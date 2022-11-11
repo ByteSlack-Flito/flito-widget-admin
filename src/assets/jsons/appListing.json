@@ -1,0 +1,21 @@
+{
+  "title": "Choose a similar app",
+  "description": "If a product similar to your idea already exists in the market, we will auto-fill the rest of the steps with the best industry-standard practices for you!",
+  "options": [
+    {
+      "id": 112,
+      "title": "Facebook",
+      "description": "The most popular social media platform, used by 1B+ people"
+    },
+    {
+      "id": 113,
+      "title": "Instagram",
+      "description": "Owned by Meta, the 2nd largest social media platform"
+    },
+    {
+      "id": 114,
+      "title": "Zapier",
+      "description": "A tool allowing you to connect to more than 200+ APIs"
+    }
+  ]
+}

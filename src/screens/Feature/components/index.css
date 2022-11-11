@@ -1,0 +1,20 @@
+@import url('../../../components/global/global.css');
+.assign_btn_container{
+    justify-content: center;
+    display: flex;
+}
+.assign_btn{
+    background: #fff;
+    padding: 5px;
+    padding-bottom: 7px;
+    border: 1px solid var(--blueLight);
+    cursor: pointer;
+    border-radius: 5px;
+    transition: all 200ms;
+}
+.assign_btn:hover{
+    border: 1px solid var(--blue);
+    transform: scale(1.04);
+    -webkit-box-shadow: 3px 0px 15px 5px rgba(101, 101, 254, 0.1);
+    box-shadow: 3px 0px 15px 5px rgba(101, 101, 254, 0.1);
+}

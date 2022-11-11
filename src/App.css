@@ -1,0 +1,88 @@
+@import url("./components/global/global.css");
+html,
+body {
+  height: 100%;
+}
+#root {
+  height: 100%;
+}
+.App {
+  text-align: center;
+  height: 100%;
+}
+.App .main {
+  height: 100%;
+}
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.spinner-fullScreen {
+  position: absolute;
+  align-self: center;
+  justify-self: center;
+  height: 100%;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  z-index: 99;
+  background: rgba(255, 255, 255, 0.502);
+}
+.slider_profile_header{
+  height: 120px;
+  background: linear-gradient(22deg, rgb(29 107 253 / 8%) 50%, rgb(72 69 252 / 33%) 100%);
+  border-radius: var(--radius);
+  position: relative;
+}
+.slider_profile {
+  display: flex;
+  position: absolute;
+  bottom: -17px;
+  left: 20px;
+}
+.slider_profile .profile_img {
+  background: #fff;
+  /* border: 1px solid var(--blueLight); */
+  padding: 30px !important;
+  color: var(--darkBlue);
+}
+
+.slider_profile .profile_name {
+  display: grid;
+  /* padding-top: 10px; */
+}
+
+.react-flow__attribution{
+  display: none;
+}

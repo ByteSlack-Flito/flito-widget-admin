@@ -1,0 +1,124 @@
+@import url("../global/global.css");
+
+.no_rad_bottom {
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 0px;
+}
+.profile_container_main {
+  padding: 10px 10px;
+  padding-top: 5px;
+}
+.profile_img {
+  width: 35px;
+  height: 35px;
+  border-radius: var(--radius);
+  background: var(--blueLight);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.profile_name_container {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+.arrow_container {
+  padding: 2px 5px;
+  background: var(--blueLight);
+  position: absolute;
+  right: 0;
+  border-radius: 3px;
+  transition: all 200ms;
+  cursor: pointer;
+}
+.arrow_container:hover {
+  background: #4e69ff75;
+}
+.arrow {
+  transform: rotateX(0deg);
+  transform: all 200ms;
+}
+.arrow_up {
+  transform: rotateX(180deg);
+}
+.menu_sticky {
+  height: 80px;
+  /* border-bottom: 1px solid var(--blue); */
+}
+.menu_container {
+  background: #0d2456;
+  position: relative;
+}
+.menu_item {
+  transition: all 200ms;
+  cursor: pointer;
+  color: var(--light);
+  padding-left: 0px;
+}
+.menu_item_title {
+  color: var(--blueSemiLight);
+  padding-left: 10px;
+  margin-bottom: 8px;
+  font-size: 0.775rem;
+}
+.menu_item_selected {
+  color: #fff;
+  background: #173473;
+  padding: 5px 0px;
+  /* background: var(--blueLight); */
+}
+.menu_item:hover {
+  /* background: var(--blueLight); */
+  /* padding-left: 15px; */
+  /* transform: scale(1.01); */
+  color: #fff;
+}
+.menu_item_profile {
+  color: #fff;
+  transition: all 200ms;
+  background: var(--blueLight);
+  /* margin-left: 10px; */
+  border-radius: var(--radius);
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+.menu_item_profile .item_container {
+  position: absolute;
+  top: 100%;
+  width: 100%;
+  background: var(--darkTheme);
+  transition: all 200ms;
+  transform: translateY(0);
+  opacity: 1;
+  z-index: 99;
+  outline: none;
+}
+.menu_item_profile .item_container_hidden {
+  transform: translateY(-35px);
+  opacity: 0;
+  z-index: -99;
+}
+.menu_item_profile .item {
+  background: var(--blueLight);
+  transition: all 200ms;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+.item:hover {
+  background: var(--darkThemeLight);
+}
+.item > p {
+  user-select: none;
+}
+.menu_item .beta_label {
+  margin-left: 5px;
+  color: var(--darkBlue);
+  padding: 0 5px;
+  border-radius: 5px;
+}
+.menu_item_selected .beta_label {
+  /* color: #fff; */
+  color: var(--darkBlue);
+
+}
