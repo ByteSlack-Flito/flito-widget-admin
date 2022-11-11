@@ -29,7 +29,6 @@ import {
   AlertDialogFooter,
   Link,
   Stack,
-  VStack,
   Tooltip,
   Popover,
   PopoverTrigger,
@@ -38,7 +37,8 @@ import {
   PopoverCloseButton,
   PopoverHeader,
   PopoverBody,
-  PopoverFooter
+  PopoverFooter,
+  VStack
 } from '@chakra-ui/react'
 import { IoExitOutline } from 'react-icons/io5'
 import { TbExternalLink } from 'react-icons/tb'

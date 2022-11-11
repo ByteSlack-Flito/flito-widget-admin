@@ -1,53 +1,32 @@
 import './App.css'
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
-import Logo from './logo-trans.png'
-import CompanyLogo from './comapny_thumb.png'
 import {
   Footer,
   Header,
-  PopupAlert,
-  Slider,
-  SubTitle,
-  Title
 } from './components/global'
 import { getRoutes, SiteRoutes } from './misc/routes'
-import { Menu, ProfileMenu } from './components/menu'
+import { Menu } from './components/menu'
 import { Provider, useDispatch } from 'react-redux'
 import store from './data/reducers'
 import { useSelector } from 'react-redux'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { Constants } from './data/constants'
 import { FirebaseActions } from './data/actions'
-import { AuthActions, ProfileActions } from './data/actions/userActions'
-import { DropDown, ExtendedButton, Input, Button } from './components/form'
-import { Formik } from 'formik'
-import { StringHelper } from './data/extensions/stringHelper'
-import { faCheck } from '@fortawesome/free-solid-svg-icons'
-import { FcVip } from 'react-icons/fc'
-import { getProfileInitials } from './misc/logics'
-import { FaCentercode } from 'react-icons/fa'
+import { AuthActions } from './data/actions/userActions'
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
-import { HiChevronDown } from 'react-icons/hi'
-import { IoExitOutline, IoHelpOutline } from 'react-icons/io5'
+
 import {
   ChakraProvider,
   Grid,
   GridItem,
   Spinner,
   Spacer,
-  Image,
   Menu as ChakraMenu,
-  MenuItem,
-  MenuList,
-  MenuButton,
   Button as ChakraButton,
-  Avatar,
-  Text,
-  HStack
 } from '@chakra-ui/react'
 import { FiUser } from 'react-icons/fi'
 
-function App () {
+function App() {
   //#region Setting site metadata
   useEffect(() => {
     document.title = Constants.Site.title
@@ -70,7 +49,7 @@ function App () {
 
 export default App
 
-function ScreenRenderer () {
+function ScreenRenderer() {
   const userState = useSelector(state => state.user)
   const firebaseApp = useSelector(state => state.firebaseApp)
   const location = useLocation()
@@ -86,7 +65,7 @@ function ScreenRenderer () {
     if (userState.profile?.userId) {
       navigate(
         location.pathname === '/'
-          ? SiteRoutes.Engine.Dashboard.path
+          ? SiteRoutes.Engine.PricingStrategy.path
           : location.pathname,
         true
       )
@@ -100,7 +79,7 @@ function ScreenRenderer () {
     })
   }, [firebaseApp.instance])
 
-  function getMenuItems () {
+  function getMenuItems() {
     return location.pathname.includes('/project/')
       ? routes.Project
       : routes.Engine
@@ -130,7 +109,7 @@ function ScreenRenderer () {
           fontWeight='bold'
         >
           <GridItem pl='2' pr='2' bg='white' shadow='sm' area={'header'}>
-            <Header/>
+            <Header />
           </GridItem>
           <GridItem
             area={'nav'}

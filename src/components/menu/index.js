@@ -6,7 +6,6 @@ import {
   Avatar,
   Box,
   Button,
-  IconButton,
   Text,
   Tooltip
 } from '@chakra-ui/react'
@@ -26,13 +25,13 @@ export const MenuItem = ({
   const location = useLocation()
   const navigate = useNavigate()
 
-  function performNavigation () {
+  function performNavigation() {
     navigate(projectId ? path.replace(':projectId', projectId) : path, {
       replace: true
     })
   }
 
-  function performSideNavigation () {
+  function performSideNavigation() {
     if (projectId)
       navigate(
         SiteRoutes.Project.Dashboard.path.replace(':projectId', projectId)
@@ -67,7 +66,7 @@ export const MenuItem = ({
   }
 
   const Sidebar = () => {
-    function isSelected () {
+    function isSelected() {
       if (label && projectId)
         return location.pathname.includes(`/project/${projectId}`)
       else {
@@ -121,9 +120,9 @@ export const MenuItem = ({
   return variant === 'regular' ? <Reguler /> : <Sidebar />
 }
 
-export const Menu = ({ data, onItemClick = ({ item = '' }) => {} }) => {
+export const Menu = ({ data, onItemClick = ({ item = '' }) => { } }) => {
   const location = useLocation()
-  function getProjectBasedURL (path) {
+  function getProjectBasedURL(path) {
     const idFromURL = location.pathname
       .split('/project/')
       .pop()

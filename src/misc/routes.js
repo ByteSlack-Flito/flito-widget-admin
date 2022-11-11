@@ -3,7 +3,7 @@ import OnboardingScreen from '../screens/Onboarding'
 import { Navigate } from 'react-router-dom'
 import { MdOutlineWidgets, MdOutlineAttachMoney } from 'react-icons/md'
 import { GiTeamIdea } from 'react-icons/gi'
-import TeamScreen from '../screens/MyTeam'
+import TeamScreen from '../screens/Team'
 import PricingStrategyScreen from '../screens/PricingStrategy'
 import WidgetScreen from '../screens/Widget'
 
