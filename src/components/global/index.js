@@ -1,35 +1,16 @@
-import React, { useEffect, useRef, useState } from 'react'
 import './global.css'
 import Logo from '../../logo-trans.png'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCheck, faExclamation } from '@fortawesome/free-solid-svg-icons'
 import '../global/global.css'
-import IconParser from '../../misc/iconParser'
 import { useLocation, useNavigate } from 'react-router-dom'
 import {
-  AlertDialog,
-  AlertDialogBody,
-  AlertDialogCloseButton,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogOverlay,
   Button,
   Grid,
   GridItem,
   HStack,
   Image,
-  useDisclosure,
-  ButtonGroup,
   Menu as ChakraMenu,
-  Avatar,
-  MenuButton,
   Text,
-  MenuList,
-  MenuItem,
-  AlertDialogFooter,
   Link,
-  Stack,
-  Tooltip,
   Popover,
   PopoverTrigger,
   PopoverContent,
@@ -43,7 +24,6 @@ import {
 import { IoExitOutline } from 'react-icons/io5'
 import { TbExternalLink } from 'react-icons/tb'
 import moment from 'moment'
-import { GrUser } from 'react-icons/gr'
 import { AuthActions } from '../../data/actions/userActions'
 import { SiteRoutes } from '../../misc/routes'
 import { useDispatch } from 'react-redux'
@@ -250,183 +230,6 @@ export const Spacer = ({ size = 'small', times }) => {
   )
 }
 
-export function Slider({
-  children,
-  onClose = () => { },
-  onOpen = () => { },
-  isOpen
-}) {
-  const containerRef = useRef()
-  useEffect(() => {
-    !isOpen ? onClose() : onOpen()
-  }, [isOpen])
-  return (
-    <div className={`modal_slider ${!isOpen && 'modal_hidden'}`}>
-      <div className='row cols-3 bg_dim modal_main' style={{ height: '100%' }}>
-        <div className='col' />
-        <div className='col' />
-        <div className='col col-sm-5 slider_container'>
-          <div
-            ref={containerRef}
-            className={`modal_container shadow_light ${isOpen &&
-              'modal_container_visible'}`}
-          >
-            {children}
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-export const InfoBox = ({ type, content, visible, onHide }) => {
-  const infoboxRef = useRef()
-
-  useEffect(() => {
-    if (visible) {
-      setTimeout(() => {
-        infoboxRef && infoboxRef.current.classList.add('infobox_hidden')
-      }, 2000)
-      setTimeout(() => {
-        onHide && onHide()
-      }, 2500)
-    }
-  }, [visible])
-
-  return (
-    <div className={`infobox_parent`}>
-      <div
-        ref={infoboxRef}
-        className={`infobox_container infobox_${type} ${!visible &&
-          'infobox_hidden'}`}
-      >
-        <div className='row'>
-          <div
-            className='col col-sm-1'
-            style={{
-              display: 'flex',
-              alignItems: 'center'
-            }}
-          >
-            <FontAwesomeIcon
-              icon={type === 'success' ? faCheck : faExclamation}
-              color='#fff'
-            />
-          </div>
-          <div className='col'>
-            <div>
-              <Spacer />
-              <SubTitle
-                content={type[0].toUpperCase() + type.substring(1)}
-                theme='light'
-                size='medium'
-                fontType='bold'
-                className='margin_xs'
-              />
-              <SubTitle className='margin_xs' content={content} theme='light' />
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-export const ContentSwitcher = ({ data }) => {
-  return (
-    <div>
-      <div className='col'>
-        <SubTitle
-          fontType='bold'
-          className='font_xs no_margin'
-          content='Front-End Engineers'
-        />
-        <SubTitle
-          className='font_xs no_margin line_s'
-          content='2 Front-End Engineer suggested for the project.'
-        />
-      </div>
-      <div className='col col-sm-1'></div>
-    </div>
-  )
-}
-
-export const PageTitle = ({ title, icon }) => {
-  return (
-    <>
-      <Spacer times={2.5} />
-      <div
-        className='page_title'
-        style={{
-          display: 'flex',
-          alignItems: 'center'
-        }}
-      >
-        {/* <IconParser itemId={location.pathname} /> */}
-        {icon}
-        <SubTitle
-          content={title}
-          fontType='bold'
-          className='no_margin'
-          style={{
-            paddingLeft: 5
-          }}
-        />
-      </div>
-      <Spacer times={2.5} />
-    </>
-  )
-}
-
-/**
- * The global Info component
- * @param {object} props Component props
- * @param {string} props.className Assign additional CSS classes to the component.
- * @param {object} props.icon Icon to render inside the component.
- * @param {object} props.link If passed a value, allow the component to navigate to the specified link.
- * @param {React.CSSProperties} props.style Defines additional styles for the component.
- * @param {React.CSSProperties} props.contentStyle Defines additional styles for the nested contents.
- * @param {HTMLElement} props.content Renders any HTML content within the component.
- * @param {boolean} props.animateScale Renders any HTML content within the component.
- */
-export const Info = ({
-  className,
-  icon,
-  content,
-  style,
-  link = {},
-  animateScale,
-  contentStyle
-}) => {
-  return (
-    <p
-      className={`font_xs no_margin ${animateScale && 'scale'} ${link &&
-        'link'} ${className}`}
-      style={{
-        padding: 2,
-        paddingLeft: 10,
-        paddingRight: 10,
-        borderRadius: 5,
-        fontSize: '0.7rem',
-        display: 'flex',
-        alignItems: 'center',
-        ...style
-      }}
-    >
-      {icon}
-      <div
-        style={{
-          // fontWeight: 600,
-          paddingLeft: icon ? 5 : 0,
-          ...contentStyle
-        }}
-      >
-        {content}
-      </div>
-    </p>
-  )
-}
-
 export const Header = ({ onLinkClick = link => { } }) => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -491,46 +294,6 @@ export const Header = ({ onLinkClick = link => { } }) => {
               </PopoverFooter>
             </PopoverContent>
           </Popover>
-          {/* <ChakraMenu size='sm' isLazy>
-            <MenuButton
-              as={Button}
-              bg='white'
-              borderColor='blue.100'
-              borderWidth='thin'
-              borderRadius='md'
-              p='0'
-              _hover={{
-                borderColor: 'blue.500'
-              }}
-            >
-              <Avatar
-                name='Software Comp'
-                src='https://bit.ly/broken-link'
-                size='xs'
-                borderRadius='md'
-              />
-            </MenuButton>
-            <MenuList zIndex={999}>
-              <MenuItem
-                icon={<FiUser />}
-                onClick={() => onLinkClick('/profile')}
-              >
-                <Text fontSize='xs'> Profile</Text>
-              </MenuItem>
-              <MenuItem
-                icon={<IoExitOutline />}
-                onClick={() => onLinkClick('/logout')}
-              >
-                <Text fontSize='xs'> Log Out</Text>
-              </MenuItem>
-              <MenuItem
-                icon={<IoHelpOutline />}
-                onClick={() => onLinkClick('/help')}
-              >
-                <Text fontSize='xs'> Get Help</Text>
-              </MenuItem>
-            </MenuList>
-          </ChakraMenu> */}
         </HStack>
       </GridItem>
     </Grid>
@@ -577,76 +340,6 @@ export const Footer = () => (
     </Link>
   </HStack>
 )
-
-export const PopupAlert = ({
-  cancelText = 'No',
-  confirmText = 'Yes',
-  onConfirm = () => { },
-  onCancel = () => { },
-  onClose = () => { },
-  title = 'Are you sure?',
-  description = '',
-  isOpen
-}) => {
-  const cancelRef = React.useRef()
-
-  return (
-    <AlertDialog
-      motionPreset='slideInBottom'
-      leastDestructiveRef={cancelRef}
-      isOpen={isOpen}
-      onClose={onClose}
-      isCentered
-    >
-      <AlertDialogOverlay />
-
-      <AlertDialogContent>
-        <AlertDialogHeader>{title}</AlertDialogHeader>
-        <AlertDialogCloseButton />
-        <AlertDialogBody>{description}</AlertDialogBody>
-        <AlertDialogFooter>
-          <Button ref={cancelRef} onClick={onClose}>
-            {cancelText}
-          </Button>
-          <Button colorScheme='red' ml={3} onClick={onConfirm}>
-            {confirmText}
-          </Button>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
-  )
-}
-
-export const UserInfo = ({
-  size = 'compact',
-  firstName,
-  lastName,
-  fullName,
-  tooltipText = 'View Client Info',
-  email,
-  navLink
-}) => {
-  return (
-    size === 'compact' && (
-      <Tooltip label={tooltipText} aria-label='user-info'>
-        <Button
-          leftIcon={<GrUser />}
-          //   rightIcon={<TbExternalLink size={12} />}
-          size='xs'
-          variant='solid'
-          colorScheme='gray'
-          ml='2'
-        >
-          {fullName
-            ? fullName
-            : email
-              ? `${firstName} - ${email}`
-              : `${firstName} ${lastName}`}
-        </Button>
-      </Tooltip>
-    )
-  )
-}
 
 /**
  * A global component to render screens with titles and descriptions.
