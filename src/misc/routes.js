@@ -20,6 +20,7 @@ export const SiteRoutes = {
       element: <Navigate to={'/'} />
     },
     Init: {
+      id: 101,
       label: 'Onboarding',
       path: '/',
       element: <OnboardingScreen />
@@ -49,6 +50,7 @@ export const SiteRoutes = {
       element: <WidgetScreen />
     },
     MyTeams: {
+      id: 3,
       icon: <GiTeamIdea />,
       label: 'My Teams',
       path: `${ENGINE_ROUTE}/my-teams`,
