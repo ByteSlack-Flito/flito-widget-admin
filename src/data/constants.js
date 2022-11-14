@@ -63,5 +63,13 @@ export const Constants = {
       id: 6,
       title: 'HR Manager'
     }
-  ]
+  ],
+
+  WidgetCode:
+    `  <iframe
+    src='https://flito-widget.vercel.app'
+    style='border: none; min-height: 500px;'
+    width='100%'
+    sandbox='allow-forms allow-scripts'>
+  </iframe>`
 }

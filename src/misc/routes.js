@@ -6,6 +6,8 @@ import TeamScreen from '../screens/Team'
 import PricingStrategyScreen from '../screens/PricingStrategy'
 import WidgetScreen from '../screens/Widget'
 import { TechStackScreen } from '../screens/TechStacks'
+import { BiCodeAlt } from 'react-icons/bi'
+import { AiOutlineAppstoreAdd } from 'react-icons/ai'
 
 const ENGINE_ROUTE = '/engine'
 const PROJECT_ROUTE = `${ENGINE_ROUTE}/project/:projectId`
@@ -38,24 +40,24 @@ export const SiteRoutes = {
       label: 'Widget',
       Screens: () => {
         return {
-          PricingStrategy: {
+          Widget: {
             id: 111,
+            label: 'Get Code',
+            icon: <BiCodeAlt />,
+            path: `${ENGINE_ROUTE}/widget-code`,
+            element: <WidgetScreen />
+          },
+          PricingStrategy: {
+            id: 112,
             label: 'Pricing Strategy',
             icon: <MdOutlineAttachMoney />,
             path: `${ENGINE_ROUTE}/pricing-strategy`,
             element: <PricingStrategyScreen />
-          },
-          Widget: {
-            id: 112,
-            label: 'Get Code',
-            icon: <MdOutlineWidgets />,
-            path: `${ENGINE_ROUTE}/widget-code`,
-            element: <WidgetScreen />
           }
         }
       }
     },
-    TeamAndTech : {
+    TeamAndTech: {
       id: 2,
       label: 'Team & Tech',
       Screens: () => {
@@ -69,12 +71,11 @@ export const SiteRoutes = {
           },
           TechStacks: {
             id: 222,
-            icon: <GiTeamIdea />,
-            label: 'Tech Stacks',
+            icon: <AiOutlineAppstoreAdd />,
+            label: 'My Stacks',
             path: `${ENGINE_ROUTE}/my-tech-stack`,
             element: <TechStackScreen />
-          },
-
+          }
         }
       }
     }
