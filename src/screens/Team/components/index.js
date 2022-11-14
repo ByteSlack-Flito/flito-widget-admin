@@ -226,6 +226,7 @@ export const AddMemberModal = React.forwardRef(({ projectId }, ref) => {
       isOpen={isOpen}
       size={'5xl'}
       motionPreset='slideInBottom'
+      onCloseComplete={() => setInviteeList([])}
     >
       <ModalOverlay />
       <ModalContent>
