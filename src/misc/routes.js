@@ -42,21 +42,20 @@ export const SiteRoutes = {
       path: `${ENGINE_ROUTE}/pricing-strategy`,
       element: < PricingStrategyScreen />
     },
-    Widget: {
+    MyTeams: {
       id: 2,
+      icon: <GiTeamIdea />,
+      label: 'Team & Tech',
+      path: `${ENGINE_ROUTE}/my-team`,
+      element: <TeamScreen />,
+    },
+    Widget: {
+      id: 3,
       label: 'Widget',
       icon: <MdOutlineWidgets />,
       path: `${ENGINE_ROUTE}/widget`,
       element: <WidgetScreen />
     },
-    MyTeams: {
-      id: 3,
-      icon: <GiTeamIdea />,
-      label: 'My Teams',
-      path: `${ENGINE_ROUTE}/my-teams`,
-      element: <TeamScreen />,
-    }
-
   },
 }
 

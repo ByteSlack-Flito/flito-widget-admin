@@ -1,0 +1,2119 @@
+[
+  {
+    "id": 1210,
+    "title": "What are you planning to build?",
+    "description": "Type of application do you want to build",
+    "options": [
+      {
+        "id": 12101,
+        "title": "Web App",
+        "description": "Suitable if you're planning to build a SaaS application, streaming service, goverment projects and others."
+      },
+      {
+        "id": 12102,
+        "title": "Mobile App",
+        "description": "Serve your customers with a native experience of your service on their devices, including games."
+      },
+      {
+        "id": 12103,
+        "title": "Desktop App",
+        "description": "Mostly used by enterprises, like CRM, ERP, CMS where clients can manage their data on their self-hosted system."
+      }
+    ]
+  },
+  {
+    "id": 1211,
+    "title": "What do you plan to offer?",
+    "description": "Domain area of your application will cover",
+    "options": [
+      {
+        "id": 12111,
+        "title": "Client Facing Interface",
+        "description": "direct interaction or communication with a customer and customers use to connect and engage with your business"
+      },
+      {
+        "id": 12112,
+        "title": "Admin Interface (CRM/CMS",
+        "description": "Admin can control the entire application"
+      }
+    ]
+  },
+  {
+    "id": 1213,
+    "title": "Choose Client Facing Interface features",
+    "description": "Describe the details about features",
+    "options": [
+      {
+        "id": 10030,
+        "title": "User onboarding",
+        "description": "User authentication and onboarding features for your application.",
+        "options": [
+          {
+            "id": 100301,
+            "title": "Email & Password",
+            "description": "Allow users to sign-up or sign-in to your platform using their email",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100302,
+            "title": "Phone Number",
+            "description": "Allow users to sign-up or sign-in to your platform using their phone",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100303,
+            "title": "via Facebook",
+            "description": "Allow users to sign-up or sign-in to your platform using their facebook",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100304,
+            "title": "via Twitter",
+            "description": "Allow users to sign-up or sign-in to your platform using their phone",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100305,
+            "title": "via Google+",
+            "description": "Allow users to sign-up or sign-in to your platform using their phone",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100306,
+            "title": "Username & Password",
+            "description": "Allow users to create their unique username",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100307,
+            "title": "Username suggestions",
+            "description": "Suggest suitable unique usernames for the user based on his name",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100308,
+            "title": "Generate Password",
+            "description": "Generate strong password that adheres to the platform's requirement",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100309,
+            "title": "Password Reset",
+            "description": "Allow users to recover their password in case they forget",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 1003010,
+            "title": "reCAPTCHA",
+            "description": "Verify if account creator is a human or robot",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 1003011,
+            "title": "Country Selection",
+            "description": "Allow users to select their country from a list.",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 1003012,
+            "title": "Date of Birth",
+            "description": "Allow users to pick their date of birth using calendar",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 1003014,
+            "title": "Sex",
+            "description": "Allow users to select their gender",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": 10031,
+        "title": "Setup screens",
+        "description": "Allow users to submit additional information",
+        "options": [
+          {
+            "id": 100311,
+            "title": "Verification code",
+            "description": "Verify users' email with OTP code",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100312,
+            "title": "Add payment details",
+            "description": "Integrate payment options",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100313,
+            "title": "Additional information",
+            "description": "Allow user to add their bio, interest or any other information",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100314,
+            "title": "Upload document",
+            "description": "Allow users to uplaod any necessary documents",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100315,
+            "title": "Profile photo from Device",
+            "description": "Allow users to upload profile photo from gallery or files",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100316,
+            "title": "Take a photo",
+            "description": "Allow users to take photo using the in-app camera",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": 10032,
+        "title": "User Interface",
+        "description": "Features including animations, responsive UI and more.",
+        "options": [
+          {
+            "id": 100321,
+            "title": "Responsive UI ",
+            "description": "Responsive UI for your applications, to support all devices and screen sizes.",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100322,
+            "title": "App Logo and Icons",
+            "description": "Implement app logos and icons in your applications, as assets.",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100323,
+            "title": "Animations",
+            "description": "Have some animated icons, videos and screens in your app.",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100324,
+            "title": "Splash Screen",
+            "description": "Implement splash screen in your application, as a welcome screen.",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100325,
+            "title": "Multi-Tab",
+            "description": "Implement tabular screens in your application.",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": 10033,
+        "title": "App Walkthrough",
+        "description": "Interactive user manual to operate your app",
+        "options": [
+          {
+            "id": 100331,
+            "title": "Tooltips",
+            "description": "Add some tooltips to help users to get started",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100332,
+            "title": "Guided manual",
+            "description": "Add interactive manual to use your app",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": 10034,
+        "title": "Profile Management",
+        "description": "Allow users to update their profile, edit information and more.",
+        "options": [
+          {
+            "id": 100342,
+            "title": "Edit email",
+            "description": "Allow users to edit email",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100343,
+            "title": "Edit Profile details",
+            "description": "Allow users to edit profile details",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100344,
+            "title": "Edit Phone",
+            "description": "Allow users to edit phone number",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100345,
+            "title": "Edit Address",
+            "description": "Allow users to edit address",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100346,
+            "title": "Edit Photo",
+            "description": "Allow users to edit profile photo",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100347,
+            "title": "Change Password",
+            "description": "Allow users to change password",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100348,
+            "title": "Edit Document",
+            "description": "Allow users to re-upload any documents",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": 10035,
+        "title": "Payment Options",
+        "description": "Payment options for your app, including payment providers and",
+        "options": [
+          {
+            "id": 100352,
+            "title": "Paypal",
+            "description": "Allow users to pay through Paypal",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100353,
+            "title": "Braintree",
+            "description": "Allow users to pay through Braintree",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100354,
+            "title": "Stripe",
+            "description": "Allow users to pay through Stripe",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100355,
+            "title": "Authorize.net",
+            "description": "Allow users to pay through Authorize.net",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100356,
+            "title": "Google Pay",
+            "description": "Allow users to pay through Google Pay",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100357,
+            "title": "Apple Pay",
+            "description": "Allow users to pay through Apple Pay",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100358,
+            "title": "Add payment method",
+            "description": "Allow users to save their payment method",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100359,
+            "title": "Edit payment method",
+            "description": "Allow users to edit primary payment method",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": 10036,
+        "title": "Notifications",
+        "description": "Features to send live notification from your app",
+        "options": [
+          {
+            "id": 100361,
+            "title": "Basic intregration",
+            "description": "Basic notification setup",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100362,
+            "title": "Push notifications",
+            "description": "Send push notifications from your app",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100363,
+            "title": "Pop-up notifications",
+            "description": "Show pop-up notice on your app",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": 10037,
+        "title": "In-App Communication",
+        "description": "Allow users to communicate within the app",
+        "options": [
+          {
+            "id": 100371,
+            "title": "text messaging",
+            "description": "User can use text messaging tool on your app",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100372,
+            "title": "media sharing",
+            "description": "Users can share photos and videos within your platform",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100373,
+            "title": "reactions",
+            "description": "Users can react love, sad, like on your app",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": 10038,
+        "title": "Data Management",
+        "description": "Allow users to locate and manipulate data",
+        "options": [
+          {
+            "id": 100381,
+            "title": "Search",
+            "description": "Allow users to search on your platform",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100382,
+            "title": "Filter",
+            "description": "Allow user to filter their search results on your app",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100383,
+            "title": "Sort",
+            "description": "Allow users to sort data as per the requirement",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": 10039,
+        "title": "In-App Purchase",
+        "description": "Features to allow customers to buy/sell products on your platform.",
+        "options": [
+          {
+            "id": 100391,
+            "title": "Subscription",
+            "description": "Allow users to subscribe to any plans on your platform.",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100392,
+            "title": "Single Product Purchase",
+            "description": "Allow user to select and buy product from your platform.",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100393,
+            "title": "Discount",
+            "description": "Offer discounts to your customers, on different products.",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100394,
+            "title": "Coupon",
+            "description": "Allow users with coupon to avail discount from your app ",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          }
+        ]
+      },
+
+      {
+        "id": 10040,
+        "title": "In-App Advertising",
+        "description": "Features to include ads to show in your application.",
+        "options": [
+          {
+            "id": 100401,
+            "title": "Google AdMob Ads",
+            "description": "Integrate Google AdMob Ads in your applications.",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100402,
+            "title": "Google AdSense",
+            "description": "Integrate Google AdSense Ads in your applications.",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100403,
+            "title": "Facebook Ads",
+            "description": "Integrate Facebook Ads in your applications.",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100404,
+            "title": "Rakuten Ads",
+            "description": "Integrate Rakuten Ads in your applications.",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100405,
+            "title": "Self-Hosted Ads",
+            "description": "Integrate Self-Hosted Ads, specific to your platform, in your applications.",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          }
+        ]
+      },
+
+      {
+        "id": 10041,
+        "title": "Location Services",
+        "description": "Allow location-dependant services your application.",
+        "options": [
+          {
+            "id": 100411,
+            "title": "Geolocation",
+            "description": "Allow users to use GPS setting",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100413,
+            "title": "Google maps",
+            "description": "Integrate Google Maps in your application.",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100414,
+            "title": "Apple Maps",
+            "description": "Integrate Apple Maps in your application.",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100415,
+            "title": "Bing Maps",
+            "description": "Integrate Bing Maps in your application.",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100416,
+            "title": "Waze",
+            "description": "Integrate Waze Maps in your application.",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100417,
+            "title": "Mark Places/Points",
+            "description": "Allow users to search places and mark them as destination or pickup points.",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": 10042,
+        "title": "eCommerce Functionalities",
+        "description": "Allow eCommerce features for your customers.",
+        "options": [
+          {
+            "id": 100421,
+            "title": "Cart",
+            "description": "Allow users to add products to cart for checkout.",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100422,
+            "title": "Checkout",
+            "description": "Allow users to directly purchase from platform.",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100423,
+            "title": "Coupon Code",
+            "description": "Allow users to avail discount on app through code.",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100424,
+            "title": "Billing Address",
+            "description": " Allow users to set their billing address.",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100425,
+            "title": "Shipment",
+            "description": "Allow users to track the shipment on app.",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100426,
+            "title": "Delivery",
+            "description": "Allow users to get the delivery updates on your app.",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": 10043,
+        "title": "Analytics options",
+        "description": "Features to collect analytics, logging, crash reports and more.",
+        "options": [
+          {
+            "id": 100431,
+            "title": "Google analytics",
+            "description": "Allow users to see the analytics dashboard on your app",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100432,
+            "title": "Microsoft clarity",
+            "description": "Integrate Microsoft clarity",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100433,
+            "title": "Generate report",
+            "description": "Generate basic reports on your dashboard",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": 10044,
+        "title": "Social Media Features",
+        "description": "Social media related features incl. comments,reactions and more",
+        "options": [
+          {
+            "id": 100441,
+            "title": "Add friends",
+            "description": "Users can add their friends on app",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100442,
+            "title": "Chat management",
+            "description": "Allow users to manage their chat settings on platform",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100443,
+            "title": "Send text",
+            "description": "User can send text to others through your app",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100444,
+            "title": "Send photo",
+            "description": "Users can share photo with others",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100445,
+            "title": "Send video",
+            "description": "Users can send videos",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100446,
+            "title": "Send Audio",
+            "description": "Users can send audio in chat",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100447,
+            "title": "Emoji",
+            "description": "Users can use emoji",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100448,
+            "title": "Typing status",
+            "description": "Provide typing status",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100449,
+            "title": "Message delivery",
+            "description": "Show message delivery status",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100450,
+            "title": "Send document",
+            "description": "Users can send documents",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100451,
+            "title": "Search in chat",
+            "description": "Users can search on your app",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100452,
+            "title": "Upload photo / video from the device",
+            "description": "Allow users to upload photos and videos",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100453,
+            "title": "Take photo using phone camera",
+            "description": "Allow access to camera to take photos",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100454,
+            "title": "Make video using phone camera",
+            "description": "Allow access to camera to take videos",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100455,
+            "title": "Search in friends List",
+            "description": "Allow users to search on their friend list",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100456,
+            "title": "Audio call",
+            "description": "Users can call others",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100457,
+            "title": "Video call",
+            "description": "Users can make video calls on your app ",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100458,
+            "title": "Group chat",
+            "description": "Users can create groups and can chat with more thnn one user",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100459,
+            "title": "Encryption",
+            "description": "Users can secure their messages",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100460,
+            "title": "In-App Sharing",
+            "description": "Allow users to share files within the app",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100461,
+            "title": "Multi-Platform Sharing",
+            "description": "Users can share files to different platform from your app",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100462,
+            "title": "Marketplaces ",
+            "description": "Users can buy and sell anything on your app",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": 10045,
+        "title": "Miscellaneous",
+        "description": "List of all other uncategorised yet important and fun features.",
+        "options": [
+          {
+            "id": 100451,
+            "title": "Give feedback",
+            "description": "Users can give feedback about the app",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100452,
+            "title": "Give reviews",
+            "description": "Users can give reviews",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100453,
+            "title": "Report an issue",
+            "description": "Users can report an issue about the app",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100454,
+            "title": "Delete account",
+            "description": "Users can delete account and remove all the datas",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100455,
+            "title": "User agreement page",
+            "description": "Allow users to read and accept any agreements",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100456,
+            "title": "FAQs",
+            "description": "Users can view all the questions and answers related to your app",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          },
+          {
+            "id": 100457,
+            "title": "Terms & Privacy page",
+            "description": "Allow users to read and accept any agreements",
+            "estDevTime": [
+              {
+                "role": "front-end",
+                "hours": 2
+              },
+              {
+                "role": "back-end",
+                "hours": 2
+              },
+              {
+                "role": "devops",
+                "hours": 2
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]
