@@ -5,6 +5,7 @@ import { GiTeamIdea } from 'react-icons/gi'
 import TeamScreen from '../screens/Team'
 import PricingStrategyScreen from '../screens/PricingStrategy'
 import WidgetScreen from '../screens/Widget'
+import { TechStackScreen } from '../screens/TechStacks'
 
 const ENGINE_ROUTE = '/engine'
 const PROJECT_ROUTE = `${ENGINE_ROUTE}/project/:projectId`
@@ -66,12 +67,12 @@ export const SiteRoutes = {
             path: `${ENGINE_ROUTE}/my-team`,
             element: <TeamScreen />
           },
-          Tech: {
+          TechStacks: {
             id: 222,
             icon: <GiTeamIdea />,
-            label: 'My Stacks',
+            label: 'Tech Stacks',
             path: `${ENGINE_ROUTE}/my-tech-stack`,
-            element: <TeamScreen />
+            element: <TechStackScreen />
           },
 
         }
