@@ -73,7 +73,9 @@ const TeamScreen = () => {
             <Tr>
               <Th>Member</Th>
               <Th>Role</Th>
-              <Th>Rate</Th>
+              <Th>Employment Type</Th>
+              <Th>Salary Type</Th>
+              <Th>Salary/Rate</Th>
               <Th></Th>
             </Tr>
           </Thead>
@@ -82,8 +84,7 @@ const TeamScreen = () => {
               _hover={{
                 bg: 'gray.100'
               }}
-              onClick={() => showDetailsScreen()}
-              cursor='pointer'
+              // onClick={() => showDetailsScreen()}
             >
               <Td>
                 <VStack
@@ -106,11 +107,9 @@ const TeamScreen = () => {
                   </Text>
                 </VStack>
               </Td>
-              <Td>
-                <Text whiteSpace='pre-line' overflowWrap='break-word'>
-                  Font-End Developer
-                </Text>
-              </Td>
+              <Td>Font-End Developer</Td>
+              <Td>{'Full Time (> 30Hrs/Week)'}</Td>
+              <Td>Hourly</Td>
               <Td textAlign='left' fontWeight='medium'>
                 $45/hr
               </Td>
