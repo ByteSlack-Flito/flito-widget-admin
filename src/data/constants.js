@@ -67,7 +67,7 @@ export const Constants = {
 
   WidgetCode:
     `  <iframe
-    src='https://flito-widget.vercel.app'
+    src='https://widget.flito.io'
     style='border: none; min-height: 500px;'
     width='100%'
     sandbox='allow-forms allow-scripts'>
