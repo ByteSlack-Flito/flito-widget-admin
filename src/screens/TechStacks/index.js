@@ -10,21 +10,21 @@ const AppTypes = [
   {
     icon: <ImMobile size={14} />,
     value: 'mobile-app',
-    title: 'Mobile App',
+    title: 'Mobile Apps',
     description: 'Native & Hybrid Apps For Cross-Platform Devices',
     platforms: ['Android', 'iOS', 'AndroidTV', 'tvOS', 'watchOS', 'wearOS']
   },
   {
     icon: <HiOutlineCursorClick size={14} />,
     value: 'web-app',
-    title: 'Web App',
+    title: 'Websites & Web Apps',
     description: 'Responsive Website and Web Apps for modern browsers.',
     platforms: ['Static Websites', 'SPA', 'PWA']
   },
   {
     icon: <AiOutlineDesktop size={14} />,
     value: 'desktop-app',
-    title: 'Desktop App',
+    title: 'Desktop Apps',
     description: 'Classic Desktop Applications that run locally.',
     platforms: ['Windows', 'Linux', 'macOS']
   }
@@ -74,6 +74,13 @@ export const TechStackScreen = () => {
     })
   }
 
+  function isFormValid () {
+    return (
+      selectedAppTypes.length > 0 &&
+      selectedAppTypes.every(x => x.platforms?.length > 0)
+    )
+  }
+
   return (
     <ScreenContainer
       title='Tech Stacks'
@@ -102,36 +109,49 @@ export const TechStackScreen = () => {
               )
             })}
           </HStack>
-          {selectedAppTypes?.length > 0 && (
+          {/* {selectedAppTypes?.length > 0 && (
             <Text fontWeight='bold' fontSize='sm'>
               Select platforms
             </Text>
-          )}
+          )} */}
 
-          <HStack align='flex-start' w='full'>
-            {selectedAppTypes?.map(({ appType }) => {
-              const { platforms } = AppTypes.find(x => x.value === appType)
-              return platforms.map(platform => {
-                const isSelected = selectedAppTypes
-                  .find(x => x.appType === appType)
-                  ?.platforms?.some(x => x === platform)
-                return (
-                  <Button
-                    size='xs'
-                    colorScheme={!isSelected ? 'gray' : 'blue'}
-                    borderWidth='thin'
-                    borderColor={!isSelected ? 'gray.300' : 'blue.400'}
-                    onClick={() => updateSelectedAppTypes(appType, platform)}
-                  >
-                    {platform}
-                  </Button>
-                )
-              })
-            })}
-          </HStack>
+          {selectedAppTypes?.map(({ appType }) => {
+            const { platforms } = AppTypes.find(x => x.value === appType)
+
+            return (
+              <>
+                <Text fontWeight='medium' fontSize='sm'>
+                  Select platforms for{' '}
+                  <b>{AppTypes.find(x => x.value === appType).title}</b>
+                </Text>
+
+                <HStack align='flex-start' w='full'>
+                  {platforms.map(platform => {
+                    const isSelected = selectedAppTypes
+                      .find(x => x.appType === appType)
+                      ?.platforms?.some(x => x === platform)
+                    return (
+                      <Button
+                        size='xs'
+                        colorScheme={!isSelected ? 'gray' : 'blue'}
+                        borderWidth='thin'
+                        borderColor={!isSelected ? 'gray.300' : 'blue.400'}
+                        onClick={() =>
+                          updateSelectedAppTypes(appType, platform)
+                        }
+                      >
+                        {platform}
+                      </Button>
+                    )
+                  })}
+                </HStack>
+              </>
+            )
+          })}
         </VStack>
       </SimpleGrid>
       <Button
+        disabled={!isFormValid()}
         size='sm'
         colorScheme='teal'
         variant='solid'
