@@ -71,7 +71,7 @@ const WidgetScreen = () => {
         </Box>
         <Text fontSize='sm' fontWeight='normal'>
           Paste the above code on any desired section of your website, where you
-          want to show the <b>Flito Cost Estimator Widget.</b>
+          want to show the <b>Flito Cost Estimator Widget.</b>{' '}
           Make sure to place the widget in a section that covers the full-screen
           width. The widget is responsive, however, it requires a{' '}
           <b>minimum width of 400px</b> and <b>minumum height of 500px</b>.

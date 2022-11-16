@@ -35,46 +35,46 @@ export const SiteRoutes = {
   },
 
   Engine: {
-    Widget: {
-      id: 1,
-      label: 'Widget',
-      Screens: () => {
-        return {
-          Widget: {
-            id: 111,
-            label: 'Get Code',
-            icon: <BiCodeAlt />,
-            path: `${ENGINE_ROUTE}/widget-code`,
-            element: <WidgetScreen />
-          },
-          PricingStrategy: {
-            id: 112,
-            label: 'Pricing Strategy',
-            icon: <MdOutlineAttachMoney />,
-            path: `${ENGINE_ROUTE}/pricing-strategy`,
-            element: <PricingStrategyScreen />
-          }
-        }
-      }
-    },
     TeamAndTech: {
-      id: 2,
+      id: 1,
       label: 'Team & Tech',
       Screens: () => {
         return {
-          MyTeam: {
-            id: 221,
-            icon: <GiTeamIdea />,
-            label: 'My Team',
-            path: `${ENGINE_ROUTE}/my-team`,
-            element: <TeamScreen />
-          },
           TechStacks: {
             id: 222,
             icon: <AiOutlineAppstoreAdd />,
             label: 'My Stacks',
             path: `${ENGINE_ROUTE}/my-tech-stack`,
             element: <TechStackScreen />
+          },
+          MyTeam: {
+            id: 221,
+            icon: <GiTeamIdea />,
+            label: 'My Team',
+            path: `${ENGINE_ROUTE}/my-team`,
+            element: <TeamScreen />
+          }
+        }
+      }
+    },
+    Widget: {
+      id: 2,
+      label: 'Widget',
+      Screens: () => {
+        return {
+          PricingStrategy: {
+            id: 112,
+            label: 'Pricing Strategy',
+            icon: <MdOutlineAttachMoney />,
+            path: `${ENGINE_ROUTE}/pricing-strategy`,
+            element: <PricingStrategyScreen />
+          },
+          Widget: {
+            id: 111,
+            label: 'Get Code',
+            icon: <BiCodeAlt />,
+            path: `${ENGINE_ROUTE}/widget-code`,
+            element: <WidgetScreen />
           }
         }
       }
