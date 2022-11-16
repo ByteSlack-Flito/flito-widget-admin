@@ -1,9 +1,6 @@
 import './App.css'
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
-import {
-  Footer,
-  Header,
-} from './components/global'
+import { Footer, Header } from './components/global'
 import { getRoutes, SiteRoutes } from './misc/routes'
 import { Menu } from './components/menu'
 import { Provider, useDispatch } from 'react-redux'
@@ -22,11 +19,11 @@ import {
   Spinner,
   Spacer,
   Menu as ChakraMenu,
-  Button as ChakraButton,
+  Button as ChakraButton
 } from '@chakra-ui/react'
 import { FiUser } from 'react-icons/fi'
 
-function App() {
+function App () {
   //#region Setting site metadata
   useEffect(() => {
     document.title = Constants.Site.title
@@ -49,7 +46,7 @@ function App() {
 
 export default App
 
-function ScreenRenderer() {
+function ScreenRenderer () {
   const userState = useSelector(state => state.user)
   const firebaseApp = useSelector(state => state.firebaseApp)
   const location = useLocation()
@@ -65,7 +62,7 @@ function ScreenRenderer() {
     if (userState.profile?.userId) {
       navigate(
         location.pathname === '/'
-          ? SiteRoutes.Engine.PricingStrategy.path
+          ? SiteRoutes.Engine.Widget.Screens().Widget.path
           : location.pathname,
         true
       )
@@ -79,7 +76,7 @@ function ScreenRenderer() {
     })
   }, [firebaseApp.instance])
 
-  function getMenuItems() {
+  function getMenuItems () {
     return location.pathname.includes('/project/')
       ? routes.Project
       : routes.Engine
