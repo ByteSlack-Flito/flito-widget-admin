@@ -44,31 +44,6 @@ export default ({}) => {
   }, [])
 
   return (
-    // <div className='main onboarding_main'>
-    //   <div className='container_main shadow_dark'>
-    //     <div className='row'>
-    //       <div className='col col-lg-6'>
-    //         <Player className='anim_wrapper' src={LoginAnim} loop autoplay />
-    //         <img
-    //           src={Logo}
-    //           className='site_logo_main site_logo'
-    //           alt='site-logo'
-    //         />
-    //       </div>
-    //       <Spacer />
-    //       <div className='col col-lg-5 d-flex form_container'>
-    //         {stepType === 'signIn' ? (
-    //           <LoginScreen onSwitchRequest={() => setStepType('signUp')} />
-    //         ) : (
-    //           <SignUpScreen
-    //             projectMetaData={projectMeta}
-    //             onSwitchRequest={() => setStepType('signIn')}
-    //           />
-    //         )}
-    //       </div>
-    //     </div>
-    //   </div>
-    // </div>
     <Grid
       templateColumns='repeat(8, 1fr)'
       templateRows='repeat(4, 1fr)'
