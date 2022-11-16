@@ -87,6 +87,7 @@ const WidgetScreen = () => {
           </Text>
           {HelpLinks.map(({ label, link }) => (
             <Link
+              key={link}
               color='teal.600'
               href={link}
               isExternal
