@@ -76,6 +76,10 @@ function ScreenRenderer () {
     })
   }, [firebaseApp.instance])
 
+  useEffect(() => {
+    console.log('User is:', userState)
+  }, [userState])
+
   function getMenuItems () {
     return location.pathname.includes('/project/')
       ? routes.Project

@@ -61,6 +61,7 @@ function * performSignUp (payload) {
         )
         yield put(setProfile(profileResult.val()))
         yield call(StorageHelper.SaveItem, signup.user.accessToken, 'auth')
+        yield put(setLoadingState(Constants.LoadingState.SUCCESS))
       } catch (ex) {
         console.log('Something went wrong while creating profile.', ex)
       }
@@ -93,13 +94,14 @@ function * performSignIn (payload) {
         get,
         child(ref(database), 'users/' + signIn.user.uid)
       )
-      console.log('Found profile:', signIn.user.uid)
       yield put(setProfile(profileResult.val()))
+      yield put(setLoadingState(Constants.LoadingState.SUCCESS))
       yield call(
         StorageHelper.SaveItem,
         { email: data.email, password: data.password },
         'auth'
       )
+      console.log('Found profile:', profileResult.val())
       // yield put(setToken(signIn.user.refreshToken))
     }
   } catch (ex) {
