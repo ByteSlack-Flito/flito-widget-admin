@@ -1,80 +1,26 @@
-
-import { useNavigate } from 'react-router-dom'
-import { FiArrowRight } from 'react-icons/fi'
-import { useForm } from 'react-hook-form'
+import { devTeam } from '../../data/constants'
 import {
   VStack,
   Box,
-  Button,
-  Input,
-  FormControl,
-  FormLabel,
-  HStack,
-  Spacer
+  Text
 } from '@chakra-ui/react'
-import { useState } from 'react'
+import { groupBy } from '../../misc/featureHelper'
+
 const HourlyPricing = () => {
+  const rolesGroup = groupBy(devTeam, 'role')
+  const AverageSalary = []
+  for (const key in rolesGroup) {
+    const Salary = (rolesGroup[key]).reduce((acc, cval) => {
+      return acc + cval.salary.rate
 
-  const roles = ['Front-End', 'Back-End', 'DevOps/Cloud Developers', 'UI Designer']
-  const {
-    register,
-    handleSubmit,
-  } = useForm({ mode: 'onChange' })
-
-  const formResult = {}
-  const onSubmit = data => {
-
-    roles.forEach((role, index) => {
-      const countId = `count${index}`
-      const rateId = `rate${index}`
-      formResult[role] = {
-
-        devCount: data[countId],
-        avgRate: data[rateId]
-      }
-    })
-    console.log(formResult)
-
+    }, 0)
+    AverageSalary.push({
+      role: key,
+      avgRate: Salary / rolesGroup[key].length,
+      type: rolesGroup[key][0].salary.type
+    }
+    )
   }
-
-  const children = roles.map((role, index) => (
-    <HStack gap='6' key={index}>
-      <FormControl w='80%'>
-        <FormLabel fontSize='xs' fontWeight='bold'>No. Of {role} In Your Team</FormLabel>
-        <Input
-          transition='all 300ms'
-          fontSize='sm'
-          size='md'
-          bg='gray.100'
-          border='none'
-          _focus={{
-            borderWidth: 'none',
-            bg: 'white'
-          }}
-          placeholder='No. Of Front-End Developers'
-          {...register(`count${index}`, { required: true })}
-        />
-      </FormControl >
-      <FormControl w='30%'>
-        <FormLabel fontSize='xs' fontWeight={'bold'}>Avg. Hourly Rate</FormLabel>
-        <Input
-          transition='all 300ms'
-          fontSize='sm'
-          size='md'
-          bg='gray.100'
-          border='none'
-          _focus={{
-            borderWidth: 'none',
-            bg: 'white'
-          }}
-          placeholder='Hourly Rate'
-          {...register(`rate${index}`, { required: true })}
-        />
-      </FormControl>
-
-    </HStack>
-  )) || '';
-
 
   return (
     <Box
@@ -83,32 +29,18 @@ const HourlyPricing = () => {
       color='gray.600'
       justifyContent='space-between'
     >
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-      >
-        <VStack gap='6'>
-          {children}
-        </VStack>
-        <Spacer h='6' />
-        <Button
-          type='submit'
-          size='sm'
-          colorScheme='purple'
-          variant='solid'
-          fontWeight='semibold'
-          rightIcon={<FiArrowRight />}
-        // disabled={!isDirty || !isValid}
-        // onClick={handleSubmit}
-        >
-          Update Pricing Model
-        </Button>
 
 
-        {/* <VStack spacing='3' justify='space-between' align='flex-start'>
+      <VStack alignItems={'flex-start'}>
+        <Text>Hourly Pricing will now be used to create estimated quotations.Based on your team set-up in My Teams,
+          we have calculated the below average rates:</Text>
+        {
+          AverageSalary.map((item, index) => (
+            <Text key={index}>Avg. Rate For {item.role}:  ${item.avgRate}</Text>
+          ))
+        }
 
-          {errors && console.log(errors)}
-        </VStack> */}
-      </form>
+      </VStack>
     </Box >
   )
 }

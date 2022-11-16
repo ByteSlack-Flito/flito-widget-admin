@@ -73,3 +73,52 @@ export const Constants = {
     sandbox='allow-forms allow-scripts'>
   </iframe>`
 }
+
+
+export const devTeam = [
+  {
+    fullName: 'Aousaf Rashid',
+    role: 'Front-End',
+    weekHours: 35,
+    salary: {
+      type: 'hourly',
+      rate: 35
+    }
+  },
+  {
+    fullName: 'Stephen Carl',
+    role: 'Front-End',
+    weekHours: 35,
+    salary: {
+      type: 'hourly',
+      rate: 40
+    }
+  },
+  {
+    fullName: 'Farhad Jaman',
+    role: 'Back-End',
+    weekHours: 35,
+    salary: {
+      type: 'hourly',
+      rate: 40
+    }
+  },
+  {
+    fullName: 'Farhad Jaman',
+    role: 'UI-designer',
+    weekHours: 50,
+    salary: {
+      type: 'hourly',
+      rate: 70
+    }
+  },
+  {
+    fullName: 'Faizur Rahman',
+    role: 'UX-designer',
+    weekHours: 50,
+    salary: {
+      type: 'hourly',
+      rate: 70
+    }
+  }
+]
