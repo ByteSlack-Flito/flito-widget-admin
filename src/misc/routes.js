@@ -40,6 +40,11 @@ export const SiteRoutes = {
       label: 'Team & Tech',
       Screens: () => {
         return {
+          Init: {
+            path: '/',
+            ignoreRendering: true,
+            element: <Navigate to={`${ENGINE_ROUTE}/my-tech-stack`} />
+          },
           TechStacks: {
             id: 222,
             icon: <AiOutlineAppstoreAdd />,
