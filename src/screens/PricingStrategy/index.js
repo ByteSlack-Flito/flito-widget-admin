@@ -1,15 +1,23 @@
 import { Select, SimpleGrid, Spacer, VStack, Text } from '@chakra-ui/react'
-import React, { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { ScreenContainer } from '../../components/global'
 import HourlyPricing from './hourlyPricing'
 import Dropdown from 'react-dropdown';
 import 'react-dropdown/style.css';
 const PricingStrategyScreen = () => {
+
+  const [currencies, setCurrencies] = useState([])
+  const [selectedCurrency, setSelectedCurrency] = useState('');
   const [pricingType, setPricingType] = useState('');
-  const options = [
-    'one', 'two', 'three'
-  ];
-  const defaultOption = options[0];
+
+  useEffect(() => {
+    (async () => {
+      const response = await fetch(`https://openexchangerates.org/api/currencies.json`);
+      let data = await response.json()
+      setCurrencies(Object.keys(data))
+    })();
+  }, []);
+  console.log(selectedCurrency)
   return (
     <ScreenContainer
       title='Pricing Strategy'
@@ -18,17 +26,20 @@ const PricingStrategyScreen = () => {
       <SimpleGrid
         spacing='40px'
         columns={{
-          sm: 2,
-          lg: 3
+          sm: 1,
+          lg: 1
         }}
       >
-        {/* <VStack rowGap={'1'} alignItems='flex-start'>
+        <VStack rowGap={'1'} alignItems='flex-start' width={'25vw'}>
           <Text fontSize='xs' fontWeight={'bold'}>Select Currency</Text>
 
-          <Dropdown options={options} placeholder="Select Currency" />;
-        </VStack > */}
+          <Dropdown
+            options={currencies}
+            onChange={(selected) => setSelectedCurrency(selected)}
+            placeholder="Select Currency" width={100} />;
+        </VStack >
 
-        <VStack rowGap={'1'} alignItems='flex-start'>
+        <VStack rowGap={'1'} alignItems='flex-start' width={'25vw'}>
 
           <Text fontSize='xs' fontWeight={'bold'}>Select pricing type</Text>
           <Select

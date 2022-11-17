@@ -24,7 +24,7 @@ import {
   InputGroup
 } from '@chakra-ui/react'
 
-export default ({}) => {
+export default ({ }) => {
   const [stepType, setStepType] = useState('signUp')
   const [projectMeta, setProjectMeta] = useState()
   const firebaseApp = useSelector(state => state.firebaseApp.instance)
@@ -122,24 +122,10 @@ export default ({}) => {
               >
                 Sign In
               </Tab>
-              <Tab
-                _selected={{
-                  borderColor: '#6565fe',
-                  color: '#6565fe',
-                  fontWeight: 'semibold'
-                }}
-                color='#4a65ff50'
-                transition='all 300ms'
-              >
-                Create Account
-              </Tab>
             </TabList>
             <TabPanels>
               <TabPanel p='0'>
                 <LoginScreen />
-              </TabPanel>
-              <TabPanel p='0'>
-                <SignUpScreen />
               </TabPanel>
             </TabPanels>
           </Tabs>

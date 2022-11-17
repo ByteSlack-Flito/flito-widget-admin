@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import '../components/index.css'
-import { faArrowRight } from '@fortawesome/free-solid-svg-icons'
 import { useDispatch, useSelector } from 'react-redux'
 import { AuthActions } from '../../../data/actions/userActions'
-import { SignUpBanner } from '../components'
 import { Formik } from 'formik'
 import { StringHelper } from '../../../data/extensions/stringHelper'
 import { Constants } from '../../../data/constants'
@@ -20,13 +18,13 @@ import {
 } from '@chakra-ui/react'
 import { AiOutlineArrowRight } from 'react-icons/ai'
 
-export default ({ onSwitchRequest = () => {} }) => {
+// eslint-disable-next-line import/no-anonymous-default-export
+export default ({ onSwitchRequest = () => { } }) => {
   const [globalLoading, setGlobalLoading] = useState(false)
   const user = useSelector(state => state.user)
   const dispatch = useDispatch()
-  const toast = useToast()
 
-  function performLogin (values) {
+  function performLogin(values) {
     // console.log('values:', values)
     dispatch({
       type: AuthActions.PERFORM_SIGNIN,
@@ -50,7 +48,7 @@ export default ({ onSwitchRequest = () => {} }) => {
     }
   }, [user.loadingState])
 
-  function isBusy (isSubmitting) {
+  function isBusy(isSubmitting) {
     if (isSubmitting) {
       if (user.error?.message) {
         return false
