@@ -4,11 +4,11 @@ import { BiCheckCircle } from 'react-icons/bi'
 import { IoColorPaletteOutline } from 'react-icons/io5'
 import { DiReact } from 'react-icons/di'
 import { Link as ReactRouterLink } from 'react-router-dom'
-import '../index.css'
 import { BsCode, BsCodeSlash } from 'react-icons/bs'
 import { TbTestPipeOff } from 'react-icons/tb'
 import { FaAws } from 'react-icons/fa'
 import { MdDevices, MdOutlineManageAccounts } from 'react-icons/md'
+import '../index.css'
 
 /**
  *
