@@ -78,7 +78,7 @@ export const Constants = {
 export const devTeam = [
   {
     fullName: 'Aousaf Rashid',
-    role: 'Front-End',
+    role: 'Front-End Developer',
     weekHours: 35,
     salary: {
       type: 'hourly',
@@ -87,7 +87,7 @@ export const devTeam = [
   },
   {
     fullName: 'Stephen Carl',
-    role: 'Front-End',
+    role: 'Front-End Developer',
     weekHours: 35,
     salary: {
       type: 'hourly',
@@ -96,7 +96,7 @@ export const devTeam = [
   },
   {
     fullName: 'Farhad Jaman',
-    role: 'Back-End',
+    role: 'Back-End Developer',
     weekHours: 35,
     salary: {
       type: 'hourly',
@@ -105,7 +105,7 @@ export const devTeam = [
   },
   {
     fullName: 'Farhad Jaman',
-    role: 'UI-designer',
+    role: 'UI-Designer',
     weekHours: 50,
     salary: {
       type: 'hourly',
@@ -114,7 +114,7 @@ export const devTeam = [
   },
   {
     fullName: 'Faizur Rahman',
-    role: 'UX-designer',
+    role: 'UX-Designer',
     weekHours: 50,
     salary: {
       type: 'hourly',
