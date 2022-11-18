@@ -1,6 +1,6 @@
 import FeatureList from '../assets/jsons/masterStep.json'
 
-export function extractFeatures () {
+export function extractFeatures() {
   const parentFeatures = FeatureList[2].options
   let subFeatures = []
 
@@ -18,7 +18,7 @@ export function extractFeatures () {
   }
 }
 
-export function extractFeature (featureId = []) {
+export function extractFeature(featureId = []) {
   const features = extractFeatures().subFeatures
   if (Array.isArray(featureId)) {
     return features.filter(x => featureId.some(id => id == x.id))
@@ -27,11 +27,11 @@ export function extractFeature (featureId = []) {
   }
 }
 
-export function extractFeaturesAsIs () {
+export function extractFeaturesAsIs() {
   return FeatureList[2].options
 }
 
-export function getSuggestedTeam (features) {
+export function getSuggestedTeam(features) {
   // features.map(x => {
   //   !Array.isArray(x.estDevTime) && console.log('ID is:', x.id)
   // })
@@ -79,11 +79,24 @@ export function getSuggestedTeam (features) {
   return finalResult;
 }
 
-function groupBy (arr, key) {
+export function groupBy(arr, key) {
   const initialValue = {}
   return arr.reduce((acc, cval) => {
     const myAttribute = cval[key]
     acc[myAttribute] = [...(acc[myAttribute] || []), cval]
     return acc
   }, initialValue)
+}
+
+export function groupByNested(array, property) {
+  var hash = {},
+    props = property.split('.');
+  for (var i = 0; i < array.length; i++) {
+    var key = props.reduce(function (acc, prop) {
+      return acc && acc[prop];
+    }, array[i]);
+    if (!hash[key]) hash[key] = [];
+    hash[key].push(array[i]);
+  }
+  return hash;
 }
