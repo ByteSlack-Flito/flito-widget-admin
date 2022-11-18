@@ -1,4 +1,4 @@
-import { SimpleGrid, Spacer, VStack, Text, Link } from '@chakra-ui/react'
+import { SimpleGrid, Spacer, VStack, Text, Link, HStack } from '@chakra-ui/react'
 import { useState, useEffect } from 'react'
 import { ScreenContainer } from '../../components/global'
 import { Link as ReactRouterLink } from 'react-router-dom'
@@ -54,7 +54,7 @@ const PricingStrategyScreen = () => {
       title='Pricing Strategy'
       description='Manage your pricing strategies for your quotations.'
     >
-      <VStack
+      <HStack
         rowGap={'1'}
         alignItems='flex-start'
         fontSize='sm'
@@ -74,7 +74,7 @@ const PricingStrategyScreen = () => {
         </VStack>
         <VStack alignItems='flex-start' spacing='1' width={'25vw'}>
           <Text fontSize='xs' fontWeight='medium'>
-            How do you charge your client
+            How do you charge your clients?
           </Text>
           <Select
             options={pricing_options}
@@ -83,7 +83,7 @@ const PricingStrategyScreen = () => {
             placeholder='Select strategy...'
           />
         </VStack>
-      </VStack>
+      </HStack>
 
       <VStack rowGap={'1'} alignItems='flex-start' w='full'>
         <Spacer h='10' />
