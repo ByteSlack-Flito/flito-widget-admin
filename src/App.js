@@ -22,14 +22,12 @@ import {
   Button as ChakraButton
 } from '@chakra-ui/react'
 import { FiUser } from 'react-icons/fi'
+import { signInWithLocal } from './data/database/users/auth'
 
 function App () {
   //#region Setting site metadata
   useEffect(() => {
     document.title = Constants.Site.title
-  }, [])
-  useEffect(() => {
-    ChartJS.register(ArcElement, Tooltip, Legend)
   }, [])
   //#endregion
 
@@ -70,9 +68,14 @@ function ScreenRenderer () {
   }, [userState.profile?.userId])
 
   useEffect(() => {
-    dispatch({
-      type: AuthActions.PERFORM_SIGNIN_LOCAL,
-      data: {}
+    signInWithLocal(firebaseApp.instance).then(res => {
+      if (res?.success) {
+        console.log(res.user.uid)
+        dispatch({
+          type: AuthActions.SET_USER,
+          data: {userId: res.user.uid}
+        })
+      }
     })
   }, [firebaseApp.instance])
 
@@ -93,7 +96,7 @@ function ScreenRenderer () {
           </div>
         </>
       )
-    } else if (userState.loadingState == SUCCESS && userState.profile?.userId) {
+    } else if (userState.loadingState == SUCCESS && userState.userId) {
       return (
         <Grid
           templateAreas={`"header header"

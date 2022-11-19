@@ -1,33 +1,13 @@
-import {
-  AuthActions,
-  ProfileActions
-} from '../actions/userActions'
+import { AuthActions, ProfileActions } from '../actions/userActions'
 import { Constants } from '../constants'
-
-export const setTeamData = data => ({
-  type: ProfileActions.SET_TEAM,
-  data
-})
-
-export const getTeamData = data => ({
-  type: ProfileActions.GET_TEAM,
-  data
-})
-
-export const setProfile = data => ({
-  type: ProfileActions.SET_PROFILE,
-  data
-})
-
-
 
 export const setLoadingState = data => ({
   type: ProfileActions.SET_LOADING_STATE,
   data
 })
 
-export const setProfileError = data => ({
-  type: AuthActions.SET_ERROR,
+export const setUser = data => ({
+  type: AuthActions.SET_USER,
   data
 })
 
@@ -35,7 +15,8 @@ const initialState = {
   profile: {},
   team: [],
   loadingState: Constants.LoadingState.LOADING,
-  error: {}
+  error: {},
+  userId: undefined
 }
 
 export default (state = initialState, action) => {
@@ -44,23 +25,12 @@ export default (state = initialState, action) => {
   let team = [...state.team]
 
   switch (action.type) {
-    case ProfileActions.SET_TEAM:
-      team = data
-      return { ...state, team } || state
-    case ProfileActions.ADD_TEAM_MEMBER:
-      if (Array.isArray(data)) {
-        team.push(...data)
-      } else {
-        team.push(data)
-      }
-      return { ...state, team } || state
-
-    case ProfileActions.SET_PROFILE:
-      profile = data
-      return { ...state, profile } || state
-
+    case AuthActions.SET_USER:
+      let userId = data
+      return { ...state, userId } || state
 
     case ProfileActions.SET_LOADING_STATE:
+      console.log('Loading set to...:', data)
       let loadingState = data
       return { ...state, loadingState } || state
 

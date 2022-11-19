@@ -15,20 +15,37 @@ import {
   useToast
 } from '@chakra-ui/react'
 import { AiOutlineArrowRight } from 'react-icons/ai'
+import {
+  useFirebaseInstance,
+  signUpWithCreds,
+  getUserIdToken
+} from '../../../data/database/users/auth'
+import { StorageHelper } from '../../../data/storage'
+import { updateProfile } from '../../../data/database/users/profile'
 
 export default ({ onSwitchRequest = () => {}, projectMetaData }) => {
   const dispatch = useDispatch()
   const user = useSelector(state => state.user)
+  const instance = useFirebaseInstance()
 
-  function performSignUp (values) {
-    dispatch({
-      type: AuthActions.PERFORM_SIGNUP,
-      data: {
-        email: values.email,
-        password: values.password,
-        projects: [projectMetaData]
-      }
+  async function performSignUp (values, setSubmitting) {
+    const signUpResult = await signUpWithCreds(instance, {
+      ...values
     })
+    if (signUpResult.success) {
+      console.log('Sign up success...')
+      const profileResult = await updateProfile(
+        instance,
+        signUpResult.user.uid,
+        {
+          forceInitial: true
+        }
+      )
+      profileResult.success && console.log('Profile created successfully!')
+    } else {
+      setSubmitting(false)
+      console.log(signUpResult.error.message)
+    }
   }
 
   function isBusy (isSubmitting) {
@@ -54,7 +71,7 @@ export default ({ onSwitchRequest = () => {}, projectMetaData }) => {
         validate={values => {
           const errors = {}
           if (StringHelper.isPropsEmpty(values, ['errMessage', 'showPassword']))
-            errors.errMessage = 'Please fill in all details.'
+            errors.email = 'Please fill in all details.'
           else if (!StringHelper.isSame([values.password, values.rePassword]))
             errors.errMessage = 'Your passwords do not match.'
           return errors
@@ -63,8 +80,8 @@ export default ({ onSwitchRequest = () => {}, projectMetaData }) => {
         onSubmit={(values, { setSubmitting }) => {
           if (StringHelper.isEmpty(values.errMessage)) {
             console.log('Should try signup now...')
-            setSubmitting(true)
-            performSignUp(values)
+            // setSubmitting(true)
+            performSignUp(values, setSubmitting)
           }
         }}
       >
@@ -123,7 +140,7 @@ export default ({ onSwitchRequest = () => {}, projectMetaData }) => {
               colorScheme='blue'
               variant='solid'
               onClick={handleSubmit}
-              isLoading={isBusy(isSubmitting)}
+              isLoading={isSubmitting}
               loadingText='Creating Account'
             >
               Create Account

@@ -23,6 +23,7 @@ import {
   Button,
   InputGroup
 } from '@chakra-ui/react'
+import CompleteProfileScreen from './screens/completeProfile'
 
 export default ({}) => {
   const firebaseApp = useSelector(state => state.firebaseApp.instance)
