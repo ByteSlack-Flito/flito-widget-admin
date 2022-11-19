@@ -4,7 +4,7 @@ export const StringHelper = {
    * @param {*} str Can be a string or an `array` of string
    * @returns True if the string(or any string from the given array) is empty, undefined, or whitespaces-only.
    */
-  isEmpty(str) {
+  isEmpty (str) {
     if (Array.isArray(str)) {
       return str.some(st => !st && !st.trim())
     }
@@ -16,14 +16,22 @@ export const StringHelper = {
    * @param {string[]} ignoreProps Array of the properties/object keys to ignore
    * @returns True if any properties of the given object is `null`, `undefined`, `empty` (in case of strings), or `length == 0` (in case of arrays)
    */
-  isPropsEmpty(obj = {}, ignoreProps = []) {
+  isPropsEmpty (obj = {}, ignoreProps = []) {
     return Object.keys(obj).some(prop => {
       if (!ignoreProps.includes(prop)) {
         return !obj[prop] && !obj[prop].trim()
       }
     })
   },
-  isSame(strings = []) {
+  isSame (strings = []) {
     return strings.every(str => str === strings[0])
   }
+}
+
+export const validateEmail = email => {
+  return String(email)
+    .toLowerCase()
+    .match(
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    )
 }

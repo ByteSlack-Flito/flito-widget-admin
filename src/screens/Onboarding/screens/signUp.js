@@ -3,7 +3,10 @@ import '../components/index.css'
 import { useDispatch, useSelector } from 'react-redux'
 import { AuthActions } from '../../../data/actions/userActions'
 import { Formik } from 'formik'
-import { StringHelper } from '../../../data/extensions/stringHelper'
+import {
+  StringHelper,
+  validateEmail
+} from '../../../data/extensions/stringHelper'
 import {
   Input,
   Spacer,
@@ -12,7 +15,10 @@ import {
   Button,
   InputGroup,
   InputRightElement,
-  useToast
+  useToast,
+  HStack,
+  VStack,
+  Checkbox
 } from '@chakra-ui/react'
 import { AiOutlineArrowRight } from 'react-icons/ai'
 import {
@@ -22,6 +28,7 @@ import {
 } from '../../../data/database/users/auth'
 import { StorageHelper } from '../../../data/storage'
 import { updateProfile } from '../../../data/database/users/profile'
+import { motion } from 'framer-motion'
 
 export default ({ onSwitchRequest = () => {}, projectMetaData }) => {
   const dispatch = useDispatch()
@@ -51,35 +58,44 @@ export default ({ onSwitchRequest = () => {}, projectMetaData }) => {
     }
   }
 
-  function isBusy (isSubmitting) {
-    if (isSubmitting) {
-      if (user.error?.message) {
-        return false
-      }
-      return true
-    }
-    return isSubmitting
-  }
-
   return (
-    <div>
+    <motion.div
+      key='signUp'
+      initial={{ opacity: 0, x: 30 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -30 }}
+    >
       <Formik
         initialValues={{
           email: '',
           password: '',
           rePassword: '',
-          errMessage: '',
+          agreed: false,
+          // errMessage: '',
           showPassword: false
         }}
+        validateOnMount
         validate={values => {
           const errors = {}
-          if (StringHelper.isPropsEmpty(values, ['errMessage', 'showPassword']))
+          if (!validateEmail(values.email)) {
+            errors.email = 'Invalid email address'
+          }
+          if (
+            StringHelper.isPropsEmpty(values, [
+              'errMessage',
+              'showPassword',
+              'agreed'
+            ])
+          )
             errors.email = 'Please fill in all details.'
           else if (!StringHelper.isSame([values.password, values.rePassword]))
-            errors.errMessage = 'Your passwords do not match.'
+            errors.password = 'Your passwords do not match.'
+
+          if (!values.agreed)
+            errors.agreed = 'You must agree to our ToU and Privacy Policy'
+
           return errors
         }}
-        validateOnChange={false}
         onSubmit={(values, { setSubmitting }) => {
           if (StringHelper.isEmpty(values.errMessage)) {
             console.log('Should try signup now...')
@@ -95,23 +111,31 @@ export default ({ onSwitchRequest = () => {}, projectMetaData }) => {
           handleSubmit,
           isSubmitting,
           setFieldValue,
-          errors
+          errors,
+          isValid
         }) => (
-          <Stack direction='column' spacing='2'>
-            <Text
-              fontSize='smaller'
-              fontWeight='medium'
-              align='center !important'
-            >
-              Create your new Flito account!
-            </Text>
-            <Spacer h='2' />
+          <VStack w='full' spacing='3' align='flex-start'>
+            <HStack w='100%' spacing='3'>
+              <Input
+                placeholder='Your Name'
+                fontSize='sm'
+                onChange={handleChange('firstName')}
+                size='lg'
+              />
+              <Input
+                placeholder='Organization Name'
+                fontSize='sm'
+                onChange={handleChange('organizationName')}
+                size='lg'
+              />
+            </HStack>
             <Input
               placeholder='Enter Email'
               fontSize='sm'
               onChange={handleChange('email')}
+              size='lg'
             />
-            <InputGroup size='md'>
+            <InputGroup size='lg'>
               <Input
                 pr='4.5rem'
                 type={values.showPassword ? 'text' : 'password'}
@@ -137,10 +161,23 @@ export default ({ onSwitchRequest = () => {}, projectMetaData }) => {
               placeholder='Confirm password'
               onChange={handleChange('rePassword')}
               fontSize='sm'
+              size='lg'
             />
+            <Checkbox onChange={handleChange('agreed')}>
+              <Text fontSize='sm'>
+                I agree to Flito's Terms Of Use & Privacy Policy
+              </Text>
+            </Checkbox>
             <Spacer h='4' />
+            {/* {console.log('Validity:', errors)} */}
             <Button
+              w='full'
               colorScheme='blue'
+              bg='#2564eb'
+              _hover={{
+                bg: '#154bbf'
+              }}
+              disabled={!isValid}
               variant='solid'
               onClick={handleSubmit}
               isLoading={isSubmitting}
@@ -164,9 +201,9 @@ export default ({ onSwitchRequest = () => {}, projectMetaData }) => {
                   {errors.errMessage || user.error?.message}
                 </Text>
               ))}
-          </Stack>
+          </VStack>
         )}
       </Formik>
-    </div>
+    </motion.div>
   )
 }

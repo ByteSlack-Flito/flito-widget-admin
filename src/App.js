@@ -78,7 +78,7 @@ function ScreenRenderer () {
           data: { userId: authResult.user.uid }
         })
       } else {
-        console.log('Sth went wrong...')
+        console.log("Local sign in didn't work")
         dispatch({
           type: ProfileActions.SET_LOADING_STATE,
           data: ERROR
