@@ -101,7 +101,7 @@ export default ({}) => {
               top: '50%',
               left: '50%'
             }}
-            exit={{ opacity: 0, y: -30, transition: { delay: 1.2 } }}
+            exit={{ opacity: 0, y: -30, transition: { delay: 0.9 } }}
           >
             <Spinner size='lg' />
           </motion.div>}
