@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import '../components/index.css'
 import { useDispatch, useSelector } from 'react-redux'
 import { AuthActions } from '../../../data/actions/userActions'
@@ -18,7 +18,8 @@ import {
   useToast,
   HStack,
   VStack,
-  Checkbox
+  Checkbox,
+  Link
 } from '@chakra-ui/react'
 import { AiOutlineArrowRight } from 'react-icons/ai'
 import {
@@ -29,11 +30,13 @@ import {
 import { StorageHelper } from '../../../data/storage'
 import { updateProfile } from '../../../data/database/users/profile'
 import { motion } from 'framer-motion'
+import { TOUModal } from '../components'
 
 export default ({ onSwitchRequest = () => {}, projectMetaData }) => {
   const dispatch = useDispatch()
   const user = useSelector(state => state.user)
   const instance = useFirebaseInstance()
+  const toumodalRef = useRef()
 
   async function performSignUp (values, setSubmitting) {
     const signUpResult = await signUpWithCreds(instance, {
@@ -58,6 +61,10 @@ export default ({ onSwitchRequest = () => {}, projectMetaData }) => {
     }
   }
 
+  function showTouModal () {
+    toumodalRef.current?.open()
+  }
+
   return (
     <motion.div
       key='signUp'
@@ -65,6 +72,7 @@ export default ({ onSwitchRequest = () => {}, projectMetaData }) => {
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -30 }}
     >
+      <TOUModal ref={toumodalRef} />
       <Formik
         initialValues={{
           email: '',
@@ -162,8 +170,11 @@ export default ({ onSwitchRequest = () => {}, projectMetaData }) => {
               size='lg'
             />
             <Checkbox onChange={handleChange('agreed')}>
-              <Text fontSize='sm'>
-                I agree to Flito's Terms Of Use & Privacy Policy
+              <Text fontSize='sm' display='flex'>
+                I agree to Flito's{' '}
+                <Link onClick={showTouModal} pl='1' fontWeight='semibold' color='blue.600'>
+                  Terms Of Use
+                </Link>
               </Text>
             </Checkbox>
             <Spacer h='4' />

@@ -79,7 +79,6 @@ export default ({}) => {
         zIndex='99'
       >
         <VStack w='full' maxW='400px' align='flex-start'>
-          {/* <ChakraImage src={flitoIcon} w='40px' /> */}
           <Heading display='flex'>{formHeaders().title}</Heading>
           <HStack fontWeight='medium'>
             <Text>{formHeaders().subTitle}</Text>
