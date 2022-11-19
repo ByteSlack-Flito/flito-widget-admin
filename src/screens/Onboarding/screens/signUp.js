@@ -38,6 +38,7 @@ export default ({ onSwitchRequest = () => {}, projectMetaData }) => {
   const user = useSelector(state => state.user)
   const instance = useFirebaseInstance()
   const toumodalRef = useRef()
+  const toast = useToast()
 
   async function performSignUp (values, setSubmitting) {
     const signUpResult = await signUpWithCreds(instance, {
@@ -63,6 +64,13 @@ export default ({ onSwitchRequest = () => {}, projectMetaData }) => {
     } else {
       setSubmitting(false)
       console.log(signUpResult.error.message)
+      toast({
+        title: "Couldn't create account.",
+        description: signUpResult.error.message || "Something went wrong. Try again.",
+        status: 'error',
+        duration: 3500,
+        isClosable: true,
+      })
     }
   }
 

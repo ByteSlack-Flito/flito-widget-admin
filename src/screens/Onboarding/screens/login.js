@@ -33,6 +33,7 @@ export default ({ onSwitchRequest = () => {} }) => {
   const user = useSelector(state => state.user)
   const dispatch = useDispatch()
   const instance = useFirebaseInstance()
+  const toast = useToast()
 
   async function performLogin (values, setSubmitting) {
     const signnResult = await signInWithCreds(instance, {
@@ -50,6 +51,13 @@ export default ({ onSwitchRequest = () => {} }) => {
     } else {
       setSubmitting(false)
       console.log(signnResult.error.message)
+      toast({
+        title: "Couldn't log in.",
+        description: signnResult.error.message || "Something went wrong. Try again.",
+        status: 'error',
+        duration: 3500,
+        isClosable: true,
+      })
     }
   }
 
