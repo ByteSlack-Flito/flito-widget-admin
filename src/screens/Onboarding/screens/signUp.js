@@ -97,11 +97,9 @@ export default ({ onSwitchRequest = () => {}, projectMetaData }) => {
           return errors
         }}
         onSubmit={(values, { setSubmitting }) => {
-          if (StringHelper.isEmpty(values.errMessage)) {
-            console.log('Should try signup now...')
-            // setSubmitting(true)
-            performSignUp(values, setSubmitting)
-          }
+          console.log('Should try signup now...')
+          performSignUp(values, setSubmitting)
+          // }
         }}
       >
         {({

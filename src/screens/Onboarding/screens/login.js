@@ -3,7 +3,10 @@ import '../components/index.css'
 import { useDispatch, useSelector } from 'react-redux'
 import { AuthActions } from '../../../data/actions/userActions'
 import { Formik } from 'formik'
-import { StringHelper, validateEmail } from '../../../data/extensions/stringHelper'
+import {
+  StringHelper,
+  validateEmail
+} from '../../../data/extensions/stringHelper'
 import { Constants } from '../../../data/constants'
 import {
   Input,
@@ -98,11 +101,9 @@ export default ({ onSwitchRequest = () => {} }) => {
           return errors
         }}
         onSubmit={(values, { setSubmitting }) => {
-          if (StringHelper.isEmpty(values.errMessage)) {
-            // console.log('Should try SignIn now...')
-            setSubmitting(true)
-            performLogin(values)
-          }
+          // console.log('Should try SignIn now...')
+          setSubmitting(true)
+          performLogin(values, setSubmitting)
         }}
       >
         {({
