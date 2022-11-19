@@ -11,11 +11,11 @@ function * performSetUser (payload) {
   const { userId } = payload.data
 
   if (userId) {
-    yield put(setUser(userId))
-    yield put(setLoadingState(Constants.LoadingState.SUCCESS))
+    // yield put(setUser(userId))
+    // yield put(setLoadingState(Constants.LoadingState.SUCCESS))
   }
 }
 
 export default function * userSaga () {
-  yield takeEvery(AuthActions.SET_USER, performSetUser)
+  yield takeEvery(AuthActions.SET_USER_SUCCESS, performSetUser)
 }

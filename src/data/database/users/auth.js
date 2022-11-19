@@ -20,7 +20,7 @@ export async function signInWithCreds (fireInstance, { email, password }) {
   try {
     const authResult = await signInWithEmailAndPassword(auth, email, password)
     const token = await getUserIdToken(authResult.user.uid)
-    StorageHelper.SaveItem('auth', token?.data)
+    StorageHelper.SaveItem(token?.data, 'auth')
     return { ...authResult, success: true }
   } catch (ex) {
     let error = new FirebaseError()
@@ -41,7 +41,6 @@ export async function signInWithLocal (fireInstance) {
   const token = StorageHelper.GetItem('auth')
   if (!fireInstance || !token) return
   const auth = getAuth(fireInstance)
-
   try {
     const authResult = await signInWithCustomToken(auth, token)
     return { ...authResult, success: true }
@@ -51,6 +50,7 @@ export async function signInWithLocal (fireInstance) {
       ...error,
       ...ex
     }
+    console.log('Error:', error)
     return {
       error: {
         ...error,

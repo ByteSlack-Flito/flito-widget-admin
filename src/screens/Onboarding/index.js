@@ -134,8 +134,8 @@ export default ({}) => {
                     <VStack align='flex-start'>
                       <Heading>Did you know ?</Heading>
                       <List spacing={2} textAlign='left'>
-                        {DID_YOU_KNOW.map(item => (
-                          <ListItem>
+                        {DID_YOU_KNOW.map((item, index) => (
+                          <ListItem key={index}>
                             <ListIcon as={BsCheckSquareFill} />
                             {item}
                           </ListItem>

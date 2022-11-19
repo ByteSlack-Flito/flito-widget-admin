@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import '../components/index.css'
 import { useDispatch, useSelector } from 'react-redux'
-import { AuthActions } from '../../../data/actions/userActions'
+import { AuthActions, ProfileActions } from '../../../data/actions/userActions'
 import { Formik } from 'formik'
 import {
   StringHelper,
@@ -42,6 +42,10 @@ export default ({ onSwitchRequest = () => {} }) => {
       dispatch({
         type: AuthActions.SET_USER,
         data: signnResult.user.uid
+      })
+      dispatch({
+        type: ProfileActions.SET_LOADING_STATE,
+        data: Constants.LoadingState.SUCCESS
       })
     } else {
       setSubmitting(false)

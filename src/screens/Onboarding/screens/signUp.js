@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react'
 import '../components/index.css'
 import { useDispatch, useSelector } from 'react-redux'
-import { AuthActions } from '../../../data/actions/userActions'
+import { AuthActions, ProfileActions } from '../../../data/actions/userActions'
 import { Formik } from 'formik'
 import {
   StringHelper,
@@ -31,6 +31,7 @@ import { StorageHelper } from '../../../data/storage'
 import { updateProfile } from '../../../data/database/users/profile'
 import { motion } from 'framer-motion'
 import { TOUModal } from '../components'
+import { Constants } from '../../../data/constants'
 
 export default ({ onSwitchRequest = () => {}, projectMetaData }) => {
   const dispatch = useDispatch()
@@ -54,6 +55,10 @@ export default ({ onSwitchRequest = () => {}, projectMetaData }) => {
       dispatch({
         type: AuthActions.SET_USER,
         data: signUpResult.user.uid
+      })
+      dispatch({
+        type: ProfileActions.SET_LOADING_STATE,
+        data: Constants.LoadingState.SUCCESS
       })
     } else {
       setSubmitting(false)

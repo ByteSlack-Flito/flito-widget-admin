@@ -57,7 +57,7 @@ function ScreenRenderer () {
       type: FirebaseActions.INIT,
       data: {}
     })
-    if (userState.profile?.userId) {
+    if (userState.userId) {
       navigate(
         location.pathname === '/'
           ? SiteRoutes.Engine.Widget.Screens().Widget.path
@@ -65,28 +65,34 @@ function ScreenRenderer () {
         true
       )
     }
-  }, [userState.profile?.userId])
+  }, [userState.userId])
 
   useEffect(() => {
-    async function trySignIn () {
-      const authResult = await signInWithLocal(firebaseApp.instance)
+    if (firebaseApp.instance) {
+      async function trySignIn () {
+        const authResult = await signInWithLocal(firebaseApp.instance)
 
-      if (authResult?.success) {
-        console.log('We can sign in now!')
-        dispatch({
-          type: AuthActions.SET_USER,
-          data: { userId: authResult.user.uid }
-        })
-      } else {
-        console.log("Local sign in didn't work")
-        dispatch({
-          type: ProfileActions.SET_LOADING_STATE,
-          data: ERROR
-        })
+        if (authResult?.success) {
+          console.log('Sign In Success! Going to main app...')
+          dispatch({
+            type: AuthActions.SET_USER,
+            data: authResult.user.uid
+          })
+          dispatch({
+            type: ProfileActions.SET_LOADING_STATE,
+            data: Constants.LoadingState.SUCCESS
+          })
+        } else {
+          console.log("Local sign in didn't work", authResult?.error?.message)
+          dispatch({
+            type: ProfileActions.SET_LOADING_STATE,
+            data: ERROR
+          })
+        }
       }
-    }
 
-    trySignIn()
+      trySignIn()
+    }
   }, [firebaseApp.instance])
 
   function getMenuItems () {
@@ -106,7 +112,7 @@ function ScreenRenderer () {
           </div>
         </>
       )
-    } else if ( userState.userId) {
+    } else if (userState.userId) {
       return (
         <Grid
           templateAreas={`"header header"

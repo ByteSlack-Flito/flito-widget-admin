@@ -21,18 +21,16 @@ const initialState = {
 
 export default (state = initialState, action) => {
   let { data } = action
-  let profile = { ...state.profile }
-  let team = [...state.team]
 
   switch (action.type) {
     case AuthActions.SET_USER:
       // let userId = data
-      console.log({ ...state, userId: data })
       return { ...state, userId: data } || state
 
     case ProfileActions.SET_LOADING_STATE:
-      let loadingState = data
-      return { ...state, loadingState } || state
+      // let loadingState = data
+      console.log('Setting loading to:', data)
+      return { ...state, loadingState: data } || state
 
     case AuthActions.SET_ERROR:
       let error = data
