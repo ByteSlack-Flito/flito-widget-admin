@@ -24,24 +24,9 @@ import {
   InputGroup
 } from '@chakra-ui/react'
 
-export default ({ }) => {
-  const [stepType, setStepType] = useState('signUp')
-  const [projectMeta, setProjectMeta] = useState()
+export default ({}) => {
   const firebaseApp = useSelector(state => state.firebaseApp.instance)
   const params = useParams()
-  useEffect(() => {
-    if (params.projectId) {
-      const database = getDatabase(firebaseApp)
-      get(child(ref(database), `projectMeta/${params.projectId}`)).then(
-        result => {
-          if (result.exists()) {
-            const data = result.val()
-            setProjectMeta(data)
-          }
-        }
-      )
-    }
-  }, [])
 
   return (
     <Grid
@@ -97,10 +82,24 @@ export default ({ }) => {
               >
                 Sign In
               </Tab>
+              <Tab
+                _selected={{
+                  borderColor: '#6565fe',
+                  color: '#6565fe',
+                  fontWeight: 'semibold'
+                }}
+                color='#4a65ff50'
+                transition='all 300ms'
+              >
+                Create Account
+              </Tab>
             </TabList>
             <TabPanels>
               <TabPanel p='0'>
                 <LoginScreen />
+              </TabPanel>
+              <TabPanel p='0'>
+                <SignUpScreen />
               </TabPanel>
             </TabPanels>
           </Tabs>
