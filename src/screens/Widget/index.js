@@ -10,6 +10,7 @@ import {
 import { useCallback, useState } from 'react'
 import ReactDOMServer from 'react-dom/server'
 import { BiCheck, BiLinkExternal } from 'react-icons/bi'
+import { useSelector } from 'react-redux'
 import { ScreenContainer } from '../../components/global'
 import { Constants } from '../../data/constants'
 
@@ -34,6 +35,7 @@ const HelpLinks = [
 
 const WidgetScreen = () => {
   const [copied, setCopied] = useState(false)
+  const userState = useSelector(state => state.user)
   const copyCode = useCallback(() => {
     !copied &&
       navigator.clipboard.writeText(Constants.WidgetCode).then(() => {
@@ -66,7 +68,7 @@ const WidgetScreen = () => {
             // fontWeight='medium'
             whiteSpace='pre'
             display='block'
-            children={Constants.WidgetCode}
+            children={Constants.WidgetCode.replace('{widgetCode}', userState.userId)}
           />
         </Box>
         <Text fontSize='sm' fontWeight='normal'>
