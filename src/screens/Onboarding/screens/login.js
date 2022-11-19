@@ -17,38 +17,47 @@ import {
   Spinner
 } from '@chakra-ui/react'
 import { AiOutlineArrowRight } from 'react-icons/ai'
+import {
+  signInWithCreds,
+  useFirebaseInstance
+} from '../../../data/database/users/auth'
 
 // eslint-disable-next-line import/no-anonymous-default-export
-export default ({ onSwitchRequest = () => { } }) => {
+export default ({ onSwitchRequest = () => {} }) => {
   const [globalLoading, setGlobalLoading] = useState(false)
   const user = useSelector(state => state.user)
   const dispatch = useDispatch()
+  const instance = useFirebaseInstance()
 
-  function performLogin(values) {
-    // console.log('values:', values)
-    dispatch({
-      type: AuthActions.PERFORM_SIGNIN,
-      data: {
-        email: values.email,
-        password: values.password
-      }
+  async function performLogin (values, setSubmitting) {
+    const signnResult = await signInWithCreds(instance, {
+      ...values
     })
-  }
-
-  useEffect(() => {
-    const { loadingState } = user
-    if (loadingState == Constants.LoadingState.LOADING) {
-      setGlobalLoading(true)
+    if (signnResult?.success) {
       dispatch({
-        type: AuthActions.PERFORM_SIGNIN_LOCAL,
-        data: {}
+        type: AuthActions.SET_USER,
+        data: signnResult.user.uid
       })
     } else {
-      setGlobalLoading(false)
+      setSubmitting(false)
+      console.log(signnResult.error.message)
     }
-  }, [user.loadingState])
+  }
 
-  function isBusy(isSubmitting) {
+  // useEffect(() => {
+  //   const { loadingState } = user
+  //   if (loadingState == Constants.LoadingState.LOADING) {
+  //     setGlobalLoading(true)
+  //     dispatch({
+  //       type: AuthActions.PERFORM_SIGNIN_LOCAL,
+  //       data: {}
+  //     })
+  //   } else {
+  //     setGlobalLoading(false)
+  //   }
+  // }, [user.loadingState])
+
+  function isBusy (isSubmitting) {
     if (isSubmitting) {
       if (user.error?.message) {
         return false

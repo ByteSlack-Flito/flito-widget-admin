@@ -9,7 +9,7 @@ import { useSelector } from 'react-redux'
 import { useEffect } from 'react'
 import { Constants } from './data/constants'
 import { FirebaseActions } from './data/actions'
-import { AuthActions } from './data/actions/userActions'
+import { AuthActions, ProfileActions } from './data/actions/userActions'
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
 
 import {
@@ -68,15 +68,25 @@ function ScreenRenderer () {
   }, [userState.profile?.userId])
 
   useEffect(() => {
-    signInWithLocal(firebaseApp.instance).then(res => {
-      if (res?.success) {
-        console.log(res.user.uid)
+    async function trySignIn () {
+      const authResult = await signInWithLocal(firebaseApp.instance)
+
+      if (authResult?.success) {
+        console.log('We can sign in now!')
         dispatch({
           type: AuthActions.SET_USER,
-          data: {userId: res.user.uid}
+          data: { userId: authResult.user.uid }
+        })
+      } else {
+        console.log('Sth went wrong...')
+        dispatch({
+          type: ProfileActions.SET_LOADING_STATE,
+          data: ERROR
         })
       }
-    })
+    }
+
+    trySignIn()
   }, [firebaseApp.instance])
 
   function getMenuItems () {
@@ -96,7 +106,7 @@ function ScreenRenderer () {
           </div>
         </>
       )
-    } else if (userState.loadingState == SUCCESS && userState.userId) {
+    } else if ( userState.userId) {
       return (
         <Grid
           templateAreas={`"header header"

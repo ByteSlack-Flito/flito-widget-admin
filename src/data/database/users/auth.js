@@ -38,13 +38,12 @@ export async function signInWithCreds (fireInstance, { email, password }) {
 }
 
 export async function signInWithLocal (fireInstance) {
-  if (!fireInstance) return
+  const token = StorageHelper.GetItem('auth')
+  if (!fireInstance || !token) return
   const auth = getAuth(fireInstance)
 
   try {
-    const token = StorageHelper.GetItem('auth')
     const authResult = await signInWithCustomToken(auth, token)
-
     return { ...authResult, success: true }
   } catch (ex) {
     let error = new FirebaseError()

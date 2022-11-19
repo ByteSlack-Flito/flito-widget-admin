@@ -26,11 +26,11 @@ export default (state = initialState, action) => {
 
   switch (action.type) {
     case AuthActions.SET_USER:
-      let userId = data
-      return { ...state, userId } || state
+      // let userId = data
+      console.log({ ...state, userId: data })
+      return { ...state, userId: data } || state
 
     case ProfileActions.SET_LOADING_STATE:
-      console.log('Loading set to...:', data)
       let loadingState = data
       return { ...state, loadingState } || state
 

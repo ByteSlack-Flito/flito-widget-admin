@@ -33,7 +33,6 @@ export default ({ onSwitchRequest = () => {}, projectMetaData }) => {
       ...values
     })
     if (signUpResult.success) {
-      console.log('Sign up success...')
       const profileResult = await updateProfile(
         instance,
         signUpResult.user.uid,
@@ -42,6 +41,10 @@ export default ({ onSwitchRequest = () => {}, projectMetaData }) => {
         }
       )
       profileResult.success && console.log('Profile created successfully!')
+      dispatch({
+        type: AuthActions.SET_USER,
+        data: signUpResult.user.uid
+      })
     } else {
       setSubmitting(false)
       console.log(signUpResult.error.message)

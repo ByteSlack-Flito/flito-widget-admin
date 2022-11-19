@@ -27,6 +27,7 @@ import moment from 'moment'
 import { AuthActions } from '../../data/actions/userActions'
 import { SiteRoutes } from '../../misc/routes'
 import { useDispatch } from 'react-redux'
+import { StorageHelper } from '../../data/storage'
 
 /**
  * The global Title component
@@ -186,7 +187,7 @@ export const SubTitle = ({
  * @param {'compact' | 'default'} props.size Defines the size of the component, affecting `padding`, `border` etc. properties.
  * @param {'dark' | 'light'} props.theme Defines the theme of the component. Defaults to `light`.
  */
-export function Card({
+export function Card ({
   children,
   theme = 'light',
   size,
@@ -198,8 +199,9 @@ export function Card({
 }) {
   return (
     <div
-      className={`card card_${theme} ${size === 'compact' ? 'card_compact' : ''
-        } ${className} ${animateScale ? 'card_animate_scale' : ''}`}
+      className={`card card_${theme} ${
+        size === 'compact' ? 'card_compact' : ''
+      } ${className} ${animateScale ? 'card_animate_scale' : ''}`}
       style={{
         ...style,
         cursor: clickable ? 'pointer' : 'default'
@@ -230,16 +232,18 @@ export const Spacer = ({ size = 'small', times }) => {
   )
 }
 
-export const Header = ({ onLinkClick = link => { } }) => {
+export const Header = ({ onLinkClick = link => {} }) => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
-  function performLogOut() {
+  function performLogOut () {
     setTimeout(() => {
+      StorageHelper.Remove('auth')
       dispatch({
-        type: AuthActions.PERFORM_SIGNOUT
+        type: AuthActions.SET_USER,
+        data: undefined
       })
-    }, 200)
+    }, 1000)
     navigate(SiteRoutes.Onboarding.Init.path)
   }
 
@@ -349,7 +353,7 @@ export const Footer = () => (
  * @param {JSX.Element} props.children Component(s) to render as the children of this component. Render all your screen components here.
  * @returns
  */
-export function ScreenContainer({ title, description, children }) {
+export function ScreenContainer ({ title, description, children }) {
   return (
     <Grid gridTemplateRows='auto 1fr' w='100%' h='100%'>
       <GridItem>
@@ -362,7 +366,9 @@ export function ScreenContainer({ title, description, children }) {
           </Text>
         </VStack>
       </GridItem>
-      <GridItem justifyContent='flex-start' textAlign='left' pt='3'>{children}</GridItem>
+      <GridItem justifyContent='flex-start' textAlign='left' pt='3'>
+        {children}
+      </GridItem>
     </Grid>
   )
 }
