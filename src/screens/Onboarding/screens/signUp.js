@@ -45,11 +45,24 @@ export default ({ onSwitchRequest = () => {}, projectMetaData }) => {
       ...values
     })
     if (signUpResult.success) {
+      /// Constructing profile
+      var profileData = {
+        ...values
+      }
+      delete profileData.password
+      delete profileData.rePassword
+      delete profileData.showPassword
+
+      if (String(profileData.fullName).includes(' ')) {
+        profileData.firstName = profileData.fullName.split(' ')[0]
+        profileData.lastName = profileData.fullName.split(' ')[1]
+      }
+      /// Ending profile
       const profileResult = await updateProfile(
         instance,
         signUpResult.user.uid,
         {
-          forceInitial: true
+          data: profileData
         }
       )
       profileResult.success && console.log('Profile created successfully!')
@@ -66,10 +79,11 @@ export default ({ onSwitchRequest = () => {}, projectMetaData }) => {
       console.log(signUpResult.error.message)
       toast({
         title: "Couldn't create account.",
-        description: signUpResult.error.message || "Something went wrong. Try again.",
+        description:
+          signUpResult.error.message || 'Something went wrong. Try again.',
         status: 'error',
         duration: 3500,
-        isClosable: true,
+        isClosable: true
       })
     }
   }
@@ -91,7 +105,8 @@ export default ({ onSwitchRequest = () => {}, projectMetaData }) => {
           email: '',
           password: '',
           rePassword: '',
-          agreed: false,
+          organizationName: '',
+          termsAgreed: false,
           // errMessage: '',
           showPassword: false
         }}
@@ -105,14 +120,14 @@ export default ({ onSwitchRequest = () => {}, projectMetaData }) => {
             StringHelper.isPropsEmpty(values, [
               'errMessage',
               'showPassword',
-              'agreed'
+              'termsAgreed'
             ])
           )
             errors.email = 'Please fill in all details.'
           else if (!StringHelper.isSame([values.password, values.rePassword]))
             errors.password = 'Your passwords do not match.'
 
-          if (!values.agreed)
+          if (!values.termsAgreed)
             errors.agreed = 'You must agree to our ToU and Privacy Policy'
 
           return errors
@@ -138,7 +153,7 @@ export default ({ onSwitchRequest = () => {}, projectMetaData }) => {
               <Input
                 placeholder='Your Name'
                 fontSize='sm'
-                onChange={handleChange('firstName')}
+                onChange={handleChange('fullName')}
                 size='lg'
               />
               <Input
@@ -182,10 +197,15 @@ export default ({ onSwitchRequest = () => {}, projectMetaData }) => {
               fontSize='sm'
               size='lg'
             />
-            <Checkbox onChange={handleChange('agreed')}>
+            <Checkbox onChange={handleChange('termsAgreed')}>
               <Text fontSize='sm' display='flex'>
                 I agree to Flito's{' '}
-                <Link onClick={showTouModal} pl='1' fontWeight='semibold' color='blue.600'>
+                <Link
+                  onClick={showTouModal}
+                  pl='1'
+                  fontWeight='semibold'
+                  color='blue.600'
+                >
                   Terms Of Use
                 </Link>
               </Text>
