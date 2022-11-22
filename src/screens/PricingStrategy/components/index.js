@@ -1,6 +1,6 @@
 import { Box, HStack, VStack, Text, Button, Link } from '@chakra-ui/react'
 import React from 'react'
-import { BiCheckCircle } from 'react-icons/bi'
+import { BiCheckCircle, BiXCircle } from 'react-icons/bi'
 import { IoColorPaletteOutline } from 'react-icons/io5'
 import { DiReact } from 'react-icons/di'
 import { Link as ReactRouterLink } from 'react-router-dom'
@@ -44,7 +44,30 @@ export const InfoBox = ({ type, title, description }) => {
       </VStack>
     </HStack>
   ) : (
-    <></>
+    <HStack
+      bg='#fce8e8'
+      color='red.700'
+      pl='2'
+      pr='4'
+      pt='2'
+      pb='2'
+      borderLeftWidth='medium'
+      borderLeftColor='red.600'
+      borderRadius='sm'
+      align='flex-start'
+      borderRightRadius='md'
+    >
+      <BiXCircle size='16' style={{ marginTop: '1px' }} />
+      <VStack fontSize='xs' fontWeight='medium'>
+        <Text className='infobox_title'>
+          {title}
+          <br style={{ lineHeight: '10px' }} />
+          <span className='infobox_desc' style={{ fontWeight: 'normal' }}>
+            {description}
+          </span>
+        </Text>
+      </VStack>
+    </HStack>
   )
 }
 
