@@ -9,8 +9,6 @@ import {
 } from '@chakra-ui/react'
 import { faAngleRight } from '@fortawesome/free-solid-svg-icons'
 import React, { useState, useImperativeHandle } from 'react'
-import { Button } from '../../../components/form'
-import { Spacer, SubTitle } from '../../../components/global'
 import './index.css'
 
 export const TOUModal = React.forwardRef(({ type }, ref) => {

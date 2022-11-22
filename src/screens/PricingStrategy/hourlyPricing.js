@@ -6,12 +6,13 @@ import { SiteRoutes } from '../../misc/routes'
 import { Link as ReactRouterLink } from 'react-router-dom'
 import { BiCheckCircle } from 'react-icons/bi'
 
-const HourlyPricing = ({ currency }) => {
-  const rolesGroup = groupBy(devTeam, 'role')
+const HourlyPricing = ({ teamData, currency }) => {
+  console.log(teamData)
+  const rolesGroup = groupBy(teamData, 'role')
   const AverageSalary = []
   for (const key in rolesGroup) {
     const Salary = rolesGroup[key].reduce((acc, cval) => {
-      return acc + cval.salary.rate
+      return acc + Number(cval.salary.rate)
     }, 0)
     AverageSalary.push({
       role: key,
@@ -20,6 +21,7 @@ const HourlyPricing = ({ currency }) => {
       roleCount: rolesGroup[key].length
     })
   }
+
 
   return (
     <HStack
@@ -32,7 +34,7 @@ const HourlyPricing = ({ currency }) => {
       // minChildWidth='200px'
     >
       {AverageSalary.map(({ role, avgRate, roleCount }, index) => (
-        <RoleBox currency={currency} role={role} rate={avgRate} index={index} roleCount={roleCount} />
+        <RoleBox key={role} currency={currency} role={role} rate={avgRate} index={index} roleCount={roleCount} />
       ))}
     </HStack>
   )

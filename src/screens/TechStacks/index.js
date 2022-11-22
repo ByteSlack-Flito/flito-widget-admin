@@ -1,9 +1,20 @@
-import { Button, HStack, SimpleGrid, Text, VStack } from '@chakra-ui/react'
-import { useCallback, useEffect, useState } from 'react'
+import {
+  Button,
+  HStack,
+  SimpleGrid,
+  Spinner,
+  Text,
+  useToast,
+  VStack
+} from '@chakra-ui/react'
+import { useCallback, useEffect, useId, useState } from 'react'
 import { AiOutlineDesktop } from 'react-icons/ai'
 import { HiOutlineCursorClick } from 'react-icons/hi'
 import { ImMobile } from 'react-icons/im'
-import { ScreenContainer } from '../../components/global'
+import { useSelector } from 'react-redux'
+import { ScreenContainer, useToastGenerator } from '../../components/global'
+import { useFirebaseInstance } from '../../data/database/users/auth'
+import { updateProfile, useWidget } from '../../data/database/users/profile'
 import { AppTypeSingle } from './components'
 
 const AppTypes = [
@@ -31,7 +42,11 @@ const AppTypes = [
 ]
 
 export const TechStackScreen = () => {
+  const instance = useFirebaseInstance()
   const [selectedAppTypes, setSelectedAppTypes] = useState([])
+  const { userId } = useSelector(state => state.user)
+  const { isFetching, isUpdating, data, update } = useWidget()
+  const toast = useToastGenerator()
 
   const updateSelectedAppTypes = (appType, platform) => {
     setSelectedAppTypes(prev => {
@@ -81,6 +96,14 @@ export const TechStackScreen = () => {
     )
   }
 
+  useEffect(() => data && setSelectedAppTypes(data.appTypes), [data])
+
+  async function performUpdate () {
+    const result = await update({
+      appTypes: selectedAppTypes
+    })
+    toast.show(result)
+  }
   return (
     <ScreenContainer
       title='Tech Stacks'
@@ -93,61 +116,62 @@ export const TechStackScreen = () => {
           gridColumnEnd={5}
           spacing='2'
         >
-          <HStack align='flex-start' justify='space-between' w='full'>
-            {AppTypes.map(type => {
-              const existing = selectedAppTypes.find(
-                x => x.appType === type.value
-              )
-              return (
-                <AppTypeSingle
-                  isSelected={existing}
-                  selectedPlatforms={existing?.selectedPlatforms}
-                  key={type.value}
-                  {...type}
-                  onSelectChange={updateSelectedAppTypes}
-                />
-              )
-            })}
-          </HStack>
-          {/* {selectedAppTypes?.length > 0 && (
-            <Text fontWeight='bold' fontSize='sm'>
-              Select platforms
-            </Text>
-          )} */}
+          {isFetching && <Spinner size='md' color='blue.400' />}
+          {!isFetching && (
+            <>
+              <HStack align='flex-start' justify='space-between' w='full'>
+                {AppTypes.map(type => {
+                  const existing = selectedAppTypes.find(
+                    x => x.appType === type.value
+                  )
+                  return (
+                    <AppTypeSingle
+                      isSelected={existing}
+                      selectedPlatforms={existing?.selectedPlatforms}
+                      key={type.value}
+                      {...type}
+                      onSelectChange={updateSelectedAppTypes}
+                    />
+                  )
+                })}
+              </HStack>
 
-          {selectedAppTypes?.map(({ appType }) => {
-            const { platforms } = AppTypes.find(x => x.value === appType)
+              {selectedAppTypes?.map(({ appType }) => {
+                const { platforms } = AppTypes.find(x => x.value === appType)
 
-            return (
-              <>
-                <Text fontWeight='medium' fontSize='sm'>
-                  Select platforms for{' '}
-                  <b>{AppTypes.find(x => x.value === appType).title}</b>
-                </Text>
+                return (
+                  <VStack align='flex-start' key={appType}>
+                    <Text fontWeight='medium' fontSize='sm'>
+                      Select platforms for{' '}
+                      <b>{AppTypes.find(x => x.value === appType).title}</b>
+                    </Text>
 
-                <HStack align='flex-start' w='full'>
-                  {platforms.map(platform => {
-                    const isSelected = selectedAppTypes
-                      .find(x => x.appType === appType)
-                      ?.platforms?.some(x => x === platform)
-                    return (
-                      <Button
-                        size='xs'
-                        colorScheme={!isSelected ? 'gray' : 'blue'}
-                        borderWidth='thin'
-                        borderColor={!isSelected ? 'gray.300' : 'blue.400'}
-                        onClick={() =>
-                          updateSelectedAppTypes(appType, platform)
-                        }
-                      >
-                        {platform}
-                      </Button>
-                    )
-                  })}
-                </HStack>
-              </>
-            )
-          })}
+                    <HStack align='flex-start' w='full'>
+                      {platforms.map(platform => {
+                        const isSelected = selectedAppTypes
+                          .find(x => x.appType === appType)
+                          ?.platforms?.some(x => x === platform)
+                        return (
+                          <Button
+                            key={platform}
+                            size='xs'
+                            colorScheme={!isSelected ? 'gray' : 'blue'}
+                            borderWidth='thin'
+                            borderColor={!isSelected ? 'gray.300' : 'blue.400'}
+                            onClick={() =>
+                              updateSelectedAppTypes(appType, platform)
+                            }
+                          >
+                            {platform}
+                          </Button>
+                        )
+                      })}
+                    </HStack>
+                  </VStack>
+                )
+              })}
+            </>
+          )}
         </VStack>
       </SimpleGrid>
       <Button
@@ -157,9 +181,8 @@ export const TechStackScreen = () => {
         variant='solid'
         fontWeight='semibold'
         mt='7'
-        // rightIcon={<FiArrowRight />}
-        // onClick={goNext}
-        // disabled={!isTypeLengthValid()}
+        isLoading={isUpdating}
+        onClick={performUpdate}
       >
         Update Preferences
       </Button>
