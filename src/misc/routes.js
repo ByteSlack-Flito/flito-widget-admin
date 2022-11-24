@@ -1,6 +1,6 @@
 import OnboardingScreen from '../screens/Onboarding'
 import { Navigate } from 'react-router-dom'
-import { MdOutlineWidgets, MdOutlineAttachMoney } from 'react-icons/md'
+import { MdOutlineWidgets, MdOutlineAttachMoney, MdDashboardCustomize } from 'react-icons/md'
 import { GiTeamIdea } from 'react-icons/gi'
 import TeamScreen from '../screens/Team'
 import PricingStrategyScreen from '../screens/PricingStrategy'
@@ -35,9 +35,31 @@ export const SiteRoutes = {
   },
 
   Engine: {
-    TeamAndTech: {
+    Widget: {
+      id: 2,
+      label: 'Widget',
+      Screens: () => {
+        return {
+          Requests: {
+            id: 201,
+            label: 'Requests',
+            icon: <MdDashboardCustomize />,
+            path: `${ENGINE_ROUTE}/widget-requests`,
+            element: <WidgetScreen />
+          },
+          Widget: {
+            id: 202,
+            label: 'Get Code',
+            icon: <BiCodeAlt />,
+            path: `${ENGINE_ROUTE}/widget-code`,
+            element: <WidgetScreen />
+          }
+        }
+      }
+    },
+    Setup: {
       id: 1,
-      label: 'Team & Tech',
+      label: 'Setup',
       Screens: () => {
         return {
           Init: {
@@ -46,40 +68,25 @@ export const SiteRoutes = {
             element: <Navigate to={`${ENGINE_ROUTE}/my-tech-stack`} />
           },
           TechStacks: {
-            id: 222,
+            id: 301,
             icon: <AiOutlineAppstoreAdd />,
             label: 'My Stacks',
             path: `${ENGINE_ROUTE}/my-tech-stack`,
             element: <TechStackScreen />
           },
           MyTeam: {
-            id: 221,
+            id: 302,
             icon: <GiTeamIdea />,
             label: 'My Team',
             path: `${ENGINE_ROUTE}/my-team`,
             element: <TeamScreen />
-          }
-        }
-      }
-    },
-    Widget: {
-      id: 2,
-      label: 'Widget',
-      Screens: () => {
-        return {
+          },
           PricingStrategy: {
-            id: 112,
+            id: 303,
             label: 'Pricing Strategy',
             icon: <MdOutlineAttachMoney />,
             path: `${ENGINE_ROUTE}/pricing-strategy`,
             element: <PricingStrategyScreen />
-          },
-          Widget: {
-            id: 111,
-            label: 'Get Code',
-            icon: <BiCodeAlt />,
-            path: `${ENGINE_ROUTE}/widget-code`,
-            element: <WidgetScreen />
           }
         }
       }

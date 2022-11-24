@@ -65,7 +65,7 @@ const PricingStrategyScreen = () => {
         Based on your team set-up in{' '}
         <Link
           as={ReactRouterLink}
-          to={SiteRoutes.Engine.TeamAndTech.Screens().MyTeam.path}
+          to={SiteRoutes.Engine.Setup.Screens().MyTeam.path}
         >
           My Teams
         </Link>
@@ -79,7 +79,7 @@ const PricingStrategyScreen = () => {
         Please go to{' '}
         <Link
           as={ReactRouterLink}
-          to={SiteRoutes.Engine.TeamAndTech.Screens().MyTeam.path}
+          to={SiteRoutes.Engine.Setup.Screens().MyTeam.path}
           pl='1'
           pr='1'
           color='blue.500'
