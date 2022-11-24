@@ -69,8 +69,7 @@ export const Constants = {
     `  <iframe
     src='https://widget.flito.io/{widgetCode}'
     style='border: none; min-height: 500px;'
-    width='100%'
-    sandbox='allow-forms allow-scripts'>
+    width='100%'>
   </iframe>`
 }
 
