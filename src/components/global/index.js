@@ -53,18 +53,20 @@ export const Spacer = ({ size = 'small', times }) => {
 }
 
 export const Header = ({ onLinkClick = link => {} }) => {
+  const [isLogginOut, setIsLoggingOut] = useState(false)
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
   function performLogOut () {
+    setIsLoggingOut(true)
     setTimeout(() => {
       StorageHelper.Remove('auth')
       dispatch({
         type: AuthActions.SET_USER,
         data: undefined
       })
+      navigate(SiteRoutes.Onboarding.Init.path)
     }, 1000)
-    navigate(SiteRoutes.Onboarding.Init.path)
   }
 
   return (
@@ -112,7 +114,12 @@ export const Header = ({ onLinkClick = link => {} }) => {
                 borderColor='blue.600'
                 display='flex'
               >
-                <Button size='xs' colorScheme='red' onClick={performLogOut}>
+                <Button
+                  size='xs'
+                  colorScheme='red'
+                  onClick={performLogOut}
+                  isLoading={isLogginOut}
+                >
                   Yes, Log Out
                 </Button>
               </PopoverFooter>
