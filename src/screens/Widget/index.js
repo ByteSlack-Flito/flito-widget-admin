@@ -38,10 +38,14 @@ const WidgetScreen = () => {
   const userState = useSelector(state => state.user)
   const copyCode = useCallback(() => {
     !copied &&
-      navigator.clipboard.writeText(Constants.WidgetCode).then(() => {
-        setCopied(true)
-        setTimeout(() => setCopied(false), 1500)
-      })
+      navigator.clipboard
+        .writeText(
+          Constants.WidgetCode.replace('{widgetCode}', userState.userId)
+        )
+        .then(() => {
+          setCopied(true)
+          setTimeout(() => setCopied(false), 1500)
+        })
   }, [])
   return (
     <ScreenContainer
@@ -68,14 +72,17 @@ const WidgetScreen = () => {
             // fontWeight='medium'
             whiteSpace='pre'
             display='block'
-            children={Constants.WidgetCode.replace('{widgetCode}', userState.userId)}
+            children={Constants.WidgetCode.replace(
+              '{widgetCode}',
+              userState.userId
+            )}
           />
         </Box>
         <Text fontSize='sm' fontWeight='normal'>
           Paste the above code on any desired section of your website, where you
-          want to show the <b>Flito Cost Estimator Widget.</b>{' '}
-          Make sure to place the widget in a section that covers the full-screen
-          width. The widget is responsive, however, it requires a{' '}
+          want to show the <b>Flito Cost Estimator Widget.</b> Make sure to
+          place the widget in a section that covers the full-screen width. The
+          widget is responsive, however, it requires a{' '}
           <b>minimum width of 400px</b> and <b>minumum height of 500px</b>.
         </Text>
         <VStack
