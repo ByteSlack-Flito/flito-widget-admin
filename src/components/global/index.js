@@ -19,7 +19,8 @@ import {
   PopoverBody,
   PopoverFooter,
   VStack,
-  useToast
+  useToast,
+  Tooltip
 } from '@chakra-ui/react'
 import { IoExitOutline } from 'react-icons/io5'
 import { TbExternalLink } from 'react-icons/tb'
@@ -28,6 +29,8 @@ import { AuthActions } from '../../data/actions/userActions'
 import { SiteRoutes } from '../../misc/routes'
 import { useDispatch } from 'react-redux'
 import { StorageHelper } from '../../data/storage'
+import { GrUser } from 'react-icons/gr'
+import { useCallback, useState } from 'react'
 
 /**
  * The global Spacer component
@@ -209,7 +212,7 @@ export const useToastGenerator = () => {
    *
    * @param {{success: boolean; error?: object;}} dbCallback The callback method containing `success` and/or `error` object.
    */
-  const show = (dbCallback) =>
+  const show = dbCallback =>
     toast({
       ...toastVariants[dbCallback.success ? 'success' : 'error'],
       duration: 3500,
@@ -217,4 +220,37 @@ export const useToastGenerator = () => {
     })
 
   return { show }
+}
+
+export const UserInfo = ({
+  size = 'compact',
+  name,
+  email,
+  tooltipText = 'View Client Info',
+  navLink
+}) => {
+  const [copied, setCopied] = useState(false)
+  const copyCode = useCallback(() => {
+    !copied &&
+      navigator.clipboard.writeText(email).then(() => {
+        setCopied(true)
+        setTimeout(() => setCopied(false), 1500)
+      })
+  }, [])
+  return (
+    size === 'compact' && (
+      <Tooltip hasArrow label='Click to copy email'>
+        <Button
+          leftIcon={<GrUser />}
+          //   rightIcon={<TbExternalLink size={12} />}
+          size='xs'
+          variant='solid'
+          colorScheme='gray'
+          ml='2'
+        >
+          {name} - {email}
+        </Button>
+      </Tooltip>
+    )
+  )
 }

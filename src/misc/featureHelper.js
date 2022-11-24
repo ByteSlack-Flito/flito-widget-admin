@@ -1,7 +1,7 @@
-import FeatureList from '../assets/jsons/masterStep.json'
+import FeatureList from '../assets/jsons/feature_list-v2.json'
 
 export function extractFeatures() {
-  const parentFeatures = FeatureList[2].options
+  const parentFeatures = FeatureList
   let subFeatures = []
 
   parentFeatures.map(parent => {
@@ -28,7 +28,7 @@ export function extractFeature(featureId = []) {
 }
 
 export function extractFeaturesAsIs() {
-  return FeatureList[2].options
+  return FeatureList
 }
 
 export function getSuggestedTeam(features) {

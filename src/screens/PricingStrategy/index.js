@@ -22,8 +22,8 @@ import { useProfile, useWidget } from '../../data/database/users/profile'
 import { Link as ReactRouterLink } from 'react-router-dom'
 
 const pricing_options = [
-  { value: 'hourly', label: 'Hourly' },
-  { value: 'fixed', label: 'Fixed' }
+  { value: 'hourly', label: 'Hourly' }
+  // { value: 'fixed', label: 'Fixed' }
 ]
 
 const commossion_options = [
@@ -40,10 +40,13 @@ const LoadingOption = props => (
     </VStack>
   </div>
 )
-const Option_IsTyping = props => (
-  <div {...props}>
+const Option_IsTyping = ({ innerProps }) => (
+  <div {...innerProps}>
     <VStack justify='center' align='center' p='2'>
-      <Text fontSize='sm'>Start Typing</Text>
+      <Text fontSize='xs'>
+        Once the Widget calculates the development cost, it will add your
+        commission rate to the final quotation, before showing to clients.
+      </Text>
     </VStack>
   </div>
 )
@@ -109,7 +112,7 @@ const PricingStrategyScreen = () => {
   }, [])
 
   useEffect(() => {
-    if (data && currencies) {
+    if (data && data.pricing && currencies) {
       const formattedData = {
         currency: currencies?.find(x => x.value === data.pricing.currency),
         strategy: pricing_options.find(x => x.value === data.pricing.strategy),
@@ -173,7 +176,7 @@ const PricingStrategyScreen = () => {
                 isLoading={isUpdating}
               />
             </VStack>
-            <VStack alignItems='flex-start' spacing='1' width={'15vw'} pl='4'>
+            <VStack alignItems='flex-start' spacing='1' width={'20vw'} pl='4'>
               <Text fontSize='xs' fontWeight='medium'>
                 How do you charge your clients?
               </Text>
@@ -216,8 +219,8 @@ const PricingStrategyScreen = () => {
                     setPricingData(prev => ({
                       ...prev,
                       commissionRate: {
-                        label: data.pricing.commissionRate,
-                        value: data.pricing.commissionRate
+                        label: data?.pricing?.commissionRate,
+                        value: data?.pricing?.commissionRate
                       }
                     }))
                   }

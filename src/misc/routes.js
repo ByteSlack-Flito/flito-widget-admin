@@ -1,6 +1,10 @@
 import OnboardingScreen from '../screens/Onboarding'
 import { Navigate } from 'react-router-dom'
-import { MdOutlineWidgets, MdOutlineAttachMoney, MdDashboardCustomize } from 'react-icons/md'
+import {
+  MdOutlineWidgets,
+  MdOutlineAttachMoney,
+  MdDashboardCustomize
+} from 'react-icons/md'
 import { GiTeamIdea } from 'react-icons/gi'
 import TeamScreen from '../screens/Team'
 import PricingStrategyScreen from '../screens/PricingStrategy'
@@ -8,6 +12,7 @@ import WidgetScreen from '../screens/Widget'
 import { TechStackScreen } from '../screens/TechStacks'
 import { BiCodeAlt } from 'react-icons/bi'
 import { AiOutlineAppstoreAdd } from 'react-icons/ai'
+import ProjectRequestScreen from '../screens/ProjectRequests'
 
 const ENGINE_ROUTE = '/engine'
 const PROJECT_ROUTE = `${ENGINE_ROUTE}/project/:projectId`
@@ -40,19 +45,19 @@ export const SiteRoutes = {
       label: 'Widget',
       Screens: () => {
         return {
-          Requests: {
-            id: 201,
-            label: 'Requests',
-            icon: <MdDashboardCustomize />,
-            path: `${ENGINE_ROUTE}/widget-requests`,
-            element: <WidgetScreen />
-          },
           Widget: {
-            id: 202,
+            id: 201,
             label: 'Get Code',
             icon: <BiCodeAlt />,
             path: `${ENGINE_ROUTE}/widget-code`,
             element: <WidgetScreen />
+          },
+          Requests: {
+            id: 202,
+            label: 'Requests',
+            icon: <MdDashboardCustomize />,
+            path: `${ENGINE_ROUTE}/widget-requests`,
+            element: <ProjectRequestScreen />
           }
         }
       }

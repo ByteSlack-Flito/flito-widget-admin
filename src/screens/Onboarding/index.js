@@ -19,7 +19,6 @@ import {
 } from '@chakra-ui/react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { BsCheckSquareFill } from 'react-icons/bs'
-import flitoIcon from '../../assets/static/flito-bird.png'
 
 const DID_YOU_KNOW = [
   "With Flito's Cost Estimator widget, you can attract more traffic to your site.",

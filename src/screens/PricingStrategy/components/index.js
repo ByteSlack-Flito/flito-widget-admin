@@ -86,15 +86,17 @@ const shadowColor = index => {
   return colors[index] || colors[0]
 }
 
-export const RoleBox = ({ index, role, rate, currency, roleCount}) => {
+export const RoleBox = ({ index, role, rate, currency, roleCount }) => {
   return (
     <VStack
+      transition='all 300ms'
       h='max-content'
       w='full'
-      boxShadow={`-2px 13px 23px -5px rgba(${shadowColor(index)},0.19)`}
+      shadow='sm'
+      // boxShadow={`-2px 13px 23px -5px rgba(${shadowColor(index)},0.19)`}
       borderRadius='md'
       borderWidth='thin'
-      borderColor='gray.100'
+      borderColor='gray.200'
       pl='4'
       pr='4'
       pt='2'
@@ -102,6 +104,10 @@ export const RoleBox = ({ index, role, rate, currency, roleCount}) => {
       minW='200px'
       maxW='250px'
       align='flex-start'
+      _hover={{
+        borderColor: 'blue.200',
+        shadow: 'lg'
+      }}
     >
       <HStack align='flex-start'>
         <Box p='1' borderRadius='full' bg='gray.100' color={shadowColor(index)}>
@@ -112,9 +118,11 @@ export const RoleBox = ({ index, role, rate, currency, roleCount}) => {
           }
         </Box>
         <VStack spacing='0' align='flex-start'>
-          <Text fontSize='sm' fontWeight='normal'>
-            {role}
-          </Text>
+          <HStack>
+            <Text fontSize='sm' fontWeight='normal' textTransform='capitalize'>
+              {role}
+            </Text>
+          </HStack>
           <Text fontSize='xx-small' fontWeight='bold'>
             {roleCount} People
           </Text>

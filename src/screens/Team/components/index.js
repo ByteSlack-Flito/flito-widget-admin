@@ -43,17 +43,23 @@ import { useToastGenerator } from '../../../components/global'
 import { arrayUnion } from 'firebase/firestore'
 
 const Roles = [
-  'Front-End Developer',
-  'Back-End Developer',
-  'QA Tester',
-  'DevOps Engineer',
-  'Project Manager',
-  'UI Designer'
+  { label: 'Front-End Developer', value: 'front-end' },
+  { label: 'Back-End Developer', value: 'back-end' },
+  { label: 'QA Tester', value: 'qa-tester' },
+  { label: 'DevOps Engineer', value: 'devops' },
+  { label: 'Project Manager', value: 'project-manager' },
+  { label: 'UI Designer', value: 'ui-designer' }
 ]
 
-const EmploymentTypes = ['Full-Time (> 30hrs/week)', 'Part-Time (< 30hrs/week)']
+const EmploymentTypes = [
+  { label: 'Full-Time (> 30hrs/week)', value: 'full-time-30-plus' },
+  { label: 'Part-Time (< 30hrs/week)', value: 'part-time-30-less' }
+]
 
-const SalaryTypes = ['Yearly', 'Hourly']
+const SalaryTypes = [
+  { label: 'Yearly', value: 'yearly' },
+  { label: 'Hourly', value: 'hourly' }
+]
 
 export const AddMemberModal = React.forwardRef(({ onSuccessClose }, ref) => {
   const [isOpen, setIsOpen] = useState(false)
@@ -112,7 +118,7 @@ export const AddMemberModal = React.forwardRef(({ onSuccessClose }, ref) => {
 
   async function performUpdate () {
     // console.log('Result:', inviteeList)
-    const result = await update({team: arrayUnion(...inviteeList)})
+    const result = await update({ team: arrayUnion(...inviteeList) })
     toast.show(result)
     if (result.success) {
       setIsOpen(false)
