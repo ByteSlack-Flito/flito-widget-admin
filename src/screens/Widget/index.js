@@ -2,6 +2,8 @@ import {
   Box,
   Button,
   Code,
+  HStack,
+  Input,
   Link,
   Spinner,
   Text,
@@ -155,6 +157,10 @@ const WidgetScreen = () => {
             </VStack>
           ) : (
             <VStack spacing='3' align='flex-start' w='95%'>
+              <HStack w='full'>
+                <Input size='sm' maxW='450px' placeholder='Website URL (where you plan to use the widget)'/>
+                <Button size='sm' w='max-content' colorScheme='teal'>Update</Button>
+              </HStack>
               <Box w='full' overflowX='scroll' borderRadius='md' pos='relative'>
                 <Button
                   size='xs'
