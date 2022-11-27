@@ -1,14 +1,13 @@
 import './global.css'
 import Logo from '../../logo-trans.png'
 import '../global/global.css'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import {
   Button,
   Grid,
   GridItem,
   HStack,
   Image,
-  Menu as ChakraMenu,
   Text,
   Link,
   Popover,
@@ -19,7 +18,9 @@ import {
   PopoverHeader,
   PopoverBody,
   PopoverFooter,
-  VStack
+  VStack,
+  useToast,
+  Tooltip
 } from '@chakra-ui/react'
 import { IoExitOutline } from 'react-icons/io5'
 import { TbExternalLink } from 'react-icons/tb'
@@ -27,188 +28,9 @@ import moment from 'moment'
 import { AuthActions } from '../../data/actions/userActions'
 import { SiteRoutes } from '../../misc/routes'
 import { useDispatch } from 'react-redux'
-
-/**
- * The global Title component
- * @param {object} props Component props
- * @param {'dark' | 'light'} props.theme Defines the theme for the component, along with `color` property. Defaults to `light`
- * @param {'bold' | 'light'} props.fontType Defines the font-weight. Defaults to `light`.
- * @param {string} props.className Assign additional CSS classes to the component.
- * @param {string} props.link If passed a value, will set the component's additional styles.
- * @param {React.CSSProperties} props.style Defines additional styles for the component.
- * @param {'large' | 'large-2' | 'large-3' | 'medium' | 'small'  | 'xs'} props.size Defines the size of the component, affecting `padding`, `border` etc. properties. Defaults to `medium`
- * @param {object} props.content Renders any HTML content within the component.
- * @param {boolean} props.isLoading If `true`, will render a loading spinner instead of any content.
- */
-export const Title = ({
-  content,
-  style,
-  theme,
-  size,
-  link,
-  fontType,
-  className,
-  isLoading
-}) => {
-  return (
-    <>
-      {isLoading && (
-        <div className='main spinner-fullScreen'>
-          <div className='spinner-border text-primary' role='status'>
-            <span className='visually-hidden'>Loading...</span>
-          </div>
-        </div>
-      )}
-      {size === 'small' ? (
-        <h6
-          className={`title theme_${theme} font_${fontType} ${className} ${isLoading &&
-            'opacity_hidden'}`}
-          style={style}
-        >
-          {content}
-        </h6>
-      ) : size === 'xs' ? (
-        <h6
-          className={`title theme_${theme} font_${fontType} ${className} ${isLoading &&
-            'opacity_hidden'} font_xs`}
-          style={style}
-        >
-          {content}
-        </h6>
-      ) : size === 'large' ? (
-        <h4
-          className={`title theme_${theme} font_${fontType} ${className} ${isLoading &&
-            'opacity_hidden'}`}
-          style={style}
-        >
-          {content}
-        </h4>
-      ) : size === 'large-2' ? (
-        <h2
-          className={`title theme_${theme} font_${fontType} ${className} ${isLoading &&
-            'opacity_hidden'}`}
-          style={style}
-        >
-          {content}
-        </h2>
-      ) : size === 'large-3' ? (
-        <h1
-          className={`title theme_${theme} font_${fontType} ${className} large_3 ${isLoading &&
-            'opacity_hidden'}`}
-          style={style}
-        >
-          {content}
-        </h1>
-      ) : (
-        <h5
-          className={`title theme_${theme} font_${fontType} ${className} ${isLoading &&
-            'opacity_hidden'}`}
-          style={style}
-        >
-          {content}
-        </h5>
-      )}
-    </>
-  )
-}
-
-/**
- * The global SubTitle component
- * @param {object} props Component props
- * @param {'dark' | 'light'} props.theme Defines the theme for the component, along with `color` property. Defaults to `light`
- * @param {'bold' | 'light'} props.fontType Defines the font-weight. Defaults to `light`.
- * @param {string} props.className Assign additional CSS classes to the component.
- * @param {string} props.link If passed a value, will set the component's additional styles.
- * @param {React.CSSProperties} props.style Defines additional styles for the component.
- * @param {'large' | 'medium' | 'small' | 'xs'} props.size Defines the size of the component, affecting `padding`, `border` etc. properties. Defaults to `medium`
- * @param {string} props.id Defines the ID of the component.
- * @param {object} props.content Renders any HTML content within the component.
- */
-export const SubTitle = ({
-  content,
-  style,
-  theme,
-  size,
-  link,
-  onClick,
-  fontType,
-  className,
-  id
-}) => {
-  return size === 'large' ? (
-    <h5
-      id={id}
-      className={`title font_${fontType} theme_${theme} ${className} ${link &&
-        'font_link'}`}
-      style={style}
-      onClick={onClick && onClick}
-    >
-      {content}
-    </h5>
-  ) : size === 'medium' || size === 'regular' ? (
-    <h6
-      id={id}
-      className={`title font_${fontType} theme_${theme} ${className} ${link &&
-        'font_link'}`}
-      style={style}
-      onClick={onClick && onClick}
-    >
-      {content}
-    </h6>
-  ) : size === 'xs' ? (
-    <p
-      className={`title theme_${theme} font_${fontType} ${className} font_xs`}
-      style={style}
-    >
-      {content}
-    </p>
-  ) : (
-    <p
-      id={id}
-      className={`title font_${fontType} theme_${theme} ${className} ${link &&
-        'font_link'}`}
-      style={style}
-      onClick={onClick && onClick}
-    >
-      {content}
-    </p>
-  )
-}
-
-/**
- * The global Card component
- * @param {object} props Component props
- * @param {'dark' | 'light'} props.theme Defines the theme for the component, along with `color` property. Defaults to `light`
- * @param {boolean} props.animateScale If true, will apply `scale(1.4)` transition on hover.
- * @param {string} props.className Assign additional CSS classes to the component.
- * @param {boolean} props.clickable If true, will set `cursor: 'pointer'`. Defaults to `true`
- * @param {React.CSSProperties} props.style Defines additional styles for the component.
- * @param {'compact' | 'default'} props.size Defines the size of the component, affecting `padding`, `border` etc. properties.
- * @param {'dark' | 'light'} props.theme Defines the theme of the component. Defaults to `light`.
- */
-export function Card({
-  children,
-  theme = 'light',
-  size,
-  id,
-  className,
-  animateScale = true,
-  style,
-  clickable = true
-}) {
-  return (
-    <div
-      className={`card card_${theme} ${size === 'compact' ? 'card_compact' : ''
-        } ${className} ${animateScale ? 'card_animate_scale' : ''}`}
-      style={{
-        ...style,
-        cursor: clickable ? 'pointer' : 'default'
-      }}
-    >
-      {children}
-    </div>
-  )
-}
+import { StorageHelper } from '../../data/storage'
+import { GrUser } from 'react-icons/gr'
+import { useCallback, useState } from 'react'
 
 /**
  * The global Spacer component
@@ -230,17 +52,21 @@ export const Spacer = ({ size = 'small', times }) => {
   )
 }
 
-export const Header = ({ onLinkClick = link => { } }) => {
+export const Header = ({ onLinkClick = link => {} }) => {
+  const [isLogginOut, setIsLoggingOut] = useState(false)
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
-  function performLogOut() {
+  function performLogOut () {
+    setIsLoggingOut(true)
     setTimeout(() => {
+      StorageHelper.Remove('auth')
       dispatch({
-        type: AuthActions.PERFORM_SIGNOUT
+        type: AuthActions.SET_USER,
+        data: undefined
       })
-    }, 200)
-    navigate(SiteRoutes.Onboarding.Init.path)
+      navigate(SiteRoutes.Onboarding.Init.path)
+    }, 1000)
   }
 
   return (
@@ -288,7 +114,12 @@ export const Header = ({ onLinkClick = link => { } }) => {
                 borderColor='blue.600'
                 display='flex'
               >
-                <Button size='xs' colorScheme='red' onClick={performLogOut}>
+                <Button
+                  size='xs'
+                  colorScheme='red'
+                  onClick={performLogOut}
+                  isLoading={isLogginOut}
+                >
                   Yes, Log Out
                 </Button>
               </PopoverFooter>
@@ -349,7 +180,7 @@ export const Footer = () => (
  * @param {JSX.Element} props.children Component(s) to render as the children of this component. Render all your screen components here.
  * @returns
  */
-export function ScreenContainer({ title, description, children }) {
+export function ScreenContainer ({ title, description, children }) {
   return (
     <Grid gridTemplateRows='auto 1fr' w='100%' h='100%'>
       <GridItem>
@@ -362,7 +193,71 @@ export function ScreenContainer({ title, description, children }) {
           </Text>
         </VStack>
       </GridItem>
-      <GridItem justifyContent='flex-start' textAlign='left' pt='3'>{children}</GridItem>
+      <GridItem justifyContent='flex-start' textAlign='left' pt='3'>
+        {children}
+      </GridItem>
     </Grid>
+  )
+}
+
+export const useToastGenerator = () => {
+  const toast = useToast()
+  const toastVariants = {
+    success: {
+      title: 'Successfully Updated!',
+      description: 'Your changes will affect in real-time.',
+      status: 'success'
+    },
+    error: {
+      title: "Couldn't update!",
+      description: 'Sorry, something went wrong. Please try again.',
+      status: 'error'
+    }
+  }
+
+  /**
+   *
+   * @param {{success: boolean; error?: object;}} dbCallback The callback method containing `success` and/or `error` object.
+   */
+  const show = dbCallback =>
+    toast({
+      ...toastVariants[dbCallback.success ? 'success' : 'error'],
+      duration: 3500,
+      isClosable: true
+    })
+
+  return { show }
+}
+
+export const UserInfo = ({
+  size = 'compact',
+  name,
+  email,
+  tooltipText = 'View Client Info',
+  navLink
+}) => {
+  const [copied, setCopied] = useState(false)
+  const copyCode = useCallback(() => {
+    !copied &&
+      navigator.clipboard.writeText(email).then(() => {
+        setCopied(true)
+        setTimeout(() => setCopied(false), 1500)
+      })
+  }, [])
+  return (
+    size === 'compact' && (
+      <Tooltip hasArrow label='Click to copy email'>
+        <Button
+          leftIcon={<GrUser />}
+          //   rightIcon={<TbExternalLink size={12} />}
+          size='xs'
+          variant='solid'
+          colorScheme='gray'
+          ml='2'
+        >
+          {name} - {email}
+        </Button>
+      </Tooltip>
+    )
   )
 }

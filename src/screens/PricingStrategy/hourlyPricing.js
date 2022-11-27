@@ -1,115 +1,42 @@
+import { devTeam } from '../../data/constants'
+import { VStack, Box, Text, Link, HStack, SimpleGrid } from '@chakra-ui/react'
+import { groupBy } from '../../misc/featureHelper'
+import { RoleBox } from './components'
+import { SiteRoutes } from '../../misc/routes'
+import { Link as ReactRouterLink } from 'react-router-dom'
+import { BiCheckCircle } from 'react-icons/bi'
 
-import { useNavigate } from 'react-router-dom'
-import { FiArrowRight } from 'react-icons/fi'
-import { useForm } from 'react-hook-form'
-import {
-  VStack,
-  Box,
-  Button,
-  Input,
-  FormControl,
-  FormLabel,
-  HStack,
-  Spacer
-} from '@chakra-ui/react'
-import { useState } from 'react'
-const HourlyPricing = () => {
-
-  const roles = ['Front-End', 'Back-End', 'DevOps/Cloud Developers', 'UI Designer']
-  const {
-    register,
-    handleSubmit,
-  } = useForm({ mode: 'onChange' })
-
-  const formResult = {}
-  const onSubmit = data => {
-
-    roles.forEach((role, index) => {
-      const countId = `count${index}`
-      const rateId = `rate${index}`
-      formResult[role] = {
-
-        devCount: data[countId],
-        avgRate: data[rateId]
-      }
+const HourlyPricing = ({ teamData, currency }) => {
+  console.log(teamData)
+  const rolesGroup = groupBy(teamData, 'role')
+  const AverageSalary = []
+  for (const key in rolesGroup) {
+    const Salary = rolesGroup[key].reduce((acc, cval) => {
+      return acc + Number(cval.salary.rate)
+    }, 0)
+    AverageSalary.push({
+      role: key,
+      avgRate: Math.floor(Salary / rolesGroup[key].length),
+      type: rolesGroup[key][0].salary.type,
+      roleCount: rolesGroup[key].length
     })
-    console.log(formResult)
-
   }
-
-  const children = roles.map((role, index) => (
-    <HStack gap='6' key={index}>
-      <FormControl w='80%'>
-        <FormLabel fontSize='xs' fontWeight='bold'>No. Of {role} In Your Team</FormLabel>
-        <Input
-          transition='all 300ms'
-          fontSize='sm'
-          size='md'
-          bg='gray.100'
-          border='none'
-          _focus={{
-            borderWidth: 'none',
-            bg: 'white'
-          }}
-          placeholder='No. Of Front-End Developers'
-          {...register(`count${index}`, { required: true })}
-        />
-      </FormControl >
-      <FormControl w='30%'>
-        <FormLabel fontSize='xs' fontWeight={'bold'}>Avg. Hourly Rate</FormLabel>
-        <Input
-          transition='all 300ms'
-          fontSize='sm'
-          size='md'
-          bg='gray.100'
-          border='none'
-          _focus={{
-            borderWidth: 'none',
-            bg: 'white'
-          }}
-          placeholder='Hourly Rate'
-          {...register(`rate${index}`, { required: true })}
-        />
-      </FormControl>
-
-    </HStack>
-  )) || '';
 
 
   return (
-    <Box
+    <HStack
       w='100%'
-      h='100%'
       color='gray.600'
-      justifyContent='space-between'
+      // justifyContent='space-between'
+      columnGap='3'
+      rowGap='4'
+      wrap='wrap'
+      // minChildWidth='200px'
     >
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-      >
-        <VStack gap='6'>
-          {children}
-        </VStack>
-        <Spacer h='6' />
-        <Button
-          type='submit'
-          size='sm'
-          colorScheme='purple'
-          variant='solid'
-          fontWeight='semibold'
-          rightIcon={<FiArrowRight />}
-        // disabled={!isDirty || !isValid}
-        // onClick={handleSubmit}
-        >
-          Update Pricing Model
-        </Button>
-
-
-        {/* <VStack spacing='3' justify='space-between' align='flex-start'>
-
-          {errors && console.log(errors)}
-        </VStack> */}
-      </form>
-    </Box >
+      {AverageSalary.map(({ role, avgRate, roleCount }, index) => (
+        <RoleBox key={role} currency={currency} role={role} rate={avgRate} index={index} roleCount={roleCount} />
+      ))}
+    </HStack>
   )
 }
 

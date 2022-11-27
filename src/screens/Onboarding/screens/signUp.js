@@ -1,9 +1,12 @@
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import '../components/index.css'
 import { useDispatch, useSelector } from 'react-redux'
-import { AuthActions } from '../../../data/actions/userActions'
+import { AuthActions, ProfileActions } from '../../../data/actions/userActions'
 import { Formik } from 'formik'
-import { StringHelper } from '../../../data/extensions/stringHelper'
+import {
+  StringHelper,
+  validateEmail
+} from '../../../data/extensions/stringHelper'
 import {
   Input,
   Spacer,
@@ -12,60 +15,127 @@ import {
   Button,
   InputGroup,
   InputRightElement,
-  useToast
+  useToast,
+  HStack,
+  VStack,
+  Checkbox,
+  Link
 } from '@chakra-ui/react'
 import { AiOutlineArrowRight } from 'react-icons/ai'
+import {
+  useFirebaseInstance,
+  signUpWithCreds,
+  getUserIdToken
+} from '../../../data/database/users/auth'
+import { StorageHelper } from '../../../data/storage'
+import { updateProfile } from '../../../data/database/users/profile'
+import { motion } from 'framer-motion'
+import { TOUModal } from '../components'
+import { Constants } from '../../../data/constants'
 
 export default ({ onSwitchRequest = () => {}, projectMetaData }) => {
   const dispatch = useDispatch()
   const user = useSelector(state => state.user)
+  const instance = useFirebaseInstance()
+  const toumodalRef = useRef()
+  const toast = useToast()
 
-  function performSignUp (values) {
-    dispatch({
-      type: AuthActions.PERFORM_SIGNUP,
-      data: {
-        email: values.email,
-        password: values.password,
-        projects: [projectMetaData]
-      }
+  async function performSignUp (values, setSubmitting) {
+    const signUpResult = await signUpWithCreds(instance, {
+      ...values
     })
+    if (signUpResult.success) {
+      /// Constructing profile
+      var profileData = {
+        ...values
+      }
+      delete profileData.password
+      delete profileData.rePassword
+      delete profileData.showPassword
+
+      if (String(profileData.fullName).includes(' ')) {
+        profileData.firstName = profileData.fullName.split(' ')[0]
+        profileData.lastName = profileData.fullName.split(' ')[1]
+      }
+      /// Ending profile
+      const profileResult = await updateProfile(
+        instance,
+        signUpResult.user.uid,
+        {
+          data: profileData
+        }
+      )
+      profileResult.success && console.log('Profile created successfully!')
+      dispatch({
+        type: AuthActions.SET_USER,
+        data: signUpResult.user.uid
+      })
+      dispatch({
+        type: ProfileActions.SET_LOADING_STATE,
+        data: Constants.LoadingState.SUCCESS
+      })
+    } else {
+      setSubmitting(false)
+      console.log(signUpResult.error.message)
+      toast({
+        title: "Couldn't create account.",
+        description:
+          signUpResult.error.message || 'Something went wrong. Try again.',
+        status: 'error',
+        duration: 3500,
+        isClosable: true
+      })
+    }
   }
 
-  function isBusy (isSubmitting) {
-    if (isSubmitting) {
-      if (user.error?.message) {
-        return false
-      }
-      return true
-    }
-    return isSubmitting
+  function showTouModal () {
+    toumodalRef.current?.open()
   }
 
   return (
-    <div>
+    <motion.div
+      key='signUp'
+      initial={{ opacity: 0, x: 30 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -30 }}
+    >
+      <TOUModal ref={toumodalRef} />
       <Formik
         initialValues={{
           email: '',
           password: '',
           rePassword: '',
-          errMessage: '',
+          organizationName: '',
+          termsAgreed: false,
+          // errMessage: '',
           showPassword: false
         }}
+        validateOnMount
         validate={values => {
           const errors = {}
-          if (StringHelper.isPropsEmpty(values, ['errMessage', 'showPassword']))
-            errors.errMessage = 'Please fill in all details.'
+          if (!validateEmail(values.email)) {
+            errors.email = 'Invalid email address'
+          }
+          if (
+            StringHelper.isPropsEmpty(values, [
+              'errMessage',
+              'showPassword',
+              'termsAgreed'
+            ])
+          )
+            errors.email = 'Please fill in all details.'
           else if (!StringHelper.isSame([values.password, values.rePassword]))
-            errors.errMessage = 'Your passwords do not match.'
+            errors.password = 'Your passwords do not match.'
+
+          if (!values.termsAgreed)
+            errors.agreed = 'You must agree to our ToU and Privacy Policy'
+
           return errors
         }}
-        validateOnChange={false}
         onSubmit={(values, { setSubmitting }) => {
-          if (StringHelper.isEmpty(values.errMessage)) {
-            console.log('Should try signup now...')
-            setSubmitting(true)
-            performSignUp(values)
-          }
+          console.log('Should try signup now...')
+          performSignUp(values, setSubmitting)
+          // }
         }}
       >
         {({
@@ -75,23 +145,31 @@ export default ({ onSwitchRequest = () => {}, projectMetaData }) => {
           handleSubmit,
           isSubmitting,
           setFieldValue,
-          errors
+          errors,
+          isValid
         }) => (
-          <Stack direction='column' spacing='2'>
-            <Text
-              fontSize='smaller'
-              fontWeight='medium'
-              align='center !important'
-            >
-              Create your new Flito account!
-            </Text>
-            <Spacer h='2' />
+          <VStack w='full' spacing='3' align='flex-start'>
+            <HStack w='100%' spacing='3'>
+              <Input
+                placeholder='Your Name'
+                fontSize='sm'
+                onChange={handleChange('fullName')}
+                size='lg'
+              />
+              <Input
+                placeholder='Organization Name'
+                fontSize='sm'
+                onChange={handleChange('organizationName')}
+                size='lg'
+              />
+            </HStack>
             <Input
               placeholder='Enter Email'
               fontSize='sm'
               onChange={handleChange('email')}
+              size='lg'
             />
-            <InputGroup size='md'>
+            <InputGroup size='lg'>
               <Input
                 pr='4.5rem'
                 type={values.showPassword ? 'text' : 'password'}
@@ -117,13 +195,34 @@ export default ({ onSwitchRequest = () => {}, projectMetaData }) => {
               placeholder='Confirm password'
               onChange={handleChange('rePassword')}
               fontSize='sm'
+              size='lg'
             />
+            <Checkbox onChange={handleChange('termsAgreed')}>
+              <Text fontSize='sm' display='flex'>
+                I agree to Flito's{' '}
+                <Link
+                  onClick={showTouModal}
+                  pl='1'
+                  fontWeight='semibold'
+                  color='blue.600'
+                >
+                  Terms Of Use
+                </Link>
+              </Text>
+            </Checkbox>
             <Spacer h='4' />
+            {/* {console.log('Validity:', errors)} */}
             <Button
+              w='full'
               colorScheme='blue'
+              bg='#2564eb'
+              _hover={{
+                bg: '#154bbf'
+              }}
+              disabled={!isValid}
               variant='solid'
               onClick={handleSubmit}
-              isLoading={isBusy(isSubmitting)}
+              isLoading={isSubmitting}
               loadingText='Creating Account'
             >
               Create Account
@@ -144,9 +243,9 @@ export default ({ onSwitchRequest = () => {}, projectMetaData }) => {
                   {errors.errMessage || user.error?.message}
                 </Text>
               ))}
-          </Stack>
+          </VStack>
         )}
       </Formik>
-    </div>
+    </motion.div>
   )
 }
