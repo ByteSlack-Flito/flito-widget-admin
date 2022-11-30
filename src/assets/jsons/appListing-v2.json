@@ -65,7 +65,7 @@
     {
       "id": 114,
       "title": "WhatsApp",
-      "type": "social-media",
+      "type": "Messaging",
       "iconSrc": "https://firebasestorage.googleapis.com/v0/b/makemyapp-7aca9.appspot.com/o/flito-static%2Fapp-icons%2Fwhats%20app.png?alt=media&token=32471e0a-92e9-42d4-97fe-aad1f69ab694",
       "description": "Owned by Meta,a FREE messaging and video calling app ",
       "taggedFeatures": [
@@ -190,18 +190,6 @@
       ]
     },
     {
-      "id": 123,
-      "title": "Zapier",
-      "type": "blog",
-      "iconSrc": "https://firebasestorage.googleapis.com/v0/b/makemyapp-7aca9.appspot.com/o/flito-static%2Fapp-icons%2Fzapier%404x.png?alt=media&token=24c65520-cf12-46f8-ba59-7ead152d2ccc",
-      "description": "A tool allowing you to connect to more than 200+ APIs",
-      "taggedFeatures": [
-        100321, 100322, 100431, 100433, 100453, 100456, 100457, 100401, 100402,
-        100403, 100404, 100405, 100391, 100382, 100381, 100361, 100352, 100354,
-        100356, 100358, 100359
-      ]
-    },
-    {
       "id": 124,
       "title": "Youtube",
       "type": "video-streaming",
@@ -212,8 +200,8 @@
         100309, 1003010, 1003011, 1003012, 1003014, 100311, 100312, 100315,
         100316, 100321, 100322, 100324, 100331, 100342, 100343, 100344, 100345,
         100346, 100347, 100356, 100357, 100358, 100359, 100361, 100363, 100373,
-        100381, 100382, 100383, 100401, 100402, 100403, 100431, 100433, 100452,
-        100453, 100461, 100453, 100454, 100455, 100456, 100457
+        100381, 100382, 100383, 100401, 100402, 100403, 100431, 100433, 100444,
+        100445, 100452, 100453, 100454, 100461
       ]
     },
     {
@@ -228,7 +216,7 @@
         100316, 100321, 100322, 100324, 100331, 100342, 100343, 100344, 100345,
         100346, 100347, 100356, 100357, 100358, 100359, 100361, 100363, 100373,
         100381, 100382, 100383, 100401, 100402, 100403, 100431, 100433, 100452,
-        100453, 100461, 100453, 100454, 100455, 100456, 100457
+        100453, 100461
       ]
     },
     {
@@ -243,7 +231,7 @@
         100316, 100321, 100322, 100324, 100331, 100342, 100343, 100344, 100345,
         100346, 100347, 100356, 100357, 100358, 100359, 100361, 100363, 100373,
         100381, 100382, 100383, 100401, 100402, 100403, 100431, 100433, 100452,
-        100453, 100461, 100453, 100454, 100455, 100456, 100457
+        100453, 100461
       ]
     },
     {
@@ -260,7 +248,7 @@
     {
       "id": 128,
       "title": "Quinntonharris",
-      "type": "blog",
+      "type": "portfolio",
       "iconSrc": "https://firebasestorage.googleapis.com/v0/b/makemyapp-7aca9.appspot.com/o/flito-static%2Fapp-icons%2Fquinton%20harris%404x.png?alt=media&token=c0fef77e-4253-4c4a-b2ee-f8fda7b116ed",
       "description": "Portfolio website of an amazing creative individual",
       "taggedFeatures": [
@@ -309,7 +297,7 @@
       "title": "Pluralsight Skills",
       "type": "LMS",
       "iconSrc": "https://firebasestorage.googleapis.com/v0/b/makemyapp-7aca9.appspot.com/o/flito-static%2Fapp-icons%2Fplural%20sight%404x.png?alt=media&token=b5b9038e-bfb1-463a-9665-18eaa4e11ab2",
-      "description": "A platform that allows you to measure and evolve the skills you need now",
+      "description": "A platform that allows you to measure and evolve the skills you need now.",
       "taggedFeatures": [
         100301, 100302, 100303, 100304, 100305, 100358, 100306, 100307, 100308,
         100309, 1003010, 1003011, 1003012, 1003014, 100311, 100312, 100313,
@@ -326,7 +314,7 @@
       "title": "WordPress",
       "type": "CMS",
       "iconSrc": "https://firebasestorage.googleapis.com/v0/b/makemyapp-7aca9.appspot.com/o/flito-static%2Fapp-icons%2Fwordpress%404x.png?alt=media&token=7d87c858-a040-4c4e-8abd-2ace42720afc",
-      "description": "A free and open-source content management system",
+      "description": "A free and open-source content management system.",
       "taggedFeatures": [
         100301, 100302, 100303, 100304, 100305, 100358, 100306, 100307, 100308,
         100309, 1003010, 1003011, 1003012, 1003014, 100311, 100312, 100313,
@@ -362,7 +350,7 @@
       "title": "TYPO3",
       "type": "CMS",
       "iconSrc": "https://firebasestorage.googleapis.com/v0/b/makemyapp-7aca9.appspot.com/o/flito-static%2Fapp-icons%2Ftypo3%404x.png?alt=media&token=1b9a58ef-f31f-484b-97b7-ecf51d906209",
-      "description": "An Open Source Enterprise Content Management System with a large global community,",
+      "description": "An Open Source Enterprise Content Management System with a large global community.",
       "taggedFeatures": [
         100301, 100302, 100303, 100304, 100305, 100358, 100306, 100307, 100308,
         100309, 1003010, 1003011, 1003012, 1003014, 100311, 100312, 100313,

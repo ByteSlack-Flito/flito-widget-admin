@@ -31,6 +31,7 @@ import { useDispatch } from 'react-redux'
 import { StorageHelper } from '../../data/storage'
 import { GrUser } from 'react-icons/gr'
 import { useCallback, useState } from 'react'
+import { signOut, useFirebaseInstance } from '../../data/database/users/auth'
 
 /**
  * The global Spacer component
@@ -56,17 +57,19 @@ export const Header = ({ onLinkClick = link => {} }) => {
   const [isLogginOut, setIsLoggingOut] = useState(false)
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  const fireInstance = useFirebaseInstance()
 
-  function performLogOut () {
+  async function performLogOut () {
     setIsLoggingOut(true)
-    setTimeout(() => {
+    const signoutResult = await signOut(fireInstance)
+    if (signoutResult.success) {
       StorageHelper.Remove('auth')
       dispatch({
         type: AuthActions.SET_USER,
         data: undefined
       })
       navigate(SiteRoutes.Onboarding.Init.path)
-    }, 1000)
+    }
   }
 
   return (

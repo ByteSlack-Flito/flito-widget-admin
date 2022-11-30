@@ -4,7 +4,8 @@ import {
   createUserWithEmailAndPassword,
   getAuth,
   signInWithCustomToken,
-  signInWithEmailAndPassword
+  signInWithEmailAndPassword,
+  signOut as FirebaseSignout
 } from 'firebase/auth'
 import { ParseFirebaseError } from '../errors'
 import { StorageHelper } from '../../storage'
@@ -72,6 +73,27 @@ export async function signUpWithCreds (fireInstance, { email, password }) {
     const token = await getUserIdToken(authResult.user.uid)
     StorageHelper.SaveItem(token?.data, 'auth')
     return { ...authResult, success: true }
+  } catch (ex) {
+    let error = new FirebaseError()
+    error = {
+      ...error,
+      ...ex
+    }
+    return {
+      error: {
+        ...error,
+        message: ParseFirebaseError[error.code]
+      }
+    }
+  }
+}
+
+export async function signOut(fireInstance){
+  if (!fireInstance) return
+  const auth = getAuth(fireInstance)
+  try {
+    await FirebaseSignout(auth)
+    return { success: true }
   } catch (ex) {
     let error = new FirebaseError()
     error = {

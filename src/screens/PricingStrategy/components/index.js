@@ -35,116 +35,100 @@ import { FaAws } from 'react-icons/fa'
 import { MdDevices, MdOutlineManageAccounts } from 'react-icons/md'
 import '../index.css'
 import { useToastGenerator } from '../../../components/global'
-import AppListing from '../../../assets/jsons/appListing-v2.json'
 import { groupBy } from '../../../misc/featureHelper'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion, useElementScroll } from 'framer-motion'
 import { useForm } from 'react-hook-form'
+import { useWidget } from '../../../data/database/users/profile'
+import { useSelector } from 'react-redux'
 
-export const FixedPricingSetupModal = React.forwardRef(
+export const VariantAppView = ({ variant, apps, onClick, pricing }) => {
+  const { data } = useWidget()
+
+  return (
+    <VStack
+      transition='all 300ms'
+      align='flex-start'
+      borderWidth='thin'
+      borderRadius='md'
+      borderColor='gray.200'
+      p='3'
+      role='group'
+      cursor='pointer'
+      _hover={{
+        borderColor: 'teal.300'
+      }}
+      onClick={onClick}
+    >
+      <Text fontSize='sm' fontWeight='medium' textTransform='capitalize'>
+        {variant} Apps
+      </Text>
+      <HStack>
+        {apps
+          .filter((app, index) => index < 3)
+          .map(app => (
+            <Image src={app.iconSrc} h='20px' />
+          ))}
+      </HStack>
+      <Text
+        transition='all 300ms'
+        fontSize='xs'
+        fontWeight='semibold'
+        opacity='0.5'
+        _groupHover={{
+          color: 'teal.400',
+          opacity: 1
+        }}
+      >
+        {pricing
+          ? `${pricing.minAmount}-${pricing.maxAmount} ${data?.pricing?.currency}`
+          : 'Click To Set Price'}
+      </Text>
+    </VStack>
+  )
+}
+
+export const AddVariantPriceModal = React.forwardRef(
   ({ onSuccessClose }, ref) => {
     const [isOpen, setIsOpen] = useState(false)
-    const appVariants = groupBy(AppListing.options, 'type')
-    const [variantIndex, setVariantIndex] = useState(0)
-    const [isValid, setIsValid] = useState(false)
-    const submitBtnRef = useRef()
+    const { update, isUpdating } = useWidget()
+    const [variantData, setVariantData] = useState()
+    const {profile} = useSelector(state => state.user)
 
-    const { register, handleSubmit, reset, getValues, watch } = useForm({
-      mode: 'onChange'
-    })
-
-    const toast = useToastGenerator()
-
-    useEffect(() => {
-      const subscription = watch((value, { name, type }) => {
-        setIsValid(checkValidity(value))
-      })
-      return () => subscription.unsubscribe()
-    }, [watch])
+    const { getValues, reset, handleSubmit, watch, register } = useForm()
 
     function open () {
       setIsOpen(true)
     }
 
     useImperativeHandle(ref, () => ({
-      open
+      open,
+      setVariantData
     }))
 
-    function goNext () {
-      setVariantIndex(prev =>
-        prev < Object.keys(appVariants).length - 1 ? ++prev : prev
-      )
+    useEffect(() => console.log('Profile is:', profile), [profile])
+
+    useEffect(() => {
+      reset(variantData)
+    }, [variantData])
+
+    async function performUpdate () {
+      onSuccessClose({ name: variantData.name, ...getValues() })
+      setIsOpen(false)
       reset()
     }
 
-    function handleSave (vals) {
-      console.log(vals)
-    }
-
-    const checkValidity = values => {
-      const isNotEmptyOrZero = Object.keys(values).every(
-        key => values[key]?.length > 0 && Number(values[key]) > 0
-      )
-      const isMaxGreater = Number(values?.maxAmount) > Number(values?.minAmount)
-      return isNotEmptyOrZero && isMaxGreater
-    }
-
-    function performReset () {
+    function handleClose () {
+      setIsOpen(false)
       reset()
-      setVariantIndex(0)
     }
-
-    const AppViews = React.memo(() => {
-      const apps = appVariants[Object.keys(appVariants)[variantIndex]].filter(
-        (item, index) => index < 3
-      )
-      return (
-        <SimpleGrid w='full' columns={3} gap='2'>
-          {apps.map(app => {
-            return (
-              <HStack
-                key={app.id}
-                transition='all 300ms'
-                pos='relative'
-                h='max-content'
-                spacing='3'
-                borderRadius='md'
-                borderWidth='thin'
-                borderColor='gray.100'
-                _hover={{
-                  borderColor: 'teal.200'
-                }}
-                p='3'
-                align='flex-start'
-              >
-                {/* <BiCheck/> */}
-                <Image
-                  src={app.iconSrc}
-                  h='30px'
-                  w='auto'
-                  objectFit='contain'
-                />
-                <VStack align='flex-start' spacing='0'>
-                  <Text fontSize='xs' fontWeight='medium'>
-                    {app.title}
-                  </Text>
-                  <Text fontSize='xs' fontWeight='normal'>
-                    {app.description?.substring(0, 55) + '...'}
-                  </Text>
-                </VStack>
-              </HStack>
-            )
-          })}
-        </SimpleGrid>
-      )
-    }, [appVariants, variantIndex])
 
     return (
       <Modal
-        onClose={() => setIsOpen(false)}
+        onClose={handleClose}
         isOpen={isOpen}
-        size={'3xl'}
+        size={'2xl'}
         motionPreset='slideInBottom'
-        onCloseComplete={performReset}
+        // onCloseComplete={() => reset()}
       >
         <ModalOverlay />
         <ModalContent>
@@ -153,76 +137,49 @@ export const FixedPricingSetupModal = React.forwardRef(
             display='flex'
             justifyContent='space-between'
             alignItems='center'
+            fontSize='md'
           >
-            <Text w='max-content' fontSize='medium'>
-              Setup Fixed Pricing Strategy
-            </Text>
+            <Text>Set Price In {profile?.widget?.pricing?.currency || ''}</Text>
           </ModalHeader>
           <ModalCloseButton mt='1' />
           <ModalBody pt='5' pb='5'>
             <VStack>
-              <AnimatePresence mode='wait'>
-                <motion.div
-                  key={variantIndex}
-                  initial={{ x: 30, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  exit={{ x: -30, opacity: 0 }}
-                  style={{ width: '100%' }}
+              <Text fontSize='md'>
+                How much will you charge for{' '}
+                <span
+                  style={{
+                    textTransform: 'capitalize',
+                    color: 'teal',
+                    fontWeight: 'bold'
+                  }}
                 >
-                  <VStack w='full' spacing='5'>
-                    <Text fontSize='md' fontWeight='medium'>
-                      Take a look at some
-                      <span
-                        style={{
-                          color: 'teal',
-                          fontWeight: 'bold',
-                          textTransform: 'capitalize'
-                        }}
-                      >
-                        {' '}
-                        {Object.keys(appVariants)[variantIndex]}
-                      </span>
-                      -like projects
-                    </Text>
-                    <AppViews />
-                    <VStack>
-                      <Text>How much will you charge for similar apps?</Text>
-                      <form onSubmit={handleSubmit(handleSave)}>
-                        <HStack>
-                          <Input
-                            size='sm'
-                            placeholder='Min. Amount'
-                            {...register('minAmount', {
-                              required: true,
-                              maxLength: 8
-                            })}
-                          />
-                          <Input
-                            size='sm'
-                            placeholder='Max. Amount'
-                            {...register('maxAmount', {
-                              required: true,
-                              maxLength: 8
-                            })}
-                          />
-                        </HStack>
-                      </form>
-                    </VStack>
-                  </VStack>
-                </motion.div>
-              </AnimatePresence>
+                  {variantData?.name}
+                </span>
+                -like apps?
+              </Text>
+              <form>
+                <HStack>
+                  <Input placeholder='Min. Amount' {...register('minAmount')} />
+                  <Divider
+                    w='20px'
+                    orientation='horizontal'
+                    borderColor='gray.400'
+                  />
+                  <Input placeholder='Max. Amount' {...register('maxAmount')} />
+                </HStack>
+              </form>
             </VStack>
           </ModalBody>
           <Divider />
           <ModalFooter bg='gray.50'>
             <Button
-              ref={submitBtnRef}
               size='sm'
               colorScheme='blue'
-              isDisabled={!isValid}
-              onClick={goNext}
+              // isDisabled={}
+              onClick={performUpdate}
+              isLoading={isUpdating}
             >
-              Move Next
+              Set Price
             </Button>
           </ModalFooter>
         </ModalContent>

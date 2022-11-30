@@ -26,6 +26,7 @@ import {
   useFirebaseInstance
 } from '../../../data/database/users/auth'
 import { motion } from 'framer-motion'
+import { getProfile, useProfile } from '../../../data/database/users/profile'
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default ({ onSwitchRequest = () => {} }) => {
@@ -34,29 +35,49 @@ export default ({ onSwitchRequest = () => {} }) => {
   const dispatch = useDispatch()
   const instance = useFirebaseInstance()
   const toast = useToast()
+  const { get, data, isFetching } = useProfile()
 
   async function performLogin (values, setSubmitting) {
     const signnResult = await signInWithCreds(instance, {
       ...values
     })
     if (signnResult?.success) {
-      dispatch({
-        type: AuthActions.SET_USER,
-        data: signnResult.user.uid
-      })
-      dispatch({
-        type: ProfileActions.SET_LOADING_STATE,
-        data: Constants.LoadingState.SUCCESS
-      })
+      const profileResult = await getProfile(signnResult.user.uid, instance)
+      if (profileResult.success) {
+        dispatch({
+          type: AuthActions.SET_USER,
+          data: signnResult.user.uid
+        })
+        dispatch({
+          type: ProfileActions.SET_PROFILE,
+          data: profileResult.data
+        })
+        dispatch({
+          type: ProfileActions.SET_LOADING_STATE,
+          data: Constants.LoadingState.SUCCESS
+        })
+      } else {
+        setSubmitting(false)
+        console.log(profileResult.error.message)
+        toast({
+          title: "Couldn't fetch profile.",
+          description:
+            profileResult.error.message || 'Something went wrong. Try again.',
+          status: 'error',
+          duration: 3500,
+          isClosable: true
+        })
+      }
     } else {
       setSubmitting(false)
       console.log(signnResult.error.message)
       toast({
         title: "Couldn't log in.",
-        description: signnResult.error.message || "Something went wrong. Try again.",
+        description:
+          signnResult.error.message || 'Something went wrong. Try again.',
         status: 'error',
         duration: 3500,
-        isClosable: true,
+        isClosable: true
       })
     }
   }

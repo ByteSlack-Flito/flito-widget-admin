@@ -88,6 +88,31 @@ export const useProfile = () => {
   return { isFetching, data, get, isUpdating, update }
 }
 
+export async function getProfile (userId, fireInstance) {
+  const document = doc(getFirestore(fireInstance), collectionName, userId)
+  try {
+    const profileSnap = await getDoc(document)
+    if (profileSnap.exists()) {
+      return {
+        data: profileSnap.data(),
+        success: true
+      }
+    }
+  } catch (ex) {
+    let error = new FirebaseError()
+    error = {
+      ...error,
+      ...ex
+    }
+    return {
+      error: {
+        ...error,
+        message: "Couldn't set profile."
+      }
+    }
+  }
+}
+
 export const useWidget = () => {
   const fireInstance = useFirebaseInstance()
   const { userId } = useSelector(state => state.user)

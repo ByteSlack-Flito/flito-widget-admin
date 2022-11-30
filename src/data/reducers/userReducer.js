@@ -32,6 +32,10 @@ export default (state = initialState, action) => {
       console.log('Setting loading to:', data)
       return { ...state, loadingState: data } || state
 
+    case ProfileActions.SET_PROFILE:
+      console.log('Setting profile to:', data)
+      return { ...state, profile: data }
+
     case AuthActions.SET_ERROR:
       let error = data
       return { ...state, error }
