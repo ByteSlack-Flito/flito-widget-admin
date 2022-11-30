@@ -20,10 +20,11 @@ import { SiteRoutes } from '../../misc/routes'
 import { useSelector } from 'react-redux'
 import { useProfile, useWidget } from '../../data/database/users/profile'
 import { Link as ReactRouterLink } from 'react-router-dom'
+import FixedPricing from './fixedPricing'
 
 const pricing_options = [
-  { value: 'hourly', label: 'Hourly' }
-  // { value: 'fixed', label: 'Fixed' }
+  { value: 'hourly', label: 'Hourly' },
+  { value: 'fixed', label: 'Fixed' }
 ]
 
 const commossion_options = [
@@ -243,15 +244,22 @@ const PricingStrategyScreen = () => {
               />
             )}
             {profileData?.team ? (
-              pricingData.strategy?.value === 'hourly' && (
-                <>
-                  <Spacer h='10' />
+              <>
+                {/* <Spacer h='10' /> */}
+                {pricingData.strategy?.value === 'hourly' ? (
                   <HourlyPricing
                     teamData={profileData.team}
                     currency={pricingData.currency?.value}
                   />
-                </>
-              )
+                ) : pricingData.strategy?.value === 'fixed' ? (
+                  <FixedPricing
+                    teamData={profileData.team}
+                    currency={pricingData.currency?.value}
+                  />
+                ) : (
+                  <></>
+                )}
+              </>
             ) : (
               <InfoBox
                 type='error'

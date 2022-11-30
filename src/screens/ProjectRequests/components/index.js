@@ -209,42 +209,43 @@ export const RequestDetailsModal = React.forwardRef(({ projectId }, ref) => {
               <HStack>
                 <Text fontSize='xs' display='flex' fontWeight='medium'>
                   Widget Quoted:
-                  <Tooltip
-                    label="Client's development cost expectation"
-                    hasArrow
-                  >
+                  <Tooltip label='AI Quoted development cost' hasArrow>
                     <Badge borderRadius='md' ml='2' colorScheme='blue'>
                       {data.devCost} {widgetHook.data?.pricing?.currency}
                     </Badge>
                   </Tooltip>
-                  <Tooltip
-                    label="Client's development timeline expectation"
-                    hasArrow
-                  >
+                  <Tooltip label='AI Quoted development timeline' hasArrow>
                     <Badge borderRadius='md' ml='2' colorScheme='purple'>
                       {data.devTime} Weeks
                     </Badge>
                   </Tooltip>
                 </Text>
-                {data.expectation && <Text fontSize='xs' display='flex' fontWeight='medium'>
-                  Client's Expectation:
-                  <Tooltip
-                    label="Client's development cost expectation"
-                    hasArrow
-                  >
-                    <Badge borderRadius='md' ml='2' colorScheme='blue'>
-                      {data.expectation.budget} {widgetHook.data?.pricing?.currency}
-                    </Badge>
-                  </Tooltip>
-                  <Tooltip
-                    label="Client's development timeline expectation"
-                    hasArrow
-                  >
-                    <Badge borderRadius='md' ml='2' colorScheme='purple'>
-                      {data.expectation.timeline}
-                    </Badge>
-                  </Tooltip>
-                </Text>}
+                {data.expectation && (
+                  <Text fontSize='xs' display='flex' fontWeight='medium'>
+                    Client's Expectation:
+                    {data.expectation.budget && (
+                      <Tooltip
+                        label="Client's development cost expectation"
+                        hasArrow
+                      >
+                        <Badge borderRadius='md' ml='2' colorScheme='blue'>
+                          {data.expectation.budget}{' '}
+                          {widgetHook.data?.pricing?.currency}
+                        </Badge>
+                      </Tooltip>
+                    )}
+                    {data.expectation.timeline && (
+                      <Tooltip
+                        label="Client's development timeline expectation"
+                        hasArrow
+                      >
+                        <Badge borderRadius='md' ml='2' colorScheme='purple'>
+                          {data.expectation.timeline}
+                        </Badge>
+                      </Tooltip>
+                    )}
+                  </Text>
+                )}
               </HStack>
             </VStack>
           )}
