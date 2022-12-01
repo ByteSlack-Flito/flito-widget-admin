@@ -113,7 +113,7 @@ export async function getProfile (userId, fireInstance) {
   }
 }
 
-export const useWidget = () => {
+export const useWidget = (fetchByDefault = true) => {
   const fireInstance = useFirebaseInstance()
   const { userId } = useSelector(state => state.user)
   const [isFetching, setIsFetching] = useState(true)
@@ -133,7 +133,7 @@ export const useWidget = () => {
       }
       setIsFetching(false)
     }
-    get()
+    fetchByDefault && get()
   }, [userId])
 
   async function update (data, merge = true) {

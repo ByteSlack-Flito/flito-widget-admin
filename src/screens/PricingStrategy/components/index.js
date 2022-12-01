@@ -40,6 +40,7 @@ import { AnimatePresence, motion, useElementScroll } from 'framer-motion'
 import { useForm } from 'react-hook-form'
 import { useWidget } from '../../../data/database/users/profile'
 import { useSelector } from 'react-redux'
+import { arrayUnion } from 'firebase/firestore'
 
 export const VariantAppView = ({ variant, apps, onClick, pricing }) => {
   const { data } = useWidget()
@@ -80,7 +81,7 @@ export const VariantAppView = ({ variant, apps, onClick, pricing }) => {
         }}
       >
         {pricing
-          ? `${pricing.minAmount}-${pricing.maxAmount} ${data?.pricing?.currency}`
+          ? `${pricing.minAmount}-${pricing.maxAmount} ${data?.pricing?.currency || ''}`
           : 'Click To Set Price'}
       </Text>
     </VStack>
@@ -90,9 +91,10 @@ export const VariantAppView = ({ variant, apps, onClick, pricing }) => {
 export const AddVariantPriceModal = React.forwardRef(
   ({ onSuccessClose }, ref) => {
     const [isOpen, setIsOpen] = useState(false)
-    const { update, isUpdating } = useWidget()
     const [variantData, setVariantData] = useState()
-    const {profile} = useSelector(state => state.user)
+    const { profile } = useSelector(state => state.user)
+    const { update, isUpdating } = useWidget(false)
+    const toast = useToastGenerator()
 
     const { getValues, reset, handleSubmit, watch, register } = useForm()
 
@@ -105,16 +107,23 @@ export const AddVariantPriceModal = React.forwardRef(
       setVariantData
     }))
 
-    useEffect(() => console.log('Profile is:', profile), [profile])
-
     useEffect(() => {
       reset(variantData)
     }, [variantData])
 
     async function performUpdate () {
-      onSuccessClose({ name: variantData.name, ...getValues() })
-      setIsOpen(false)
-      reset()
+      const data = {
+        name: variantData.name,
+        ...getValues()
+      }
+      const updateResult = await update({ fixedAppPrices: arrayUnion(data) })
+      if (updateResult.success) {
+        onSuccessClose({ name: variantData.name, ...getValues() })
+        setIsOpen(false)
+        reset()
+      } else {
+        toast.show(updateResult)
+      }
     }
 
     function handleClose () {
@@ -178,6 +187,7 @@ export const AddVariantPriceModal = React.forwardRef(
               // isDisabled={}
               onClick={performUpdate}
               isLoading={isUpdating}
+              loadingText='Updating'
             >
               Set Price
             </Button>

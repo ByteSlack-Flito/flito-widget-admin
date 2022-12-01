@@ -23,6 +23,7 @@ import {
 } from '@chakra-ui/react'
 import { FiUser } from 'react-icons/fi'
 import { signInWithLocal } from './data/database/users/auth'
+import { getProfile } from './data/database/users/profile'
 
 function App () {
   //#region Setting site metadata
@@ -73,15 +74,26 @@ function ScreenRenderer () {
         const authResult = await signInWithLocal(firebaseApp.instance)
 
         if (authResult?.success) {
-          console.log('Sign In Success! Going to main app...')
-          dispatch({
-            type: AuthActions.SET_USER,
-            data: authResult.user.uid
-          })
-          dispatch({
-            type: ProfileActions.SET_LOADING_STATE,
-            data: Constants.LoadingState.SUCCESS
-          })
+          console.log('Sign In Success! Fetching profile...')
+          const profileResult = await getProfile(
+            authResult.user.uid,
+            firebaseApp.instance
+          )
+
+          if (profileResult.success) {
+            dispatch({
+              type: AuthActions.SET_USER,
+              data: authResult.user.uid
+            })
+            dispatch({
+              type: ProfileActions.SET_PROFILE,
+              data: profileResult.data
+            })
+            dispatch({
+              type: ProfileActions.SET_LOADING_STATE,
+              data: Constants.LoadingState.SUCCESS
+            })
+          }
         } else {
           console.log("Local sign in didn't work", authResult?.error?.message)
           dispatch({

@@ -65,7 +65,7 @@
     {
       "id": 114,
       "title": "WhatsApp",
-      "type": "Messaging",
+      "type": "messaging",
       "iconSrc": "https://firebasestorage.googleapis.com/v0/b/makemyapp-7aca9.appspot.com/o/flito-static%2Fapp-icons%2Fwhats%20app.png?alt=media&token=32471e0a-92e9-42d4-97fe-aad1f69ab694",
       "description": "Owned by Meta,a FREE messaging and video calling app ",
       "taggedFeatures": [
