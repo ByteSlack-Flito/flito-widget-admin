@@ -19,34 +19,23 @@ import {
   PopoverArrow,
   PopoverCloseButton,
   PopoverHeader,
-  PopoverBody
+  PopoverBody,
+  Spinner
 } from '@chakra-ui/react'
-import { AddMemberModal, MemberDetailsModal } from './components'
+import { AddMemberModal } from './components'
 import { BiX } from 'react-icons/bi'
 import { FiUserPlus } from 'react-icons/fi'
 import './index.css'
-
-const MemberQuickActions = [
-  [
-    {
-      title: 'Remove Member',
-      tooltip:
-        'Remove this user from your team. The user will be disassociated from teams, projects and will not be able to access this organization data.',
-      icon: <BiX color='red' />
-    }
-  ]
-]
+import { useProfile } from '../../data/database/users/profile'
 
 const TeamScreen = () => {
   const detailsModalRef = useRef()
   const addMemberModalRef = useRef()
-
-  function showDetailsScreen () {
-    detailsModalRef.current.open()
-  }
+  const { isFetching, data, get } = useProfile()
   function showAddMemberScreen () {
     addMemberModalRef.current.open()
   }
+
   return (
     <VStack align='flex-start' pt='3'>
       <Text fontSize='lg' fontWeight='normal'>
@@ -65,94 +54,85 @@ const TeamScreen = () => {
           Add Team Members
         </Button>
       </HStack>
-      <MemberDetailsModal ref={detailsModalRef} />
-      <AddMemberModal ref={addMemberModalRef} />
-      <TableContainer w='100%' overflowY='scroll !important' maxH='500px'>
-        <Table size='sm'>
-          <Thead bg='gray.100'>
-            <Tr>
-              <Th>Member</Th>
-              <Th>Role</Th>
-              <Th>Employment Type</Th>
-              <Th>Salary Type</Th>
-              <Th>Salary/Rate</Th>
-              <Th></Th>
-            </Tr>
-          </Thead>
-          <Tbody fontWeight='normal'>
-            <Tr
-              _hover={{
-                bg: 'gray.100'
-              }}
-              // onClick={() => showDetailsScreen()}
-            >
-              <Td>
-                <VStack
-                  align='flex-start'
-                  flexWrap='wrap'
-                  spacing='0'
-                  justify='flex-start'
-                  whiteSpace='pre-line'
-                  overflowWrap='break-word'
+      {/* <MemberDetailsModal ref={detailsModalRef} /> */}
+      <AddMemberModal ref={addMemberModalRef} onSuccessClose={() => get()} />
+      {isFetching && <Spinner size='md' color='blue.400' />}
+      {!isFetching && (data.team?.length <= 0 || !data.team) && (
+        <Text fontSize='md' fontWeight='normal'>
+          Start adding team-members
+        </Text>
+      )}
+      {!isFetching && data?.team?.length > 0 && (
+        <TableContainer w='100%' overflowY='scroll !important' maxH='500px'>
+          <Table size='sm'>
+            <Thead bg='gray.100'>
+              <Tr>
+                <Th>Member</Th>
+                <Th>Role</Th>
+                <Th>Employment Type</Th>
+                <Th>Salary Type</Th>
+                <Th>Salary/Rate</Th>
+                <Th></Th>
+              </Tr>
+            </Thead>
+            <Tbody fontWeight='normal'>
+              {data?.team?.map((member, index) => (
+                <Tr
+                  _hover={{
+                    bg: 'gray.100'
+                  }}
+                  key={index}
                 >
-                  <Text
-                    color='blue.500'
-                    fontWeight='semibold'
-                    fontSize='smaller'
-                  >
-                    Aousaf Rashid
-                  </Text>
-                  <Text fontSize='small' fontWeight='medium'>
-                    aousaf@flito.io
-                  </Text>
-                </VStack>
-              </Td>
-              <Td>Font-End Developer</Td>
-              <Td>{'Full Time (> 30Hrs/Week)'}</Td>
-              <Td>Hourly</Td>
-              <Td textAlign='left' fontWeight='medium'>
-                $45/hr
-              </Td>
-              <Td>
-                <Popover isLazy>
-                  <PopoverTrigger>
-                    <Button
-                      onClick={e => e.stopPropagation()}
-                      colorScheme='red'
-                      // bg="red.300"
-                      variant='solid'
-                      size='xs'
-                    >
-                      Remove
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent
-                    onClick={e => e.stopPropagation()}
-                    cursor='default'
-                  >
-                    <PopoverArrow />
-                    <PopoverCloseButton />
-                    <PopoverHeader>Remove member?</PopoverHeader>
-                    <PopoverBody
-                      whiteSpace='pre-line'
-                      overflowWrap='break-word'
-                    >
-                      <Text fontSize='smaller'>
-                        Are you sure you want to remove this member?
-                      </Text>
-                      <HStack mt='2'>
-                        <Button variant='solid' colorScheme='red' size='xs'>
-                          Yes, Remove
+                  <Td>{member.name}</Td>
+                  <Td>{member.role}</Td>
+                  <Td>{member.employmentType}</Td>
+                  <Td>{member.salary.type}</Td>
+                  <Td textAlign='left' fontWeight='medium'>
+                    {member.salary.rate}
+                    {member.salary.type?.toLowerCase() === 'hourly' && '/hr'}
+                  </Td>
+                  <Td>
+                    <Popover isLazy>
+                      <PopoverTrigger>
+                        <Button
+                          onClick={e => e.stopPropagation()}
+                          colorScheme='red'
+                          // bg="red.300"
+                          variant='solid'
+                          size='xs'
+                        >
+                          Remove
                         </Button>
-                      </HStack>
-                    </PopoverBody>
-                  </PopoverContent>
-                </Popover>
-              </Td>
-            </Tr>
-          </Tbody>
-        </Table>
-      </TableContainer>
+                      </PopoverTrigger>
+                      <PopoverContent
+                        onClick={e => e.stopPropagation()}
+                        cursor='default'
+                      >
+                        <PopoverArrow />
+                        <PopoverCloseButton />
+                        <PopoverHeader>Remove member?</PopoverHeader>
+                        <PopoverBody
+                          whiteSpace='pre-line'
+                          overflowWrap='break-word'
+                        >
+                          <Text fontSize='smaller'>
+                            Are you sure you want to remove this member?
+                          </Text>
+                          <HStack mt='2'>
+                            <Button variant='solid' colorScheme='red' size='xs'>
+                              Yes, Remove
+                            </Button>
+                          </HStack>
+                        </PopoverBody>
+                      </PopoverContent>
+                    </Popover>
+                  </Td>
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+        </TableContainer>
+      )}
     </VStack>
   )
 }

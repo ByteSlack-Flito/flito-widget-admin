@@ -1,150 +1,153 @@
-import { Player } from '@lottiefiles/react-lottie-player'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import LoginScreen from './screens/login'
 import SignUpScreen from './screens/signUp'
-import Logo from '../../logo-trans.png'
 import { useSelector } from 'react-redux'
-import { getDatabase, get, child, ref } from 'firebase/database'
 import {
   Box,
-  Grid,
-  GridItem,
-  Image,
-  Input,
-  Spacer,
-  Stack,
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
   Text,
-  Tabs,
-  Button,
-  InputGroup
+  SimpleGrid,
+  VStack,
+  Heading,
+  HStack,
+  Link,
+  List,
+  ListItem,
+  ListIcon,
+  Image as ChakraImage,
+  Spinner
 } from '@chakra-ui/react'
+import { AnimatePresence, motion } from 'framer-motion'
+import { BsCheckSquareFill } from 'react-icons/bs'
+
+const DID_YOU_KNOW = [
+  "With Flito's Cost Estimator widget, you can attract more traffic to your site.",
+  'You can get more potential leads.',
+  "Flito will launch with it's full-fledged Project Management system soon.",
+  'You can manage your clients, projects, teams, invoices, billings and much more with Flito.'
+]
 
 export default ({}) => {
-  const [stepType, setStepType] = useState('signUp')
-  const [projectMeta, setProjectMeta] = useState()
-  const firebaseApp = useSelector(state => state.firebaseApp.instance)
-  const params = useParams()
+  const sidebarRef = useRef()
+
+  const [formType, setFormType] = useState('signUp')
+  const [sidebarLoaded, setSidebarLoaded] = useState(false)
+
+  function loadSidebarImage () {
+    var src =
+      'https://firebasestorage.googleapis.com/v0/b/makemyapp-7aca9.appspot.com/o/flito-static%2Fflito-onboard-sidebar.jpg?alt=media&token=f57bf7d2-4998-4c99-814b-97c0438d444f'
+    var image = new Image()
+    image.addEventListener('load', function () {
+      sidebarRef.current.style.backgroundImage = 'url(' + src + ')'
+      setSidebarLoaded(true)
+    })
+    image.src = src
+  }
+
   useEffect(() => {
-    if (params.projectId) {
-      const database = getDatabase(firebaseApp)
-      get(child(ref(database), `projectMeta/${params.projectId}`)).then(
-        result => {
-          if (result.exists()) {
-            const data = result.val()
-            setProjectMeta(data)
-          }
-        }
-      )
+    sidebarRef.current && loadSidebarImage()
+  }, [sidebarRef.current])
+
+  function handleFormChange () {
+    setFormType(prev => (prev === 'signIn' ? 'signUp' : 'signIn'))
+  }
+
+  const formHeaders = () => {
+    const headerTypes = {
+      signIn: {
+        title: 'Sign in to Flito',
+        subTitle: 'New to Flito?',
+        link: 'Get Started'
+      },
+      signUp: {
+        title: 'Sign up to Flito',
+        subTitle: 'Already have an account?',
+        link: 'Log In'
+      }
     }
-  }, [])
+    return headerTypes[formType]
+  }
 
   return (
-    // <div className='main onboarding_main'>
-    //   <div className='container_main shadow_dark'>
-    //     <div className='row'>
-    //       <div className='col col-lg-6'>
-    //         <Player className='anim_wrapper' src={LoginAnim} loop autoplay />
-    //         <img
-    //           src={Logo}
-    //           className='site_logo_main site_logo'
-    //           alt='site-logo'
-    //         />
-    //       </div>
-    //       <Spacer />
-    //       <div className='col col-lg-5 d-flex form_container'>
-    //         {stepType === 'signIn' ? (
-    //           <LoginScreen onSwitchRequest={() => setStepType('signUp')} />
-    //         ) : (
-    //           <SignUpScreen
-    //             projectMetaData={projectMeta}
-    //             onSwitchRequest={() => setStepType('signIn')}
-    //           />
-    //         )}
-    //       </div>
-    //     </div>
-    //   </div>
-    // </div>
-    <Grid
-      templateColumns='repeat(8, 1fr)'
-      templateRows='repeat(4, 1fr)'
-      height='100%'
-      // bgGradient='linear(to-tr, #261dfd, #cd7ffc, #fcd045)'
-      bg='#2f6cff14'
-    >
-      <GridItem
-        rowStart={2}
-        rowEnd={4}
-        colStart={4}
-        colEnd={6}
-        p='0'
-        minH='400'
+    <SimpleGrid columns={2} w='full' h='full'>
+      <VStack
+        align='center'
+        // justify='center'
+        pt='20%'
+        boxShadow=' 17px 10px 35px 0px rgba(0,0,0,0.10)'
+        zIndex='99'
       >
-        <Box
-          h='100%'
-          w='100%'
-          boxShadow='lg'
-          borderWidth='thin'
-          borderColor='gray.100'
-          borderRadius='md'
-          bg='white'
-          p='4'
-          pt='2'
-          justifyContent='center'
-        >
-          <Grid templateColumns='repeat(3, 1fr)'>
-            <GridItem colStart={2} p='0'>
-              <Image
-                boxSize='60px'
-                objectFit='contain'
-                src={Logo}
-                alt='Flito Logo'
-                ml='4'
-              />
-            </GridItem>
-          </Grid>
-
-          <Spacer height='2' />
-          <Tabs isFitted>
-            <TabList mb='1em'>
-              <Tab
-                _selected={{
-                  borderColor: '#6565fe',
-                  color: '#6565fe',
-                  fontWeight: 'semibold'
-                }}
-                color='#4a65ff34'
+        <VStack w='full' maxW='400px' align='flex-start'>
+          <Heading display='flex'>{formHeaders().title}</Heading>
+          <HStack fontWeight='medium'>
+            <Text>{formHeaders().subTitle}</Text>
+            <Link color='blue' fontWeight='semibold' onClick={handleFormChange}>
+              {formHeaders().link}
+            </Link>
+          </HStack>
+          <Box h='5' />
+          <AnimatePresence mode='wait'>
+            {formType === 'signUp' && <SignUpScreen />}
+            {formType === 'signIn' && <LoginScreen />}
+          </AnimatePresence>
+        </VStack>
+      </VStack>
+      <VStack ref={sidebarRef} bgSize='cover' position='relative'>
+        <AnimatePresence key='loader' mode='wait'>
+          {!sidebarLoaded && <motion.div
+            style={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%'
+            }}
+            exit={{ opacity: 0, y: -30, transition: { delay: 0.9 } }}
+          >
+            <Spinner size='lg' />
+          </motion.div>}
+        </AnimatePresence>
+        <AnimatePresence key='sidebar' mode='wait'>
+          {sidebarLoaded && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1, transition: { delay: 1 } }}
+              style={{
+                width: '100%',
+                height: '100%'
+              }}
+            >
+              <VStack
+                w='full'
+                h='full'
                 transition='all 300ms'
+                bgGradient='linear(to-b, transparent, blackAlpha.800)'
+                color='white'
+                align='flex-start'
+                justify='flex-end'
+                p='10'
               >
-                Sign In
-              </Tab>
-              <Tab
-                _selected={{
-                  borderColor: '#6565fe',
-                  color: '#6565fe',
-                  fontWeight: 'semibold'
-                }}
-                color='#4a65ff50'
-                transition='all 300ms'
-              >
-                Create Account
-              </Tab>
-            </TabList>
-            <TabPanels>
-              <TabPanel p='0'>
-                <LoginScreen />
-              </TabPanel>
-              <TabPanel p='0'>
-                <SignUpScreen />
-              </TabPanel>
-            </TabPanels>
-          </Tabs>
-        </Box>
-      </GridItem>
-    </Grid>
+                {sidebarLoaded && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0, transition: { delay: 1.5 } }}
+                  >
+                    <VStack align='flex-start'>
+                      <Heading>Did you know ?</Heading>
+                      <List spacing={2} textAlign='left'>
+                        {DID_YOU_KNOW.map((item, index) => (
+                          <ListItem key={index}>
+                            <ListIcon as={BsCheckSquareFill} />
+                            {item}
+                          </ListItem>
+                        ))}
+                      </List>
+                    </VStack>
+                  </motion.div>
+                )}
+              </VStack>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </VStack>
+    </SimpleGrid>
   )
 }

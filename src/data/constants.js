@@ -67,9 +67,57 @@ export const Constants = {
 
   WidgetCode:
     `  <iframe
-    src='https://flito-widget.vercel.app'
+    src='https://widget.flito.io/{widgetCode}'
     style='border: none; min-height: 500px;'
-    width='100%'
-    sandbox='allow-forms allow-scripts'>
+    width='100%'>
   </iframe>`
 }
+
+
+export const devTeam = [
+  {
+    fullName: 'Aousaf Rashid',
+    role: 'Front-End Developer',
+    weekHours: 35,
+    salary: {
+      type: 'hourly',
+      rate: 35
+    }
+  },
+  {
+    fullName: 'Stephen Carl',
+    role: 'Front-End Developer',
+    weekHours: 35,
+    salary: {
+      type: 'hourly',
+      rate: 40
+    }
+  },
+  {
+    fullName: 'Farhad Jaman',
+    role: 'Back-End Developer',
+    weekHours: 35,
+    salary: {
+      type: 'hourly',
+      rate: 40
+    }
+  },
+  {
+    fullName: 'Farhad Jaman',
+    role: 'UI-Designer',
+    weekHours: 50,
+    salary: {
+      type: 'hourly',
+      rate: 70
+    }
+  },
+  {
+    fullName: 'Faizur Rahman',
+    role: 'UX-Designer',
+    weekHours: 50,
+    salary: {
+      type: 'hourly',
+      rate: 70
+    }
+  }
+]

@@ -33,161 +33,40 @@ import { BiX } from 'react-icons/bi'
 
 import DropDown from 'react-dropdown'
 import 'react-dropdown/style.css'
-
-const OrgAccessOptions = [
-  {
-    label: 'Developer',
-    value: 'developer',
-    tooltip: 'User will have access to the project(s), his team is assigned to.'
-  },
-  {
-    label: 'Manager',
-    value: 'manager',
-    tooltip:
-      'User can manage/see all projects, project requests, client lists and invoices. The user will not have access to organization profile settings incl. payment methods.'
-  },
-  {
-    label: 'Admin',
-    value: 'admin',
-    tooltip:
-      'User will have full-admin access of your organization. However, user cannot remove other admins.'
-  }
-]
-
-export const MemberDetailsModal = React.forwardRef(({ projectId }, ref) => {
-  const [isOpen, setIsOpen] = useState(false)
-  const [orgAccessLevel, setOrgAccessLevel] = useState(
-    OrgAccessOptions[0].value
-  )
-
-  function open () {
-    setIsOpen(true)
-  }
-
-  useImperativeHandle(ref, () => ({
-    open
-  }))
-
-  return (
-    <Modal
-      onClose={() => setIsOpen(false)}
-      isOpen={isOpen}
-      scrollBehavior='inside'
-      size={'xl'}
-      motionPreset='slideInBottom'
-    >
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader
-          bg='gray.50'
-          display='flex'
-          justifyContent='space-between'
-          alignItems='center'
-        >
-          <Text w='max-content' fontSize='medium'>
-            User Details
-          </Text>
-        </ModalHeader>
-        <ModalCloseButton mt='1' />
-        <ModalBody pt='5'>
-          <VStack spacing='4' align='flex-start' w='100%'>
-            <HStack>
-              <Avatar size='lg' name='Aousaf Rashid' borderRadius='md' />
-              <Text fontSize='md' fontWeight='semibold'>
-                aousafr<Text fontSize='xs'>aousafr@gmail.com</Text>
-                <Badge colorScheme='orange'>Developer</Badge>
-              </Text>
-            </HStack>
-            <Box w='100%' shadow='md'>
-              <Text
-                fontSize='xs'
-                fontWeight='semibold'
-                w='100%'
-                bg='gray.100'
-                p='2'
-                pl='4'
-              >
-                PROJECT ACCESS
-              </Text>
-              <Box p='2' pl='4' pr='4'>
-                <Text fontSize='xs' fontWeight='medium'>
-                  If this team member is added to a team, you can manage the
-                  team's <i>Project Access</i> instead
-                </Text>
-                <Text fontSize='xs' fontWeight='medium' mt='2'>
-                  Team Name: <Badge colorScheme='purple'>Agile Front-End</Badge>
-                </Text>
-              </Box>
-            </Box>
-            <Box w='100%' shadow='md'>
-              <Text
-                fontSize='xs'
-                fontWeight='semibold'
-                w='100%'
-                bg='gray.100'
-                p='2'
-                pl='4'
-              >
-                ORGANIZATION ACCESS
-              </Text>
-              <Box p='2' pl='4' pr='4'>
-                <RadioGroup
-                  defaultValue={OrgAccessOptions[0].value}
-                  onChange={val => setOrgAccessLevel(val)}
-                >
-                  {OrgAccessOptions.map(option => (
-                    <Radio
-                      key={option.value}
-                      colorScheme='green'
-                      value={option.value}
-                      mr='2'
-                      mb='2'
-                    >
-                      <Text fontSize='xs' fontWeight='medium'>
-                        {option.label}
-                      </Text>
-                    </Radio>
-                  ))}
-                </RadioGroup>
-
-                <Text fontSize='xs' fontWeight='medium'>
-                  {
-                    OrgAccessOptions.filter(x => x.value === orgAccessLevel)[0]
-                      .tooltip
-                  }
-                </Text>
-              </Box>
-            </Box>
-          </VStack>
-        </ModalBody>
-        <Divider />
-        <ModalFooter justifyContent='flex-end'>
-          <Button size='xs' colorScheme='blue' variant='solid' ml='2'>
-            Update
-          </Button>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
-  )
-})
+import {
+  updateProfile,
+  useProfile,
+  useWidget
+} from '../../../data/database/users/profile'
+import { useSelector } from 'react-redux'
+import { useToastGenerator } from '../../../components/global'
+import { arrayUnion } from 'firebase/firestore'
 
 const Roles = [
-  'Front-End Developer',
-  'Back-End Developer',
-  'QA Tester',
-  'DevOps Engineer',
-  'Project Manager',
-  'UI Designer'
+  { label: 'Front-End Developer', value: 'front-end' },
+  { label: 'Back-End Developer', value: 'back-end' },
+  { label: 'QA Tester', value: 'qa-tester' },
+  { label: 'DevOps Engineer', value: 'devops' },
+  { label: 'Project Manager', value: 'project-manager' },
+  { label: 'UI Designer', value: 'ui-designer' }
 ]
 
-const EmploymentTypes = ['Full-Time (> 30hrs/week)', 'Part-Time (< 30hrs/week)']
+const EmploymentTypes = [
+  { label: 'Full-Time (> 30hrs/week)', value: 'full-time-30-plus' },
+  { label: 'Part-Time (< 30hrs/week)', value: 'part-time-30-less' }
+]
 
-const SalaryTypes = ['Yearly', 'Hourly']
+const SalaryTypes = [
+  { label: 'Yearly', value: 'yearly' },
+  { label: 'Hourly', value: 'hourly' }
+]
 
-export const AddMemberModal = React.forwardRef(({ projectId }, ref) => {
+export const AddMemberModal = React.forwardRef(({ onSuccessClose }, ref) => {
   const [isOpen, setIsOpen] = useState(false)
   const [inviteeList, setInviteeList] = useState([])
-  const emailInputRef = useRef()
+  const nameInputRef = useRef()
+  const { update, isUpdating } = useProfile()
+  const toast = useToastGenerator()
 
   function open () {
     setIsOpen(true)
@@ -198,13 +77,13 @@ export const AddMemberModal = React.forwardRef(({ projectId }, ref) => {
   }))
 
   function addMemberToList (key) {
-    const email = emailInputRef.current.value
+    const name = nameInputRef.current.value
     if (key === 'Enter') {
-      if (!inviteeList.some(x => x.email === email))
+      if (!inviteeList.some(x => x.name === name))
         setInviteeList(prev => [
           ...prev,
           {
-            email
+            name
           }
         ])
     }
@@ -217,8 +96,35 @@ export const AddMemberModal = React.forwardRef(({ projectId }, ref) => {
   }
 
   useEffect(() => {
-    if (emailInputRef.current) emailInputRef.current.value = ''
+    if (nameInputRef.current) nameInputRef.current.value = ''
   }, [inviteeList?.length])
+
+  function updateInvitee ({ key, nestedKey, val, inviteeName }) {
+    setInviteeList(prev => {
+      let spread = [...prev]
+      const updIndex = inviteeList.findIndex(x => x.name === inviteeName)
+      if (nestedKey) {
+        if (!spread[updIndex][key]) {
+          spread[updIndex][key] = {}
+        }
+
+        spread[updIndex][key][nestedKey] = val
+      } else {
+        spread[updIndex][key] = val
+      }
+      return spread
+    })
+  }
+
+  async function performUpdate () {
+    // console.log('Result:', inviteeList)
+    const result = await update({ team: arrayUnion(...inviteeList) })
+    toast.show(result)
+    if (result.success) {
+      setIsOpen(false)
+      onSuccessClose()
+    }
+  }
 
   return (
     <Modal
@@ -258,7 +164,7 @@ export const AddMemberModal = React.forwardRef(({ projectId }, ref) => {
               </b>
             </Text>
             <Input
-              ref={emailInputRef}
+              ref={nameInputRef}
               placeholder="Enter member's full name & hit ENTER ↵"
               size='sm'
               maxW='350px'
@@ -297,7 +203,7 @@ export const AddMemberModal = React.forwardRef(({ projectId }, ref) => {
                     >
                       <Td>
                         <Text fontSize='smaller' fontWeight='medium'>
-                          {invitee.email}
+                          {invitee.name}
                         </Text>
                       </Td>
                       <Td maxW='140px'>
@@ -305,6 +211,13 @@ export const AddMemberModal = React.forwardRef(({ projectId }, ref) => {
                           menuClassName='custom-dropdown'
                           options={Roles}
                           placeholder='Select ...'
+                          onChange={e =>
+                            updateInvitee({
+                              key: 'role',
+                              val: e.value,
+                              inviteeName: invitee.name
+                            })
+                          }
                         />
                       </Td>
                       <Td maxW='160px'>
@@ -312,6 +225,13 @@ export const AddMemberModal = React.forwardRef(({ projectId }, ref) => {
                           menuClassName='custom-dropdown'
                           options={EmploymentTypes}
                           placeholder='Select ...'
+                          onChange={e =>
+                            updateInvitee({
+                              key: 'employmentType',
+                              val: e.value,
+                              inviteeName: invitee.name
+                            })
+                          }
                         />
                       </Td>
                       <Td maxW='200px'>
@@ -320,8 +240,27 @@ export const AddMemberModal = React.forwardRef(({ projectId }, ref) => {
                             menuClassName='custom-dropdown'
                             options={SalaryTypes}
                             placeholder='Select ...'
+                            onChange={e =>
+                              updateInvitee({
+                                key: 'salary',
+                                nestedKey: 'type',
+                                val: e.value,
+                                inviteeName: invitee.name
+                              })
+                            }
                           />
-                          <Input size='sm' placeholder='Amount in USD' />
+                          <Input
+                            size='sm'
+                            placeholder='Amount'
+                            onChange={e =>
+                              updateInvitee({
+                                key: 'salary',
+                                nestedKey: 'rate',
+                                val: e.target.value,
+                                inviteeName: invitee.name
+                              })
+                            }
+                          />
                         </HStack>
                       </Td>
                       <Td textAlign='right'>
@@ -346,6 +285,8 @@ export const AddMemberModal = React.forwardRef(({ projectId }, ref) => {
             size='sm'
             colorScheme='blue'
             isDisabled={inviteeList?.length <= 0}
+            onClick={performUpdate}
+            isLoading={isUpdating}
           >
             Add Members
           </Button>

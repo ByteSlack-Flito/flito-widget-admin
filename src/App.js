@@ -1,9 +1,6 @@
 import './App.css'
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
-import {
-  Footer,
-  Header,
-} from './components/global'
+import { Footer, Header } from './components/global'
 import { getRoutes, SiteRoutes } from './misc/routes'
 import { Menu } from './components/menu'
 import { Provider, useDispatch } from 'react-redux'
@@ -12,7 +9,7 @@ import { useSelector } from 'react-redux'
 import { useEffect } from 'react'
 import { Constants } from './data/constants'
 import { FirebaseActions } from './data/actions'
-import { AuthActions } from './data/actions/userActions'
+import { AuthActions, ProfileActions } from './data/actions/userActions'
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
 
 import {
@@ -22,17 +19,16 @@ import {
   Spinner,
   Spacer,
   Menu as ChakraMenu,
-  Button as ChakraButton,
+  Button as ChakraButton
 } from '@chakra-ui/react'
 import { FiUser } from 'react-icons/fi'
+import { signInWithLocal } from './data/database/users/auth'
+import { getProfile } from './data/database/users/profile'
 
-function App() {
+function App () {
   //#region Setting site metadata
   useEffect(() => {
     document.title = Constants.Site.title
-  }, [])
-  useEffect(() => {
-    ChartJS.register(ArcElement, Tooltip, Legend)
   }, [])
   //#endregion
 
@@ -49,7 +45,7 @@ function App() {
 
 export default App
 
-function ScreenRenderer() {
+function ScreenRenderer () {
   const userState = useSelector(state => state.user)
   const firebaseApp = useSelector(state => state.firebaseApp)
   const location = useLocation()
@@ -62,24 +58,56 @@ function ScreenRenderer() {
       type: FirebaseActions.INIT,
       data: {}
     })
-    if (userState.profile?.userId) {
+    if (userState.userId) {
       navigate(
         location.pathname === '/'
-          ? SiteRoutes.Engine.PricingStrategy.path
+          ? SiteRoutes.Engine.Widget.Screens().Widget.path
           : location.pathname,
         true
       )
     }
-  }, [userState.profile?.userId])
+  }, [userState.userId])
 
   useEffect(() => {
-    dispatch({
-      type: AuthActions.PERFORM_SIGNIN_LOCAL,
-      data: {}
-    })
+    if (firebaseApp.instance) {
+      async function trySignIn () {
+        const authResult = await signInWithLocal(firebaseApp.instance)
+
+        if (authResult?.success) {
+          console.log('Sign In Success! Fetching profile...')
+          const profileResult = await getProfile(
+            authResult.user.uid,
+            firebaseApp.instance
+          )
+
+          if (profileResult.success) {
+            dispatch({
+              type: AuthActions.SET_USER,
+              data: authResult.user.uid
+            })
+            dispatch({
+              type: ProfileActions.SET_PROFILE,
+              data: profileResult.data
+            })
+            dispatch({
+              type: ProfileActions.SET_LOADING_STATE,
+              data: Constants.LoadingState.SUCCESS
+            })
+          }
+        } else {
+          console.log("Local sign in didn't work", authResult?.error?.message)
+          dispatch({
+            type: ProfileActions.SET_LOADING_STATE,
+            data: ERROR
+          })
+        }
+      }
+
+      trySignIn()
+    }
   }, [firebaseApp.instance])
 
-  function getMenuItems() {
+  function getMenuItems () {
     return location.pathname.includes('/project/')
       ? routes.Project
       : routes.Engine
@@ -96,7 +124,7 @@ function ScreenRenderer() {
           </div>
         </>
       )
-    } else if (userState.loadingState == SUCCESS && userState.profile?.userId) {
+    } else if (userState.userId) {
       return (
         <Grid
           templateAreas={`"header header"

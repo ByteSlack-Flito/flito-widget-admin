@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import '../components/index.css'
-import { faArrowRight } from '@fortawesome/free-solid-svg-icons'
 import { useDispatch, useSelector } from 'react-redux'
-import { AuthActions } from '../../../data/actions/userActions'
-import { SignUpBanner } from '../components'
+import { AuthActions, ProfileActions } from '../../../data/actions/userActions'
 import { Formik } from 'formik'
-import { StringHelper } from '../../../data/extensions/stringHelper'
+import {
+  StringHelper,
+  validateEmail
+} from '../../../data/extensions/stringHelper'
 import { Constants } from '../../../data/constants'
 import {
   Input,
@@ -16,39 +17,82 @@ import {
   InputGroup,
   InputRightElement,
   useToast,
-  Spinner
+  Spinner,
+  VStack
 } from '@chakra-ui/react'
 import { AiOutlineArrowRight } from 'react-icons/ai'
+import {
+  signInWithCreds,
+  useFirebaseInstance
+} from '../../../data/database/users/auth'
+import { motion } from 'framer-motion'
+import { getProfile, useProfile } from '../../../data/database/users/profile'
 
+// eslint-disable-next-line import/no-anonymous-default-export
 export default ({ onSwitchRequest = () => {} }) => {
   const [globalLoading, setGlobalLoading] = useState(false)
   const user = useSelector(state => state.user)
   const dispatch = useDispatch()
+  const instance = useFirebaseInstance()
   const toast = useToast()
 
-  function performLogin (values) {
-    // console.log('values:', values)
-    dispatch({
-      type: AuthActions.PERFORM_SIGNIN,
-      data: {
-        email: values.email,
-        password: values.password
-      }
+  async function performLogin (values, setSubmitting) {
+    const signnResult = await signInWithCreds(instance, {
+      ...values
     })
+    if (signnResult?.success) {
+      const profileResult = await getProfile(signnResult.user.uid, instance)
+      if (profileResult.success) {
+        dispatch({
+          type: AuthActions.SET_USER,
+          data: signnResult.user.uid
+        })
+        dispatch({
+          type: ProfileActions.SET_PROFILE,
+          data: profileResult.data
+        })
+        dispatch({
+          type: ProfileActions.SET_LOADING_STATE,
+          data: Constants.LoadingState.SUCCESS
+        })
+      } else {
+        setSubmitting(false)
+        console.log(profileResult.error.message)
+        toast({
+          title: "Couldn't fetch profile.",
+          description:
+            profileResult.error.message || 'Something went wrong. Try again.',
+          status: 'error',
+          duration: 3500,
+          isClosable: true
+        })
+      }
+    } else {
+      setSubmitting(false)
+      console.log(signnResult.error.message)
+      toast({
+        title: "Couldn't log in.",
+        description:
+          signnResult.error.message || 'Something went wrong. Try again.',
+        status: 'error',
+        duration: 3500,
+        isClosable: true
+      })
+    }
   }
 
-  useEffect(() => {
-    const { loadingState } = user
-    if (loadingState == Constants.LoadingState.LOADING) {
-      setGlobalLoading(true)
-      dispatch({
-        type: AuthActions.PERFORM_SIGNIN_LOCAL,
-        data: {}
-      })
-    } else {
-      setGlobalLoading(false)
-    }
-  }, [user.loadingState])
+  // useEffect(() => {
+  //   const { loadingState } = user
+  //   if (loadingState == Constants.LoadingState.LOADING) {
+  //     setGlobalLoading(true)
+  //     dispatch({
+  //       type: AuthActions.PERFORM_SIGNIN_LOCAL,
+  //       data: {}
+  //     })
+  //   } else {
+  //     setGlobalLoading(false)
+  //   }
+  // }, [user.loadingState])
 
   function isBusy (isSubmitting) {
     if (isSubmitting) {
@@ -61,27 +105,37 @@ export default ({ onSwitchRequest = () => {} }) => {
   }
 
   return (
-    <div>
+    <motion.div
+      key='signIn'
+      initial={{ opacity: 0, x: 30 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: 30 }}
+      style={{
+        width: '100%'
+      }}
+    >
       <Formik
         initialValues={{
           email: '',
           password: '',
-          errMessage: '',
+          // errMessage: '',
           showPassword: false
         }}
+        validateOnMount
+        validateOnChange
         validate={values => {
           const errors = {}
-          if (StringHelper.isPropsEmpty(values, ['errMessage', 'showPassword']))
-            errors.errMessage = 'Please fill in all details.'
+          if (!validateEmail(values.email)) {
+            errors.email = 'Invalid email address'
+          } else if (values.password?.length <= 0) {
+            errors.password = 'Please type in password'
+          }
           return errors
         }}
-        validateOnChange={false}
         onSubmit={(values, { setSubmitting }) => {
-          if (StringHelper.isEmpty(values.errMessage)) {
-            // console.log('Should try SignIn now...')
-            setSubmitting(true)
-            performLogin(values)
-          }
+          // console.log('Should try SignIn now...')
+          setSubmitting(true)
+          performLogin(values, setSubmitting)
         }}
       >
         {({
@@ -91,7 +145,8 @@ export default ({ onSwitchRequest = () => {} }) => {
           handleSubmit,
           isSubmitting,
           setFieldValue,
-          errors
+          errors,
+          isValid
         }) => (
           <>
             {globalLoading && (
@@ -99,21 +154,14 @@ export default ({ onSwitchRequest = () => {} }) => {
                 <Spinner size='xl' />
               </div>
             )}
-            <Stack direction='column' spacing='2'>
-              <Text
-                fontSize='smaller'
-                fontWeight='medium'
-                align='center !important'
-              >
-                Log-in to your existing Flito account
-              </Text>
-              <Spacer h='2' />
+            <VStack w='full' spacing='3' align='flex-start'>
               <Input
                 placeholder='Enter Email'
                 fontSize='sm'
                 onChange={handleChange('email')}
+                size='lg'
               />
-              <InputGroup size='md'>
+              <InputGroup size='lg'>
                 <Input
                   pr='4.5rem'
                   type={values.showPassword ? 'text' : 'password'}
@@ -135,9 +183,15 @@ export default ({ onSwitchRequest = () => {} }) => {
               </InputGroup>
               <Spacer h='4' />
               <Button
-                rightIcon={<AiOutlineArrowRight />}
+                w='100%'
+                // rightIcon={<AiOutlineArrowRight />}
                 colorScheme='blue'
+                bg='#2564eb'
+                _hover={{
+                  bg: '#154bbf'
+                }}
                 variant='solid'
+                disabled={!isValid}
                 onClick={handleSubmit}
                 isLoading={isBusy(isSubmitting)}
                 loadingText='Logging In'
@@ -145,104 +199,22 @@ export default ({ onSwitchRequest = () => {} }) => {
                 Log In
               </Button>
               <Spacer h='3' />
-              {errors.errMessage || user.error?.message ? (
-                <Text
-                  fontSize='xs'
-                  bg='red.400'
-                  color='white'
-                  align='left'
-                  pt='1'
-                  pb='1'
-                  pl='3'
-                  fontWeight='semibold'
-                >
-                  {errors.errMessage || user.error?.message}
-                </Text>
-              ) : (
-                <Text fontSize='x-small' lineHeight='shorter'>
-                  By clicking 'Log-In', you agree to our Terms of Services and
-                  our cookie-usage policies. Flito will utilise certain cookies
-                  to ensure better user-experience.
-                </Text>
-              )}
-            </Stack>
-            {/* <Title
-                className='font_gradient no_margin'
-                content="Let's Make Your App!"
-                size='large-2'
-                fontType='bold'
-                style={{
-                  paddingBottom: '10px'
-                }}
-              />
-              <SubTitle
-                size='medium'
-                fontType='light'
-                content='Log-in and start building your app now!'
-              />
-              <Spacer size='large' />
-              <Input
-                className={`col col-lg-9 margin_xs ${isBusy(isSubmitting) &&
-                  'disabled'}`}
-                placeholder='Email Address'
-                onValueChange={handleChange('email')}
-              />
-              <Spacer />
-              <Input
-                className={`col col-lg-9 margin_xs ${isBusy(isSubmitting) &&
-                  'disabled'}`}
-                placeholder='Password'
-                isPassword
-                onValueChange={handleChange('password')}
-              />
-              {errors.errMessage || user.error?.message ? (
-                <>
-                  <SubTitle
-                    content={errors.errMessage || user.error.message}
-                    className='font_xs no_margin font_error margin_xs col col-lg-9'
-                    fontType={'bold'}
-                  />
-                  <Spacer size='small' />
-                </>
-              ) : (
-                <Spacer size='medium' />
-              )}
-              <div className='row'>
-                <div className='col col-sm-5'>
-                  <Button
-                    hasShadow
-                    isRounded
-                    theme='dark'
-                    label='Log In'
-                    icon={faArrowRight}
-                    animateIcon
-                    onClick={handleSubmit}
-                    isBusy={isBusy(isSubmitting)}
-                    animateScale
-                  />
-                </div>
-              </div>
-              <Spacer size={'medium'} />
-              <div className='row'>
-                <SubTitle
-                  className='col col-lg-12 font_xs'
-                  content={
-                    <>
-                      By clicking{' '}
-                      <i>
-                        <b className='font_link'>Log In</b>
-                      </i>
-                      , you agree to our{' '}
-                      <i className='font_link'>Terms and Conditions</i>. And you
-                      also agree to allow us to save cookies in your local
-                      browser.
-                    </>
-                  }
-                />
-              </div> */}
+              {/* <Text
+                fontSize='xs'
+                bg='red.400'
+                color='white'
+                align='left'
+                pt='1'
+                pb='1'
+                pl='3'
+                fontWeight='semibold'
+              >
+                {errors.errMessage || user.error?.message}
+              </Text> */}
+            </VStack>
           </>
         )}
       </Formik>
-    </div>
+    </motion.div>
   )
 }

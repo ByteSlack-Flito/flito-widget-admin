@@ -11,14 +11,11 @@ export const ProfileActions = {
 }
 
 export const AuthActions = {
+  SET_USER: 'user/set',
+  SET_USER_SUCCESS: 'user/set',
   PERFORM_SIGNUP: 'user/signup',
   PERFORM_SIGNIN: 'user/signin',
   PERFORM_SIGNIN_LOCAL: 'user/signin/local',
   PERFORM_SIGNOUT: 'user/signout',
   SET_ERROR: 'user/error'
-}
-
-export const ProjectActions = {
-  PERFORM_FEATURE_CHANGE: 'project/current/feature/modify',
-  SET_PROJECT: 'project/current/set'
 }

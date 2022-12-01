@@ -1,9 +1,338 @@
-import React from 'react'
+import {
+  Box,
+  HStack,
+  VStack,
+  Text,
+  Button,
+  Link,
+  Divider,
+  Modal,
+  ModalOverlay,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  Image,
+  SimpleGrid,
+  Input
+} from '@chakra-ui/react'
+import React, {
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState
+} from 'react'
+import { BiCheck, BiCheckCircle, BiXCircle } from 'react-icons/bi'
+import { IoColorPaletteOutline } from 'react-icons/io5'
+import { DiReact } from 'react-icons/di'
+import { Link as ReactRouterLink } from 'react-router-dom'
+import { BsCode, BsCodeSlash } from 'react-icons/bs'
+import { TbTestPipeOff } from 'react-icons/tb'
+import { FaAws } from 'react-icons/fa'
+import { MdDevices, MdOutlineManageAccounts } from 'react-icons/md'
+import '../index.css'
+import { useToastGenerator } from '../../../components/global'
+import { groupBy } from '../../../misc/featureHelper'
+import { AnimatePresence, motion, useElementScroll } from 'framer-motion'
+import { useForm } from 'react-hook-form'
+import { useWidget } from '../../../data/database/users/profile'
+import { useSelector } from 'react-redux'
+import { arrayUnion } from 'firebase/firestore'
 
-const index = () => {
+export const VariantAppView = ({ variant, apps, onClick, pricing }) => {
+  const { data } = useWidget()
+
   return (
-    <div>index</div>
+    <VStack
+      transition='all 300ms'
+      align='flex-start'
+      borderWidth='thin'
+      borderRadius='md'
+      borderColor='gray.200'
+      p='3'
+      role='group'
+      cursor='pointer'
+      _hover={{
+        borderColor: 'teal.300'
+      }}
+      onClick={onClick}
+    >
+      <Text fontSize='sm' fontWeight='medium' textTransform='capitalize'>
+        {variant} Apps
+      </Text>
+      <HStack>
+        {apps
+          .filter((app, index) => index < 3)
+          .map(app => (
+            <Image src={app.iconSrc} h='20px' />
+          ))}
+      </HStack>
+      <Text
+        transition='all 300ms'
+        fontSize='xs'
+        fontWeight='semibold'
+        opacity='0.5'
+        _groupHover={{
+          color: 'teal.400',
+          opacity: 1
+        }}
+      >
+        {pricing
+          ? `${pricing.minAmount}-${pricing.maxAmount} ${data?.pricing?.currency || ''}`
+          : 'Click To Set Price'}
+      </Text>
+    </VStack>
   )
 }
 
-export default index
+export const AddVariantPriceModal = React.forwardRef(
+  ({ onSuccessClose }, ref) => {
+    const [isOpen, setIsOpen] = useState(false)
+    const [variantData, setVariantData] = useState()
+    const { profile } = useSelector(state => state.user)
+    const { update, isUpdating } = useWidget(false)
+    const toast = useToastGenerator()
+
+    const { getValues, reset, handleSubmit, watch, register } = useForm()
+
+    function open () {
+      setIsOpen(true)
+    }
+
+    useImperativeHandle(ref, () => ({
+      open,
+      setVariantData
+    }))
+
+    useEffect(() => {
+      reset(variantData)
+    }, [variantData])
+
+    async function performUpdate () {
+      const data = {
+        name: variantData.name,
+        ...getValues()
+      }
+      const updateResult = await update({ fixedAppPrices: arrayUnion(data) })
+      if (updateResult.success) {
+        onSuccessClose({ name: variantData.name, ...getValues() })
+        setIsOpen(false)
+        reset()
+      } else {
+        toast.show(updateResult)
+      }
+    }
+
+    function handleClose () {
+      setIsOpen(false)
+      reset()
+    }
+
+    return (
+      <Modal
+        onClose={handleClose}
+        isOpen={isOpen}
+        size={'2xl'}
+        motionPreset='slideInBottom'
+        // onCloseComplete={() => reset()}
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader
+            bg='gray.50'
+            display='flex'
+            justifyContent='space-between'
+            alignItems='center'
+            fontSize='md'
+          >
+            <Text>Set Price In {profile?.widget?.pricing?.currency || ''}</Text>
+          </ModalHeader>
+          <ModalCloseButton mt='1' />
+          <ModalBody pt='5' pb='5'>
+            <VStack>
+              <Text fontSize='md'>
+                How much will you charge for{' '}
+                <span
+                  style={{
+                    textTransform: 'capitalize',
+                    color: 'teal',
+                    fontWeight: 'bold'
+                  }}
+                >
+                  {variantData?.name}
+                </span>
+                -like apps?
+              </Text>
+              <form>
+                <HStack>
+                  <Input placeholder='Min. Amount' {...register('minAmount')} />
+                  <Divider
+                    w='20px'
+                    orientation='horizontal'
+                    borderColor='gray.400'
+                  />
+                  <Input placeholder='Max. Amount' {...register('maxAmount')} />
+                </HStack>
+              </form>
+            </VStack>
+          </ModalBody>
+          <Divider />
+          <ModalFooter bg='gray.50'>
+            <Button
+              size='sm'
+              colorScheme='blue'
+              // isDisabled={}
+              onClick={performUpdate}
+              isLoading={isUpdating}
+              loadingText='Updating'
+            >
+              Set Price
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    )
+  }
+)
+
+/**
+ *
+ * @param {object} props The component props
+ * @param {'success' | 'error'} props.type The type of info to show.
+ * @param {''} props.title The title.
+ * @param {Object} props.description The description.
+ * @param {import('@chakra-ui/react').StackProps} props.containerProps The props for the parent `<HStack/>`.
+ * @param {} props.children The description.
+ * @param {'vertical' | 'horizontal'} props.childNestingType The description.
+ */
+export const InfoBox = ({
+  type,
+  title,
+  description,
+  containerProps,
+  children,
+  childNestingType = 'vertical'
+}) => {
+  return type === 'success' ? (
+    <HStack
+      bg='#f1e8fc'
+      color='#5d06c7'
+      pl='2'
+      pr='4'
+      pt='2'
+      pb='2'
+      borderLeftWidth='medium'
+      borderLeftColor='#5d06c7'
+      borderRadius='sm'
+      align='flex-start'
+      borderRightRadius='md'
+      {...containerProps}
+    >
+      <BiCheckCircle size='16' style={{ marginTop: '1px' }} />
+      <VStack fontSize='xs' fontWeight='medium'>
+        <Text className='infobox_title'>
+          {title}
+          <br style={{ lineHeight: '10px' }} />
+          <span className='infobox_desc' style={{ fontWeight: 'normal' }}>
+            {description}
+          </span>
+        </Text>
+        {childNestingType === 'vertical' && children}
+      </VStack>
+    </HStack>
+  ) : (
+    <HStack
+      bg='#fce8e8'
+      color='red.700'
+      pl='2'
+      pr='4'
+      pt='2'
+      pb='2'
+      borderLeftWidth='medium'
+      borderLeftColor='red.600'
+      borderRadius='sm'
+      align='flex-start'
+      borderRightRadius='md'
+      {...containerProps}
+    >
+      <BiXCircle size='16' style={{ marginTop: '1px' }} />
+      <VStack fontSize='xs' fontWeight='medium' align='flex-start'>
+        <Text className='infobox_title'>
+          {title}
+          <br style={{ lineHeight: '10px' }} />
+          <span className='infobox_desc' style={{ fontWeight: 'normal' }}>
+            {description}
+          </span>
+        </Text>
+        {childNestingType === 'vertical' && children}
+      </VStack>
+    </HStack>
+  )
+}
+
+const Role_Icons = ({ size = '20', color = '#000' }) => ({
+  'front-end': <DiReact size={size} color={color} />,
+  'back-end': <BsCode size={size} color={color} />,
+  'qa-tester': <TbTestPipeOff size={size} color={color} />,
+  devops: <FaAws size={size} color={color} />,
+  'project-manager': <MdOutlineManageAccounts size={size} color={color} />,
+  'ui-designer': <IoColorPaletteOutline size={size} color={color} />,
+  'ux-designer': <MdDevices size={size} color={color} />
+})
+
+const shadowColor = index => {
+  const colors = ['83,140,255', '253,83,255', '255,147,83']
+  return colors[index] || colors[0]
+}
+
+export const RoleBox = ({ index, role, rate, currency, roleCount }) => {
+  return (
+    <VStack
+      transition='all 300ms'
+      h='max-content'
+      w='full'
+      shadow='sm'
+      // boxShadow={`-2px 13px 23px -5px rgba(${shadowColor(index)},0.19)`}
+      borderRadius='md'
+      borderWidth='thin'
+      borderColor='gray.200'
+      pl='4'
+      pr='4'
+      pt='2'
+      pb='2'
+      minW='200px'
+      maxW='250px'
+      align='flex-start'
+      _hover={{
+        borderColor: 'blue.200',
+        shadow: 'lg'
+      }}
+    >
+      <HStack align='flex-start'>
+        <Box p='1' borderRadius='full' bg='gray.100' color={shadowColor(index)}>
+          {
+            Role_Icons({
+              color: `rgb(${shadowColor(index)})`
+            })[role]
+          }
+        </Box>
+        <VStack spacing='0' align='flex-start'>
+          <HStack>
+            <Text fontSize='sm' fontWeight='normal' textTransform='capitalize'>
+              {role}
+            </Text>
+          </HStack>
+          <Text fontSize='xx-small' fontWeight='bold'>
+            {roleCount} People
+          </Text>
+          <Text fontSize='sm' fontWeight='thin' pt='2'>
+            {rate} {currency}
+          </Text>
+        </VStack>
+      </HStack>
+    </VStack>
+  )
+}
