@@ -24,7 +24,8 @@ import {
   TableContainer,
   Tbody,
   Divider,
-  Spinner
+  Spinner,
+  Box
 } from '@chakra-ui/react'
 import { extractFeature, extractFeatures } from '../../../misc/featureHelper'
 import { Constants } from '../../../data/constants'
@@ -50,10 +51,6 @@ export const RequestDetailsModal = React.forwardRef(({ projectId }, ref) => {
   useEffect(() => {
     isOpen && metaId && get(metaId)
   }, [metaId])
-
-  useEffect(() => {
-    console.log(data)
-  }, [data])
 
   function open () {
     setIsOpen(true)
@@ -259,6 +256,7 @@ export const RequestDetailsModal = React.forwardRef(({ projectId }, ref) => {
  *
  * @param {object} props The component props
  * @param {import('@chakra-ui/react').StackProps} props.style Styles for the component
+ * @param {boolean} props.isRead
  * @returns
  */
 export const ProjectSingle = ({
@@ -268,7 +266,8 @@ export const ProjectSingle = ({
   devCost,
   devTime,
   createdOn,
-  onClick
+  onClick,
+  isRead
 }) => {
   const navigate = useNavigate()
   const formattedCost = () => {
@@ -276,10 +275,6 @@ export const ProjectSingle = ({
     return kmbt <= 0 ? devCost : kmbt
   }
 
-  // const projectPath = SiteRoutes.Project.Dashboard.path.replace(
-  //   ':projectId',
-  //   '990192'
-  // )
   return (
     <VStack
       minH='max-content'
@@ -300,8 +295,9 @@ export const ProjectSingle = ({
         shadow: 'md',
         borderColor: 'blue.200'
       }}
-      onClick={onClick}
       role='group'
+      pos='relative'
+      onClick={onClick}
       {...style}
     >
       <HStack>
@@ -311,30 +307,30 @@ export const ProjectSingle = ({
           borderRadius='md'
           fontSize='sm'
           bg='gray.200'
-          // borderWidth='thin'
-          // borderColor='blue.300'
           align='center'
           justify='center'
           color='gray.600'
         >
           <Text>{appName.substring(0, 1)}</Text>
         </VStack>
-        {/* <Avatar size='xs' name={appName} borderRadius='md' bg=''/> */}
         <VStack
           spacing='0'
           textAlign='left'
           align='flex-start'
           justify='flex-start'
         >
-          <Text
-            fontSize='smaller'
-            transition='all 300ms'
-            _groupHover={{
-              color: 'blue.500'
-            }}
-          >
-            {appName}
-          </Text>
+          <HStack>
+            <Text
+              fontSize='smaller'
+              transition='all 300ms'
+              _groupHover={{
+                color: 'blue.500'
+              }}
+            >
+              {appName}
+            </Text>
+            {!isRead && <Badge colorScheme='blue'>NEW</Badge>}
+          </HStack>
           <Text
             display='flex'
             fontSize='x-small'

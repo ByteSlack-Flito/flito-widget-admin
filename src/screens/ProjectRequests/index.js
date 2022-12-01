@@ -31,13 +31,29 @@ import { useProfile } from '../../data/database/users/profile'
 
 const ProjectRequestScreen = () => {
   const detailsModalRef = useRef()
-  const { isFetching, data } = useProfile()
+  const { isFetching, data, update } = useProfile()
+  const [doneRead, setDoneRead] = useState([])
 
   useEffect(() => {}, [])
 
-  function showDetailsScreen (id) {
+  async function showDetailsScreen (id) {
     detailsModalRef.current.setMetaId(id)
     detailsModalRef.current.open()
+
+    const { projectRequests } = data
+
+    const isRead =
+      projectRequests?.find(x => x.metaId === id).isRead ||
+      doneRead.includes(id)
+
+    if (!isRead) {
+      doneRead.push(id)
+      let spread = [...projectRequests]
+      const updatingIndex = spread.findIndex(x => x.metaId === id)
+      spread[updatingIndex].isRead = true
+
+      await update({ projectRequests: spread })
+    }
   }
 
   return (
@@ -60,17 +76,21 @@ const ProjectRequestScreen = () => {
               </i>
             </Text>
           )}
-          {data?.projectRequests?.map(project => (
-            <ProjectSingle
-              onClick={() => showDetailsScreen(project.metaId)}
-              style={{
-                marginRight: '3',
-                marginBottom: '3',
-                maxW: '300px'
-              }}
-              {...project}
-            />
-          ))}
+          {data?.projectRequests?.reverse()?.map(project => {
+            const isRead = project.isRead || doneRead.includes(project.metaId)
+            return (
+              <ProjectSingle
+                isRead={isRead}
+                onClick={() => showDetailsScreen(project.metaId)}
+                style={{
+                  marginRight: '3',
+                  marginBottom: '3',
+                  maxW: '300px'
+                }}
+                {...project}
+              />
+            )
+          })}
         </Box>
       )}
     </VStack>
