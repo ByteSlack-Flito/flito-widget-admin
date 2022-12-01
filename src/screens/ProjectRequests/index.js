@@ -31,7 +31,7 @@ import { useProfile } from '../../data/database/users/profile'
 
 const ProjectRequestScreen = () => {
   const detailsModalRef = useRef()
-  const { isFetching, data, update } = useProfile()
+  const { isFetching, data, update, get } = useProfile()
   const [doneRead, setDoneRead] = useState([])
 
   useEffect(() => {}, [])
@@ -53,6 +53,16 @@ const ProjectRequestScreen = () => {
       spread[updatingIndex].isRead = true
 
       await update({ projectRequests: spread })
+    }
+  }
+
+  async function deleteRequest (metaId) {
+    const { projectRequests } = data
+    const updatedArray = projectRequests.filter(x => x.metaId !== metaId)
+
+    const deleteResult = await update({projectRequests: updatedArray})
+    if(deleteResult.success){
+      get()
     }
   }
 
@@ -82,6 +92,7 @@ const ProjectRequestScreen = () => {
               <ProjectSingle
                 isRead={isRead}
                 onClick={() => showDetailsScreen(project.metaId)}
+                onRequestDelete={() => deleteRequest(project.metaId)}
                 style={{
                   marginRight: '3',
                   marginBottom: '3',

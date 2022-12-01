@@ -25,12 +25,21 @@ import {
   Tbody,
   Divider,
   Spinner,
-  Box
+  Box,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverHeader,
+  PopoverArrow,
+  PopoverCloseButton,
+  PopoverBody,
+  PopoverFooter,
+  useDisclosure
 } from '@chakra-ui/react'
 import { extractFeature, extractFeatures } from '../../../misc/featureHelper'
 import { Constants } from '../../../data/constants'
 
-import { BiCollapse, BiExpand, BiX } from 'react-icons/bi'
+import { BiCollapse, BiExpand, BiTrash, BiX } from 'react-icons/bi'
 import { MdAttachMoney } from 'react-icons/md'
 import { useNavigate } from 'react-router-dom'
 import { UserInfo } from '../../../components/global'
@@ -252,11 +261,88 @@ export const RequestDetailsModal = React.forwardRef(({ projectId }, ref) => {
   )
 })
 
+const DeleteButton = ({ onConfirm }) => {
+  const [isBusy, setBusy] = useState(false)
+
+  function performConfirm () {
+    setBusy(true)
+    onConfirm()
+  }
+  return (
+    <Popover placement='right' closeOnEsc closeOnBlur closeDelay={2000}>
+      {({ onClose }) => (
+        <>
+          <PopoverTrigger>
+            <VStack
+              transition='all 200ms'
+              justify='center'
+              align='center'
+              p='2'
+              bg='gray.200'
+              borderRadius='md'
+              pos='absolute'
+              right='0'
+              _hover={{
+                bg: 'red.500',
+                color: 'white'
+              }}
+              onClick={e => {
+                e.stopPropagation()
+              }}
+            >
+              <BiTrash size={14} />
+            </VStack>
+          </PopoverTrigger>
+          <PopoverContent
+            color='white'
+            bg='blue.800'
+            borderColor='blue.800'
+            cursor='default'
+            onClick={e => {
+              e.stopPropagation()
+            }}
+          >
+            <PopoverHeader pt={4} fontWeight='bold' border='0' fontSize='sm'>
+              Delete Request?
+            </PopoverHeader>
+            <PopoverCloseButton mt='2' />
+            <PopoverArrow bg='blue.800' />
+
+            <PopoverFooter
+              border='0'
+              display='flex'
+              alignItems='center'
+              justifyContent='space-between'
+              pb={4}
+            >
+              <ButtonGroup size='xs'>
+                <Button
+                  colorScheme='red'
+                  onClick={performConfirm}
+                  loadingText='Deleting'
+                  isLoading={isBusy}
+                >
+                  Confirm
+                </Button>
+                <Button colorScheme='green' onClick={onClose}>
+                  No, Keep It
+                </Button>
+              </ButtonGroup>
+            </PopoverFooter>
+          </PopoverContent>
+        </>
+      )}
+    </Popover>
+  )
+}
+
 /**
  *
  * @param {object} props The component props
  * @param {import('@chakra-ui/react').StackProps} props.style Styles for the component
  * @param {boolean} props.isRead
+ * @param {() => {}} props.onRequestDelete
+ * @param {() => {}} props.onClick
  * @returns
  */
 export const ProjectSingle = ({
@@ -267,7 +353,8 @@ export const ProjectSingle = ({
   devTime,
   createdOn,
   onClick,
-  isRead
+  isRead,
+  onRequestDelete
 }) => {
   const navigate = useNavigate()
   const formattedCost = () => {
@@ -300,7 +387,7 @@ export const ProjectSingle = ({
       onClick={onClick}
       {...style}
     >
-      <HStack>
+      <HStack w='full' pos='relative'>
         <VStack
           h='30px'
           w='30px'
@@ -341,6 +428,8 @@ export const ProjectSingle = ({
             {moment.utc(createdOn).format('lll')}
           </Text>
         </VStack>
+
+        <DeleteButton onConfirm={onRequestDelete} />
       </HStack>
       <Text fontSize='xs' fontWeight='normal' mt='2' noOfLines={3} h='40px'>
         {appDesc}
