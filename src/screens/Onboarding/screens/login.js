@@ -35,7 +35,6 @@ export default ({ onSwitchRequest = () => {} }) => {
   const dispatch = useDispatch()
   const instance = useFirebaseInstance()
   const toast = useToast()
-  const { get, data, isFetching } = useProfile()
 
   async function performLogin (values, setSubmitting) {
     const signnResult = await signInWithCreds(instance, {

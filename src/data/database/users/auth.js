@@ -110,9 +110,9 @@ export async function signOut(fireInstance){
 }
 
 export async function getUserIdToken (uid) {
-  const api = process.env.REACT_APP_FUNCTIONS_URL
+  const api = process.env.REACT_APP_API_URL
 
-  return axios.post(`${api}/getCustomToken`, {
+  return axios.post(`${api}/auth/getCustomToken`, {
     uid
   })
 }
