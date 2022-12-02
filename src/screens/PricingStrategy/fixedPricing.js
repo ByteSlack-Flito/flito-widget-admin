@@ -11,13 +11,39 @@ import { groupBy } from '../../misc/featureHelper'
 import { VariantAppView, InfoBox, AddVariantPriceModal } from './components'
 import AppListing from '../../assets/jsons/appListing-v2.json'
 import { useWidget } from '../../data/database/users/profile'
+import axios from 'axios'
 
 const FixedPricing = ({ none }) => {
-  const variantApps = groupBy(AppListing.options, 'type')
+  // const variantApps = groupBy(AppListing.options, 'type')
+  const [variantApps, setVariantApps] = useState({
+    isFetching: false,
+    data: undefined
+  })
   const variantModalRef = useRef()
   const { data, isFetching } = useWidget()
 
   const [variantPricing, setVariantPricing] = useState([])
+
+  useEffect(() => {
+    getAppListing()
+  }, [])
+
+  useEffect(() => {
+    if (data) {
+      setVariantPricing(data?.fixedAppPrices)
+    }
+  }, [data])
+
+  async function getAppListing () {
+    setVariantApps(prev => ({ ...prev, isFetching: true }))
+    const api = process.env.REACT_APP_API_URL
+
+    const appListing = await axios.get(`${api}/static/getAppList`)
+    if (appListing.data) {
+      const groupedResult = groupBy(appListing.data.options, 'type')
+      setVariantApps({ isFetching: false, data: groupedResult })
+    }
+  }
 
   function openModal (variant) {
     const currentVariant = variantPricing?.find(x => x.name === variant)
@@ -38,14 +64,8 @@ const FixedPricing = ({ none }) => {
     }
   }
 
-  useEffect(() => {
-    if (data) {
-      setVariantPricing(data?.fixedAppPrices)
-    }
-  }, [data])
-
   const renderIncompleteSetup = () => {
-    const setupCompleted = data?.length >= Object.keys(variantApps).length
+    const setupCompleted = data?.length >= Object.keys(variantApps.data)?.length
     return !setupCompleted ? (
       <InfoBox
         type='error'
@@ -57,14 +77,17 @@ const FixedPricing = ({ none }) => {
     )
   }
 
+  const isAllFetching = (isFetching || variantApps.isFetching) && !data
+
   return (
     <VStack w='full' fontWeight='normal' align='flex-start' spacing='5' pb='10'>
       <AddVariantPriceModal
         ref={variantModalRef}
         onSuccessClose={handleVariantPricing}
       />
-      {isFetching && !data && <Spinner size='md' color='blue.400' />}
-      {!isFetching && data && (
+      {isAllFetching ? (
+        <Spinner size='md' color='blue.400' />
+      ) : (
         <>
           {renderIncompleteSetup()}
           <VStack w='full' spacing='1' align='flex-start'>
@@ -72,15 +95,16 @@ const FixedPricing = ({ none }) => {
               How much will you charge for similar apps?
             </Text>
             <Text fontSize='xs' fontWeight='semibold' color='red.400'>
-              Please provide details for all categories. The more pricing info you provide, the better our AI will work.
+              Please provide details for all categories. The more pricing info
+              you provide, the better our AI will work.
             </Text>
           </VStack>
           <SimpleGrid columns={4} gap='3' w='98%' minChildWidth='250px'>
-            {Object.keys(variantApps).map(variant => (
+            {Object.keys(variantApps.data)?.map(variant => (
               <VariantAppView
                 pricing={variantPricing.find(x => x.name === variant)}
                 variant={variant}
-                apps={variantApps[variant]}
+                apps={variantApps.data[variant]}
                 onClick={() => openModal(variant)}
               />
             ))}
