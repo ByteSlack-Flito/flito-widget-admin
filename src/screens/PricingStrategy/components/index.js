@@ -60,6 +60,7 @@ export const VariantAppView = ({ variant, apps, onClick, pricing }) => {
       }}
       onClick={onClick}
     >
+      {console.log('Rendered..')}
       <Text fontSize='sm' fontWeight='medium' textTransform='capitalize'>
         {variant} Apps
       </Text>
@@ -95,7 +96,7 @@ export const AddVariantPriceModal = React.forwardRef(
     const [isOpen, setIsOpen] = useState(false)
     const [variantData, setVariantData] = useState()
     const { profile } = useSelector(state => state.user)
-    const { update, isUpdating, data } = useWidget(false)
+    const { update, isUpdating, getLatest } = useWidget(false)
     const toast = useToastGenerator()
 
     const { getValues, reset, handleSubmit, watch, register } = useForm()
@@ -114,6 +115,8 @@ export const AddVariantPriceModal = React.forwardRef(
     }, [variantData])
 
     async function performUpdate () {
+      const widgetData = await getLatest()
+
       const priceData = {
         name: variantData.name,
         avgAmount: Math.floor(
@@ -121,7 +124,25 @@ export const AddVariantPriceModal = React.forwardRef(
         ),
         ...getValues()
       }
-      const fixedPrices = data.fixedAppPrices || [priceData]
+      const { fixedAppPrices } = widgetData.data
+
+      const setFixedPrices = () => {
+        if(fixedAppPrices && fixedAppPrices.length > 0){
+          let spread = [...fixedAppPrices]
+          const currentVariantIndex = fixedAppPrices.findIndex(x => x.name === variantData.name)
+          if(currentVariantIndex > -1){
+            spread[currentVariantIndex] = priceData
+          } else {
+            spread = [...spread, priceData]
+          }
+
+          return spread
+        }
+
+        return [priceData]
+      }
+
+      const fixedPrices = setFixedPrices()
       const updateResult = await update({ fixedAppPrices: fixedPrices })
       if (updateResult.success) {
         onSuccessClose({ name: variantData.name, ...getValues() })

@@ -123,18 +123,31 @@ export const useWidget = (fetchByDefault = true) => {
   const document = doc(getFirestore(fireInstance), collectionName, userId)
 
   useEffect(() => {
-    async function get () {
-      setIsFetching(true)
-      const widgetSnap = await getDoc(document)
-      if (widgetSnap.exists()) {
-        setData(widgetSnap.data().widget)
-      } else {
-        setData()
-      }
-      setIsFetching(false)
-    }
     fetchByDefault && get()
   }, [userId])
+  async function get () {
+    setIsFetching(true)
+    const widgetSnap = await getDoc(document)
+    if (widgetSnap.exists()) {
+      setData(widgetSnap.data().widget)
+    } else {
+      setData()
+    }
+    setIsFetching(false)
+  }
+
+  async function getLatest() {
+    const widgetSnap = await getDoc(document)
+    if (widgetSnap.exists()) {
+      return {
+        success: true,
+        data: widgetSnap.data().widget
+      }
+    }
+    return {
+      error: true
+    }
+  }
 
   async function update (data, merge = true) {
     setIsUpdating(true)
@@ -153,7 +166,8 @@ export const useWidget = (fetchByDefault = true) => {
     isFetching,
     isUpdating,
     data,
-    update
+    update,
+    getLatest
   }
   // return [isFetching, isUpdating, data, update]
 }

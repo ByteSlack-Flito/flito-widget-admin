@@ -30,7 +30,7 @@ const FixedPricing = ({ none }) => {
 
   useEffect(() => {
     if (data) {
-      setVariantPricing(data?.fixedAppPrices)
+      setVariantPricing(data?.fixedAppPrices || [])
     }
   }, [data])
 
@@ -54,7 +54,7 @@ const FixedPricing = ({ none }) => {
   }
 
   function handleVariantPricing (data) {
-    const currentIndex = variantPricing.findIndex(x => x.name === data.name)
+    const currentIndex = variantPricing?.findIndex(x => x.name === data.name)
     if (currentIndex > -1) {
       const spread = [...variantPricing]
       spread[currentIndex] = data
@@ -77,7 +77,7 @@ const FixedPricing = ({ none }) => {
     )
   }
 
-  const isAllFetching = (isFetching || variantApps.isFetching) && !data
+  const isAllFetching = (isFetching || variantApps.isFetching) && (!data || !variantApps.data)
 
   return (
     <VStack w='full' fontWeight='normal' align='flex-start' spacing='5' pb='10'>
