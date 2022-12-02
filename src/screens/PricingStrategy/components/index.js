@@ -81,7 +81,9 @@ export const VariantAppView = ({ variant, apps, onClick, pricing }) => {
         }}
       >
         {pricing
-          ? `${pricing.minAmount}-${pricing.maxAmount} ${data?.pricing?.currency || ''}`
+          ? `${pricing.minAmount}-${pricing.maxAmount} ${
+              data?.pricing?.currency || ''
+            }`
           : 'Click To Set Price'}
       </Text>
     </VStack>
@@ -93,7 +95,7 @@ export const AddVariantPriceModal = React.forwardRef(
     const [isOpen, setIsOpen] = useState(false)
     const [variantData, setVariantData] = useState()
     const { profile } = useSelector(state => state.user)
-    const { update, isUpdating } = useWidget(false)
+    const { update, isUpdating, data } = useWidget(false)
     const toast = useToastGenerator()
 
     const { getValues, reset, handleSubmit, watch, register } = useForm()
@@ -112,12 +114,15 @@ export const AddVariantPriceModal = React.forwardRef(
     }, [variantData])
 
     async function performUpdate () {
-      const data = {
+      const priceData = {
         name: variantData.name,
-        avgAmount: Math.floor((Number(getValues().minAmount) + Number(getValues().maxAmount)) / 2),
+        avgAmount: Math.floor(
+          (Number(getValues().minAmount) + Number(getValues().maxAmount)) / 2
+        ),
         ...getValues()
       }
-      const updateResult = await update({ fixedAppPrices: arrayUnion(data) })
+      const fixedPrices = data.fixedAppPrices || [priceData]
+      const updateResult = await update({ fixedAppPrices: fixedPrices })
       if (updateResult.success) {
         onSuccessClose({ name: variantData.name, ...getValues() })
         setIsOpen(false)
