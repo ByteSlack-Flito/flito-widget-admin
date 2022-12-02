@@ -68,7 +68,7 @@ export const VariantAppView = ({ variant, apps, onClick, pricing }) => {
         {apps
           .filter((app, index) => index < 3)
           .map(app => (
-            <Image src={app.iconSrc} h='20px' />
+            <Image src={app.iconSrc} h='20px' loading='lazy'/>
           ))}
       </HStack>
       <Text
