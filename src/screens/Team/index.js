@@ -20,13 +20,16 @@ import {
   PopoverCloseButton,
   PopoverHeader,
   PopoverBody,
-  Spinner
+  Spinner,
+  Box
 } from '@chakra-ui/react'
-import { AddMemberModal } from './components'
+import { AddMemberModal, RoleBoxEditable, RoleBoxSingle } from './components'
 import { BiX } from 'react-icons/bi'
 import { FiUserPlus } from 'react-icons/fi'
 import './index.css'
 import { useProfile } from '../../data/database/users/profile'
+import { Constants } from '../../data/constants'
+import { RoleBox } from '../PricingStrategy/components'
 
 const TeamScreen = () => {
   const detailsModalRef = useRef()
@@ -62,6 +65,11 @@ const TeamScreen = () => {
           Start adding team-members
         </Text>
       )}
+      {/* <Box display='flex' flexWrap='wrap'>
+        {Constants.MemberRoles.map(({ label, value }) => (
+          <RoleBoxEditable roleName={label}/>
+        ))}
+      </Box> */}
       {!isFetching && data?.team?.length > 0 && (
         <TableContainer w='100%' overflowY='scroll !important' maxH='500px'>
           <Table size='sm'>
@@ -84,12 +92,20 @@ const TeamScreen = () => {
                   key={index}
                 >
                   <Td>{member.name}</Td>
-                  <Td>{member.role}</Td>
-                  <Td>{member.employmentType}</Td>
-                  <Td>{member.salary.type}</Td>
+                  <Td textTransform='capitalize'>{member.role}</Td>
+                  <Td textTransform='capitalize'>
+                    {
+                      Constants.MemberEmploymentTypes.find(
+                        x => x.value === member.employmentType
+                      ).label
+                    }
+                  </Td>
+                  <Td textTransform='capitalize'>{member.salary.type}</Td>
                   <Td textAlign='left' fontWeight='medium'>
                     {member.salary.rate}
-                    {member.salary.type?.toLowerCase() === 'hourly' && '/hr'}
+                    {member.salary.type?.toLowerCase() === 'hourly'
+                      ? '/hr'
+                      : '/yr'}
                   </Td>
                   <Td>
                     <Popover isLazy>

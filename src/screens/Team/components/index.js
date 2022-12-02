@@ -41,25 +41,7 @@ import {
 import { useSelector } from 'react-redux'
 import { useToastGenerator } from '../../../components/global'
 import { arrayUnion } from 'firebase/firestore'
-
-const Roles = [
-  { label: 'Front-End Developer', value: 'front-end' },
-  { label: 'Back-End Developer', value: 'back-end' },
-  { label: 'QA Tester', value: 'qa-tester' },
-  { label: 'DevOps Engineer', value: 'devops' },
-  { label: 'Project Manager', value: 'project-manager' },
-  { label: 'UI Designer', value: 'ui-designer' }
-]
-
-const EmploymentTypes = [
-  { label: 'Full-Time (> 30hrs/week)', value: 'full-time-30-plus' },
-  { label: 'Part-Time (< 30hrs/week)', value: 'part-time-30-less' }
-]
-
-const SalaryTypes = [
-  { label: 'Yearly', value: 'yearly' },
-  { label: 'Hourly', value: 'hourly' }
-]
+import { Constants } from '../../../data/constants'
 
 export const AddMemberModal = React.forwardRef(({ onSuccessClose }, ref) => {
   const [isOpen, setIsOpen] = useState(false)
@@ -209,7 +191,7 @@ export const AddMemberModal = React.forwardRef(({ onSuccessClose }, ref) => {
                       <Td maxW='140px'>
                         <DropDown
                           menuClassName='custom-dropdown'
-                          options={Roles}
+                          options={Constants.MemberRoles}
                           placeholder='Select ...'
                           onChange={e =>
                             updateInvitee({
@@ -223,7 +205,7 @@ export const AddMemberModal = React.forwardRef(({ onSuccessClose }, ref) => {
                       <Td maxW='160px'>
                         <DropDown
                           menuClassName='custom-dropdown'
-                          options={EmploymentTypes}
+                          options={Constants.MemberEmploymentTypes}
                           placeholder='Select ...'
                           onChange={e =>
                             updateInvitee({
@@ -238,7 +220,7 @@ export const AddMemberModal = React.forwardRef(({ onSuccessClose }, ref) => {
                         <HStack>
                           <DropDown
                             menuClassName='custom-dropdown'
-                            options={SalaryTypes}
+                            options={Constants.MemberSalaryTypes}
                             placeholder='Select ...'
                             onChange={e =>
                               updateInvitee({

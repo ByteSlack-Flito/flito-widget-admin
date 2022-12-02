@@ -1,4 +1,3 @@
-import { devTeam } from '../../data/constants'
 import { VStack, Box, Text, Link, HStack, SimpleGrid } from '@chakra-ui/react'
 import { groupBy } from '../../misc/featureHelper'
 import { RoleBox } from './components'
