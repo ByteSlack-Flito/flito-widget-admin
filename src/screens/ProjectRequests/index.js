@@ -78,7 +78,7 @@ const ProjectRequestScreen = () => {
       {isFetching && <Spinner size='md' color='blue.400' />}
       {!isFetching && (
         <Box w='full' display='flex' flexWrap='wrap'>
-          {!data?.projectRequests && (
+          {(!data?.projectRequests || data.projectRequests.length <= 0) && (
             <Text fontSize='md' fontWeight='normal' color='gray.500'>
               <i>
                 No requests yet. Once someone uses the Flito Widget integrated
