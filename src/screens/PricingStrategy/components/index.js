@@ -114,6 +114,7 @@ export const AddVariantPriceModal = React.forwardRef(
     async function performUpdate () {
       const data = {
         name: variantData.name,
+        avgAmount: Math.floor((Number(getValues().minAmount) + Number(getValues().maxAmount)) / 2),
         ...getValues()
       }
       const updateResult = await update({ fixedAppPrices: arrayUnion(data) })
