@@ -65,7 +65,7 @@ const FixedPricing = ({ none }) => {
   }
 
   const renderIncompleteSetup = () => {
-    const setupCompleted = data?.length >= Object.keys(variantApps.data)?.length
+    const setupCompleted = data?.length >= Object.keys(variantApps?.data)?.length
     return !setupCompleted ? (
       <InfoBox
         type='error'
@@ -100,11 +100,12 @@ const FixedPricing = ({ none }) => {
             </Text>
           </VStack>
           <SimpleGrid columns={4} gap='3' w='98%' minChildWidth='250px'>
-            {Object.keys(variantApps.data)?.map(variant => (
+            {Object.keys(variantApps?.data)?.map(variant => (
               <VariantAppView
-                pricing={variantPricing.find(x => x.name === variant)}
+                key={variant.name}
+                pricing={variantPricing?.find(x => x.name === variant)}
                 variant={variant}
-                apps={variantApps.data[variant]}
+                apps={variantApps?.data[variant]}
                 onClick={() => openModal(variant)}
               />
             ))}
