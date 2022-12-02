@@ -72,7 +72,7 @@ const FixedPricing = ({ none }) => {
               How much will you charge for similar apps?
             </Text>
             <Text fontSize='xs' fontWeight='semibold' color='red.400'>
-              Please provide details for all categories
+              Please provide details for all categories. The more pricing info you provide, the better our AI will work.
             </Text>
           </VStack>
           <SimpleGrid columns={4} gap='3' w='98%' minChildWidth='250px'>
