@@ -66,6 +66,8 @@ const ProjectRequestScreen = () => {
     }
   }
 
+  const request_sorted = data?.projectRequests?.sort((a, b) => a.createdOn - b.createdOn).reverse()
+
   return (
     <VStack align='flex-start' pt='3'>
       <Text fontSize='lg' fontWeight='normal'>
@@ -86,7 +88,7 @@ const ProjectRequestScreen = () => {
               </i>
             </Text>
           )}
-          {data?.projectRequests?.reverse()?.map(project => {
+          {request_sorted?.map(project => {
             const isRead = project.isRead || doneRead.includes(project.metaId)
             return (
               <ProjectSingle
