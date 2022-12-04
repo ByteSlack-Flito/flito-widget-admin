@@ -21,10 +21,11 @@ import {
   PopoverHeader,
   PopoverBody,
   Spinner,
-  Box
+  Box,
+  IconButton
 } from '@chakra-ui/react'
 import { AddMemberModal, RoleBoxEditable, RoleBoxSingle } from './components'
-import { BiX } from 'react-icons/bi'
+import { BiTrash, BiX } from 'react-icons/bi'
 import { FiUserPlus } from 'react-icons/fi'
 import './index.css'
 import { useProfile } from '../../data/database/users/profile'
@@ -34,9 +35,23 @@ import { RoleBox } from '../PricingStrategy/components'
 const TeamScreen = () => {
   const detailsModalRef = useRef()
   const addMemberModalRef = useRef()
-  const { isFetching, data, get } = useProfile()
+  const { isFetching, data, get, update } = useProfile()
+  const [deletingIndex, setDeletingIndex] = useState(-1)
   function showAddMemberScreen () {
     addMemberModalRef.current.open()
+  }
+
+  async function removeMember (index) {
+    setDeletingIndex(index)
+
+    const updatedTeam = data.team.filter((item, idx) => idx !== index)
+    const updateResult = await update({
+      team: updatedTeam
+    })
+    if (updateResult.success) {
+      setDeletingIndex(-1)
+      await get()
+    }
   }
 
   return (
@@ -110,21 +125,26 @@ const TeamScreen = () => {
                   <Td>
                     <Popover isLazy>
                       <PopoverTrigger>
-                        <Button
+                        <IconButton
                           onClick={e => e.stopPropagation()}
                           colorScheme='red'
                           // bg="red.300"
                           variant='solid'
+                          p='2'
+                          // pb='4'
+                          // pt='4'
                           size='xs'
-                        >
-                          Remove
-                        </Button>
+                          icon={<BiTrash />}
+                        />
                       </PopoverTrigger>
                       <PopoverContent
-                        onClick={e => e.stopPropagation()}
+                        color='white'
+                        bg='blue.800'
+                        borderColor='blue.800'
                         cursor='default'
+                        onClick={e => e.stopPropagation()}
                       >
-                        <PopoverArrow />
+                        <PopoverArrow bg='blue.800' />
                         <PopoverCloseButton />
                         <PopoverHeader>Remove member?</PopoverHeader>
                         <PopoverBody
@@ -135,7 +155,14 @@ const TeamScreen = () => {
                             Are you sure you want to remove this member?
                           </Text>
                           <HStack mt='2'>
-                            <Button variant='solid' colorScheme='red' size='xs'>
+                            <Button
+                              variant='solid'
+                              colorScheme='red'
+                              size='xs'
+                              onClick={() => removeMember(index)}
+                              isLoading={deletingIndex == index}
+                              loadingText='Deleting'
+                            >
                               Yes, Remove
                             </Button>
                           </HStack>
