@@ -117,7 +117,7 @@ const TeamScreen = () => {
                   </Td>
                   <Td textTransform='capitalize'>{member.salary.type}</Td>
                   <Td textAlign='left' fontWeight='medium'>
-                    {member.salary.rate}
+                    {member.salary.principalAmount || member.salary.rate}
                     {member.salary.type?.toLowerCase() === 'hourly'
                       ? '/hr'
                       : '/yr'}
@@ -181,3 +181,4 @@ const TeamScreen = () => {
 }
 
 export default TeamScreen
+

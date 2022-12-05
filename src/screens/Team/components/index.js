@@ -100,7 +100,25 @@ export const AddMemberModal = React.forwardRef(({ onSuccessClose }, ref) => {
 
   async function performUpdate () {
     // console.log('Result:', inviteeList)
-    const result = await update({ team: arrayUnion(...inviteeList) })
+    const spread = inviteeList.map(single => {
+      let invitee = { ...single }
+      if (invitee.salary.type === 'yearly') {
+        invitee.salary.principalAmount = invitee.salary.rate
+
+        const hoursInWeek =
+          invitee.employmentType === Constants.MemberEmploymentTypes[0].value
+            ? 35
+            : 25
+        invitee.salary.rate = Math.floor(
+          invitee.salary.principalAmount / 12 / (hoursInWeek * 4)
+        )
+        /// ^^^ Above, We devide yearly salary by 12 (months in a year),
+        /// So we have their monthly salary. Then we devide it by hoursInWeek (considering they work, say, 35 hrs/week, so we multiple 35 * 4(number of weeks in a month))
+      }
+
+      return invitee
+    })
+    const result = await update({ team: arrayUnion(...spread) })
     toast.show(result)
     if (result.success) {
       setIsOpen(false)
