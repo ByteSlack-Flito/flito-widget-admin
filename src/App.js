@@ -151,7 +151,7 @@ function ScreenRenderer () {
             <Spacer h='2' />
             <Menu data={getMenuItems()} />
           </GridItem>
-          <GridItem pl='4' area={'main'} overflow='scroll'>
+          <GridItem pl='4' area={'main'} overflow='scroll' color='white !important'>
             <Routes>
               {routes.Engine.map((route, index) => {
                 return !route.screens ? (

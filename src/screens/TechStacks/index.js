@@ -9,6 +9,7 @@ import {
 } from '@chakra-ui/react'
 import { useCallback, useEffect, useId, useState } from 'react'
 import { AiOutlineDesktop } from 'react-icons/ai'
+import { BsCheck2 } from 'react-icons/bs'
 import { HiOutlineCursorClick } from 'react-icons/hi'
 import { ImMobile } from 'react-icons/im'
 import { useSelector } from 'react-redux'
@@ -154,13 +155,22 @@ export const TechStackScreen = () => {
                         return (
                           <Button
                             key={platform}
-                            size='xs'
-                            colorScheme={!isSelected ? 'gray' : 'blue'}
+                            size='sm'
+                            color='white'
                             borderWidth='thin'
-                            borderColor={!isSelected ? 'gray.300' : 'blue.400'}
+                            borderColor={'#543d63'}
+                            bg={!isSelected ? 'transparent' : '#543d63'}
+                            leftIcon={isSelected && <BsCheck2/>}
+                            _hover={{
+                              bg: '#0f283d'
+                            }}
+                            _active={{
+                              bg: '#0f283d'
+                            }}
                             onClick={() =>
                               updateSelectedAppTypes(appType, platform)
                             }
+                            borderRadius='full'
                           >
                             {platform}
                           </Button>

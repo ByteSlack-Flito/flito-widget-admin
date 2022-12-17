@@ -1,18 +1,20 @@
 import { Badge, Box, HStack, Text, VStack } from '@chakra-ui/react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { BsCheck2 } from 'react-icons/bs'
+import { BsCheck2, BsCheckAll, BsFillCheckCircleFill } from 'react-icons/bs'
+import './components.css'
 
 function getSelectedStyle (selected) {
   if (selected)
     return {
       // bgGradient: 'linear(to-tr, #7928CA, #FF0080)',
       // borderWidth: 'medium',
-      bg: 'blue.500',
-      borderColor: 'blue.300',
+      bg: '#0f283d',
+      borderWidth: 'thin',
+      borderColor: 'transparent',
       color: 'white',
       _hover: {
-        color: 'white',
-        borderColor: 'blue.300'
+        color: 'white'
+        // borderColor: 'blue.300'
       }
     }
 }
@@ -34,13 +36,13 @@ export const AppTypeSingle = ({
       h='100%'
       p='5'
       borderWidth='thin'
-      borderColor='gray.300'
-      borderRadius='md'
-      color='gray.600'
+      borderColor='#543d63'
       cursor={'pointer'}
+      borderRadius='md'
       _hover={{
-        borderColor: 'blue.300',
-        color: 'blue.500',
+        bg: '#0f283d',
+        borderColor: 'transparent',
+        // color: '#3b154d',
         shadow: 'md'
       }}
       onClick={() => onSelectChange(value)}
@@ -50,7 +52,19 @@ export const AppTypeSingle = ({
     >
       <VStack textAlign='left' align='flex-start'>
         <HStack>
-          {icon}
+          <AnimatePresence mode='wait'>
+            <motion.div
+              key={isSelected}
+              initial={{ x: 10, opacity: 1 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: -10, opacity: 0 }}
+              style={{
+                width: '20px'
+              }}
+            >
+              {isSelected ? <BsFillCheckCircleFill color='white' /> : icon}
+            </motion.div>
+          </AnimatePresence>
           <Text fontSize='md' fontWeight='normal' display='flex'>
             {title}
           </Text>
