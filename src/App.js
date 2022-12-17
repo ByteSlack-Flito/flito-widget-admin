@@ -135,13 +135,15 @@ function ScreenRenderer () {
           h='100%'
           color='blackAlpha.700'
           fontWeight='bold'
+          // bg='red'
+          bgGradient='radial(circle farthest-corner at 10px 250px, #543d63, #3b154d, #091927 300px)'
         >
-          <GridItem pl='2' pr='2' bg='white' shadow='sm' area={'header'}>
+          <GridItem pl='2' pr='2' shadow='sm' area={'header'}>
             <Header />
           </GridItem>
           <GridItem
             area={'nav'}
-            shadow='7px 0px 15px 0px rgba(69,149,255,0.12)'
+            // shadow='7px 0px 15px 0px rgba(69,149,255,0.12)'
             pl='1'
             pr='2'
             zIndex='3'
@@ -162,7 +164,7 @@ function ScreenRenderer () {
               })}
             </Routes>
           </GridItem>
-          <GridItem pl='2' area={'footer'} bg='#f5f0ff'>
+          <GridItem pl='2' area={'footer'}>
             <Footer />
           </GridItem>
         </Grid>

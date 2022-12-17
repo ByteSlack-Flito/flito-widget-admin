@@ -40,28 +40,6 @@ export const SiteRoutes = {
   },
 
   Engine: {
-    Widget: {
-      id: 2,
-      label: 'Widget',
-      Screens: () => {
-        return {
-          Widget: {
-            id: 201,
-            label: 'Get Code',
-            icon: <BiCodeAlt />,
-            path: `${ENGINE_ROUTE}/widget-code`,
-            element: <WidgetScreen />
-          },
-          Requests: {
-            id: 202,
-            label: 'Requests',
-            icon: <MdDashboardCustomize />,
-            path: `${ENGINE_ROUTE}/widget-requests`,
-            element: <ProjectRequestScreen />
-          }
-        }
-      }
-    },
     Setup: {
       id: 1,
       label: 'Setup',
@@ -92,6 +70,28 @@ export const SiteRoutes = {
             icon: <MdOutlineAttachMoney />,
             path: `${ENGINE_ROUTE}/pricing-strategy`,
             element: <PricingStrategyScreen />
+          }
+        }
+      }
+    },
+    Widget: {
+      id: 2,
+      label: 'Widget',
+      Screens: () => {
+        return {
+          Widget: {
+            id: 201,
+            label: 'Get Code',
+            icon: <BiCodeAlt />,
+            path: `${ENGINE_ROUTE}/widget-code`,
+            element: <WidgetScreen />
+          },
+          Requests: {
+            id: 202,
+            label: 'Requests',
+            icon: <MdDashboardCustomize />,
+            path: `${ENGINE_ROUTE}/widget-requests`,
+            element: <ProjectRequestScreen />
           }
         }
       }

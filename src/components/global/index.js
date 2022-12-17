@@ -87,7 +87,23 @@ export const Header = ({ onLinkClick = link => {} }) => {
         <HStack align='center' h='100%' justify='flex-end'>
           <Popover isLazy>
             <PopoverTrigger>
-              <Button rightIcon={<IoExitOutline />} size='xs'>
+              <Button
+                rightIcon={<IoExitOutline />}
+                transition='all 200ms'
+                size='xs'
+                bg='#d885ff20'
+                color='whiteAlpha.600'
+                // borderColor='#d885ff70'
+                // borderWidth='thin'
+                fontWeight='light'
+                _active={{
+                  bg: '#d885ff20'
+                }}
+                _hover={{
+                  color: 'white',
+                  transform: 'scale(1.05)'
+                }}
+              >
                 Log Out
               </Button>
             </PopoverTrigger>
