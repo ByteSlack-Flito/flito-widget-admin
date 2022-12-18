@@ -33,26 +33,6 @@ import { GrUser } from 'react-icons/gr'
 import { useCallback, useState } from 'react'
 import { signOut, useFirebaseInstance } from '../../data/database/users/auth'
 
-/**
- * The global Spacer component
- * @param {object} props Component props
- * @param {'small' | 'medium' | 'large'} props.size Defines the size of the component, affecting `padding`, `border` etc. properties. Defaults to `small`.
- * @param {number} props.times Multiply the size of the spacer.
- */
-export const Spacer = ({ size = 'small', times }) => {
-  const initSize = 10 * times
-  return !times ? (
-    <div className={`spacer_${size ? size : 'small'}`} />
-  ) : (
-    <div
-      style={{
-        height: initSize,
-        widows: initSize
-      }}
-    />
-  )
-}
-
 export const Header = ({ onLinkClick = link => {} }) => {
   const [isLogginOut, setIsLoggingOut] = useState(false)
   const dispatch = useDispatch()
@@ -279,4 +259,13 @@ export const UserInfo = ({
       </Tooltip>
     )
   )
+}
+
+const LinkStyles = {
+  color: 'teal',
+  fontWeight: 'semibold'
+}
+
+export const SiteStyles = {
+  LinkStyles
 }

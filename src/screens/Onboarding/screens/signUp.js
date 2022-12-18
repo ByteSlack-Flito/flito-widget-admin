@@ -32,6 +32,8 @@ import { updateProfile } from '../../../data/database/users/profile'
 import { motion } from 'framer-motion'
 import { TOUModal } from '../components'
 import { Constants } from '../../../data/constants'
+import { InputStyles } from '..'
+import { SiteStyles } from '../../../components/global'
 
 export default ({ onSwitchRequest = () => {}, projectMetaData }) => {
   const dispatch = useDispatch()
@@ -93,12 +95,7 @@ export default ({ onSwitchRequest = () => {}, projectMetaData }) => {
   }
 
   return (
-    <motion.div
-      key='signUp'
-      initial={{ opacity: 0, x: 30 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -30 }}
-    >
+    <>
       <TOUModal ref={toumodalRef} />
       <Formik
         initialValues={{
@@ -155,12 +152,14 @@ export default ({ onSwitchRequest = () => {}, projectMetaData }) => {
                 fontSize='sm'
                 onChange={handleChange('fullName')}
                 size='lg'
+                {...InputStyles}
               />
               <Input
                 placeholder='Organization Name'
                 fontSize='sm'
                 onChange={handleChange('organizationName')}
                 size='lg'
+                {...InputStyles}
               />
             </HStack>
             <Input
@@ -168,6 +167,7 @@ export default ({ onSwitchRequest = () => {}, projectMetaData }) => {
               fontSize='sm'
               onChange={handleChange('email')}
               size='lg'
+              {...InputStyles}
             />
             <InputGroup size='lg'>
               <Input
@@ -176,14 +176,21 @@ export default ({ onSwitchRequest = () => {}, projectMetaData }) => {
                 placeholder='Enter password'
                 onChange={handleChange('password')}
                 fontSize='sm'
+                {...InputStyles}
               />
               <InputRightElement width='4.5rem'>
                 <Button
+                  transition='all 200ms'
                   h='1.75rem'
                   size='sm'
                   onClick={() =>
                     setFieldValue('showPassword', !values.showPassword)
                   }
+                  bg='#091927'
+                  _hover={{
+                    bg: '#09192760'
+                  }}
+                  // bgGradient='radial(circle farthest-corner at 90% 90%, #543d63, #3b154d, #091927 300px)'
                 >
                   {values.showPassword ? 'Hide' : 'Show'}
                 </Button>
@@ -196,16 +203,12 @@ export default ({ onSwitchRequest = () => {}, projectMetaData }) => {
               onChange={handleChange('rePassword')}
               fontSize='sm'
               size='lg'
+              {...InputStyles}
             />
             <Checkbox onChange={handleChange('termsAgreed')}>
               <Text fontSize='sm' display='flex'>
                 I agree to Flito's{' '}
-                <Link
-                  onClick={showTouModal}
-                  pl='1'
-                  fontWeight='semibold'
-                  color='blue.600'
-                >
+                <Link onClick={showTouModal} pl='1' {...SiteStyles.LinkStyles}>
                   Terms Of Use
                 </Link>
               </Text>
@@ -246,6 +249,6 @@ export default ({ onSwitchRequest = () => {}, projectMetaData }) => {
           </VStack>
         )}
       </Formik>
-    </motion.div>
+    </>
   )
 }

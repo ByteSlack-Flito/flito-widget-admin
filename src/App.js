@@ -26,11 +26,6 @@ import { signInWithLocal } from './data/database/users/auth'
 import { getProfile } from './data/database/users/profile'
 
 function App () {
-  //#region Setting site metadata
-  useEffect(() => {
-    document.title = Constants.Site.title
-  }, [])
-  //#endregion
 
   return (
     <ChakraProvider>

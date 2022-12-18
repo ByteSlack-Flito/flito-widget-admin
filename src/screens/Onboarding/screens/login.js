@@ -27,6 +27,7 @@ import {
 } from '../../../data/database/users/auth'
 import { motion } from 'framer-motion'
 import { getProfile, useProfile } from '../../../data/database/users/profile'
+import { InputStyles } from '..'
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default ({ onSwitchRequest = () => {} }) => {
@@ -105,15 +106,7 @@ export default ({ onSwitchRequest = () => {} }) => {
   }
 
   return (
-    <motion.div
-      key='signIn'
-      initial={{ opacity: 0, x: 30 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: 30 }}
-      style={{
-        width: '100%'
-      }}
-    >
+    <>
       <Formik
         initialValues={{
           email: '',
@@ -154,12 +147,13 @@ export default ({ onSwitchRequest = () => {} }) => {
                 <Spinner size='xl' />
               </div>
             )}
-            <VStack w='full' spacing='3' align='flex-start'>
+            <VStack w='100%' spacing='3' align='flex-start'>
               <Input
                 placeholder='Enter Email'
                 fontSize='sm'
                 onChange={handleChange('email')}
                 size='lg'
+                {...InputStyles}
               />
               <InputGroup size='lg'>
                 <Input
@@ -168,6 +162,7 @@ export default ({ onSwitchRequest = () => {} }) => {
                   placeholder='Enter password'
                   fontSize='sm'
                   onChange={handleChange('password')}
+                  {...InputStyles}
                 />
                 <InputRightElement width='4.5rem'>
                   <Button
@@ -176,6 +171,10 @@ export default ({ onSwitchRequest = () => {} }) => {
                     onClick={() =>
                       setFieldValue('showPassword', !values.showPassword)
                     }
+                    bg='#091927'
+                    _hover={{
+                      bg: '#09192760'
+                    }}
                   >
                     {values.showPassword ? 'Hide' : 'Show'}
                   </Button>
@@ -215,6 +214,6 @@ export default ({ onSwitchRequest = () => {} }) => {
           </>
         )}
       </Formik>
-    </motion.div>
+    </>
   )
 }
