@@ -265,7 +265,18 @@ const LinkStyles = {
   color: 'teal',
   fontWeight: 'semibold'
 }
+const ButtonStyles = {
+  transition: 'all 300ms',
+  bg: '#0f283d',
+  dropShadow: 'md',
+  borderWidth: 'thin',
+  borderColor: 'teal.400',
+  _hover: {
+    bg: 'teal'
+  }
+}
 
 export const SiteStyles = {
-  LinkStyles
+  LinkStyles,
+  ButtonStyles
 }

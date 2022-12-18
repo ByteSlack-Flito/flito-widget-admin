@@ -13,7 +13,7 @@ import { BsCheck2 } from 'react-icons/bs'
 import { HiOutlineCursorClick } from 'react-icons/hi'
 import { ImMobile } from 'react-icons/im'
 import { useSelector } from 'react-redux'
-import { ScreenContainer, useToastGenerator } from '../../components/global'
+import { ScreenContainer, SiteStyles, useToastGenerator } from '../../components/global'
 import { useFirebaseInstance } from '../../data/database/users/auth'
 import { updateProfile, useWidget } from '../../data/database/users/profile'
 import { AppTypeSingle } from './components'
@@ -160,7 +160,7 @@ export const TechStackScreen = () => {
                             borderWidth='thin'
                             borderColor={'#543d63'}
                             bg={!isSelected ? 'transparent' : '#543d63'}
-                            leftIcon={isSelected && <BsCheck2/>}
+                            leftIcon={isSelected && <BsCheck2 />}
                             _hover={{
                               bg: '#0f283d'
                             }}
@@ -187,14 +187,15 @@ export const TechStackScreen = () => {
       <Button
         disabled={!isFormValid()}
         size='sm'
-        colorScheme='teal'
+        // colorScheme='blue'
         variant='solid'
         fontWeight='semibold'
         mt='7'
         isLoading={isUpdating}
         onClick={performUpdate}
+        {...SiteStyles.ButtonStyles}
       >
-        Update Preferences
+        Update Stacks
       </Button>
     </ScreenContainer>
   )
