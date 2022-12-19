@@ -103,7 +103,7 @@ export const SiteRoutes = {
  *
  * @returns All the routes of the site
  */
-export function getRoutes (location) {
+export function getRoutes () {
   const onboardingRoutes = Object.keys(SiteRoutes.Onboarding).map(prop => {
     const initRoute = SiteRoutes.Onboarding[prop]
     if (initRoute.Screens) {

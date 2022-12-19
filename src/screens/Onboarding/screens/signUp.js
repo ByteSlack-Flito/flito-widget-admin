@@ -32,7 +32,6 @@ import { updateProfile } from '../../../data/database/users/profile'
 import { motion } from 'framer-motion'
 import { TOUModal } from '../components'
 import { Constants } from '../../../data/constants'
-import { InputStyles } from '..'
 import { SiteStyles } from '../../../components/global'
 
 export default ({ onSwitchRequest = () => {}, projectMetaData }) => {
@@ -152,14 +151,16 @@ export default ({ onSwitchRequest = () => {}, projectMetaData }) => {
                 fontSize='sm'
                 onChange={handleChange('fullName')}
                 size='lg'
-                {...InputStyles}
+                {...SiteStyles.InputStyles}
+
               />
               <Input
                 placeholder='Organization Name'
                 fontSize='sm'
                 onChange={handleChange('organizationName')}
                 size='lg'
-                {...InputStyles}
+                {...SiteStyles.InputStyles}
+
               />
             </HStack>
             <Input
@@ -167,7 +168,8 @@ export default ({ onSwitchRequest = () => {}, projectMetaData }) => {
               fontSize='sm'
               onChange={handleChange('email')}
               size='lg'
-              {...InputStyles}
+              {...SiteStyles.InputStyles}
+
             />
             <InputGroup size='lg'>
               <Input
@@ -176,7 +178,8 @@ export default ({ onSwitchRequest = () => {}, projectMetaData }) => {
                 placeholder='Enter password'
                 onChange={handleChange('password')}
                 fontSize='sm'
-                {...InputStyles}
+                {...SiteStyles.InputStyles}
+
               />
               <InputRightElement width='4.5rem'>
                 <Button
@@ -203,7 +206,7 @@ export default ({ onSwitchRequest = () => {}, projectMetaData }) => {
               onChange={handleChange('rePassword')}
               fontSize='sm'
               size='lg'
-              {...InputStyles}
+              {...SiteStyles.InputStyles}
             />
             <Checkbox onChange={handleChange('termsAgreed')}>
               <Text fontSize='sm' display='flex'>

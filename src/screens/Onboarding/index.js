@@ -113,8 +113,3 @@ export default ({}) => {
     </SimpleGrid>
   )
 }
-
-export const InputStyles = {
-  bg: '#0f283d',
-  border: 'none'
-}

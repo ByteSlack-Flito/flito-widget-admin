@@ -27,7 +27,7 @@ import {
 } from '../../../data/database/users/auth'
 import { motion } from 'framer-motion'
 import { getProfile, useProfile } from '../../../data/database/users/profile'
-import { InputStyles } from '..'
+import { SiteStyles } from '../../../components/global'
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default ({ onSwitchRequest = () => {} }) => {
@@ -153,7 +153,7 @@ export default ({ onSwitchRequest = () => {} }) => {
                 fontSize='sm'
                 onChange={handleChange('email')}
                 size='lg'
-                {...InputStyles}
+                {...SiteStyles.InputStyles}
               />
               <InputGroup size='lg'>
                 <Input
@@ -162,7 +162,8 @@ export default ({ onSwitchRequest = () => {} }) => {
                   placeholder='Enter password'
                   fontSize='sm'
                   onChange={handleChange('password')}
-                  {...InputStyles}
+                  {...SiteStyles.InputStyles}
+
                 />
                 <InputRightElement width='4.5rem'>
                   <Button

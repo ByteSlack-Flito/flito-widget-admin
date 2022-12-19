@@ -107,7 +107,6 @@ export const TechStackScreen = () => {
   }
   return (
     <ScreenContainer
-      title='Tech Stacks'
       description='Manage what applications you offer to develop for your clients.'
     >
       <SimpleGrid spacing='40px' columns={5}>
