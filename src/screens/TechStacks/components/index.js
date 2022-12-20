@@ -1,6 +1,7 @@
 import { Badge, Box, HStack, Text, VStack } from '@chakra-ui/react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { BsCheck2, BsCheckAll, BsFillCheckCircleFill } from 'react-icons/bs'
+import { SiteStyles } from '../../../components/global'
 import './components.css'
 
 function getSelectedStyle (selected) {
@@ -34,19 +35,8 @@ export const AppTypeSingle = ({
       transition='all 200ms'
       w='100%'
       h='100%'
-      p='5'
-      borderWidth='thin'
-      borderColor='#543d63'
-      cursor={'pointer'}
-      borderRadius='md'
-      _hover={{
-        bg: '#0f283d',
-        borderColor: 'transparent',
-        // color: '#3b154d',
-        shadow: 'md'
-      }}
+      {...SiteStyles.ClickableContainer}
       onClick={() => onSelectChange(value)}
-      userSelect='none'
       justifyContent='space-between'
       {...getSelectedStyle(isSelected)}
     >

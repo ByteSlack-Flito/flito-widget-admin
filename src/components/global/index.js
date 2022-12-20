@@ -34,6 +34,7 @@ import { useCallback, useState } from 'react'
 import { signOut, useFirebaseInstance } from '../../data/database/users/auth'
 import { BsChevronRight } from 'react-icons/bs'
 import { AiOutlineRight } from 'react-icons/ai'
+import { BiUser, BiX } from 'react-icons/bi'
 
 export const Header = ({ onLinkClick = link => {} }) => {
   const [isLogginOut, setIsLoggingOut] = useState(false)
@@ -281,12 +282,10 @@ export const UserInfo = ({
     size === 'compact' && (
       <Tooltip hasArrow label='Click to copy email'>
         <Button
-          leftIcon={<GrUser />}
-          //   rightIcon={<TbExternalLink size={12} />}
+          leftIcon={<BiUser style={{ color: 'white' }} />}
           size='xs'
-          variant='solid'
-          colorScheme='gray'
           ml='2'
+          {...ButtonStyles}
         >
           {name} - {email}
         </Button>
@@ -305,6 +304,7 @@ const ButtonStyles = {
   dropShadow: 'md',
   borderWidth: 'thin',
   borderColor: 'teal.400',
+  color: 'white',
   _active: {
     bg: 'teal'
   },
@@ -317,9 +317,45 @@ const InputStyles = {
   bg: '#0f283d',
   border: 'none'
 }
+const ClickableContainer = {
+  userSelect: 'none',
+  borderWidth: 'thin',
+  borderColor: '#543d63',
+  cursor: 'pointer',
+  borderRadius: 'md',
+  _hover: {
+    bg: '#0f283d',
+    borderColor: 'transparent',
+    // color: '#3b154d',
+    shadow: 'md'
+  },
+  p: '5'
+}
+const DeleteButton = {
+  bg: '#14344f',
+  variant: 'solid',
+  p: '2',
+  size: 'xs',
+  h: '30px',
+  _active: {
+    bg: '#3d0f1b'
+  },
+  _hover: {
+    bg: '#61162a'
+  },
+  icon: <BiX size={16} />
+}
+
+const BadgeStyle = {
+  bg: '#543d63',
+  color: 'white'
+}
 
 export const SiteStyles = {
   LinkStyles,
   ButtonStyles,
-  InputStyles
+  InputStyles,
+  ClickableContainer,
+  DeleteButton,
+  BadgeStyle
 }

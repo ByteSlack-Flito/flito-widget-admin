@@ -154,17 +154,7 @@ const TeamScreen = () => {
                           <PopoverTrigger>
                             <IconButton
                               onClick={e => e.stopPropagation()}
-                              bg='#0f283d'
-                              variant='solid'
-                              p='2'
-                              size='xs'
-                              _active={{
-                                bg: '#3d0f1b'
-                              }}
-                              _hover={{
-                                bg: '#61162a'
-                              }}
-                              icon={<BiX size={16} />}
+                              {...SiteStyles.DeleteButton}
                             />
                           </PopoverTrigger>
                           <PopoverContent
@@ -176,7 +166,7 @@ const TeamScreen = () => {
                           >
                             <PopoverArrow bg='blue.800' />
                             <PopoverCloseButton />
-                            <PopoverHeader>Remove member?</PopoverHeader>
+                            <PopoverHeader pt={4} fontWeight='bold' border='0' fontSize='sm'>Remove member?</PopoverHeader>
                             <PopoverBody
                               whiteSpace='pre-line'
                               overflowWrap='break-word'

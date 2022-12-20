@@ -42,11 +42,12 @@ import { Constants } from '../../../data/constants'
 import { BiCollapse, BiExpand, BiTrash, BiX } from 'react-icons/bi'
 import { MdAttachMoney } from 'react-icons/md'
 import { useNavigate } from 'react-router-dom'
-import { UserInfo } from '../../../components/global'
+import { SiteStyles, UserInfo } from '../../../components/global'
 import { BsClockHistory } from 'react-icons/bs'
 import moment from 'moment'
 import { useProjectMeta } from '../../../data/database/projectMeta'
 import { useProfile, useWidget } from '../../../data/database/users/profile'
+import { trimString } from '../../../data/extensions/stringHelper'
 
 export const RequestDetailsModal = React.forwardRef(({ projectId }, ref) => {
   const [featureList, setFeatureList] = useState()
@@ -80,9 +81,9 @@ export const RequestDetailsModal = React.forwardRef(({ projectId }, ref) => {
       motionPreset='slideInBottom'
     >
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent color='white' bg='#143554'>
         <ModalHeader
-          bg='gray.50'
+          bg='#0f283d'
           display='flex'
           justifyContent='space-between'
           alignItems='center'
@@ -100,11 +101,11 @@ export const RequestDetailsModal = React.forwardRef(({ projectId }, ref) => {
           >
             <IconButton
               icon={modalFullscreen ? <BiCollapse /> : <BiExpand />}
-              variant='solid'
-              colorScheme='gray'
               size='sm'
               mr='5'
               onClick={() => setModalFullscreen(prev => !prev)}
+              {...SiteStyles.ButtonStyles}
+              border='none'
             />
           </Tooltip>
         </ModalHeader>
@@ -124,13 +125,12 @@ export const RequestDetailsModal = React.forwardRef(({ projectId }, ref) => {
                       key={index}
                       textTransform='capitalize'
                       fontSize='xs'
-                      bg='teal'
                       borderRadius='md'
                       pl='2'
                       pr='2'
                       pb='0.5'
                       pt='0.5'
-                      color='white'
+                      {...SiteStyles.BadgeStyle}
                     >
                       <b>{platform}</b>
                     </Text>
@@ -141,24 +141,29 @@ export const RequestDetailsModal = React.forwardRef(({ projectId }, ref) => {
                 <Text fontSize='smaller' fontWeight='medium'>
                   Development Phases:
                 </Text>
-                {buildPhases.map((phase, index) => {
-                  return (
-                    <ButtonGroup size='xs' isAttached variant='outline'>
-                      <Button>{phase}</Button>
-                    </ButtonGroup>
-                  )
-                })}
+                <Text
+                  textTransform='capitalize'
+                  fontSize='xs'
+                  borderRadius='md'
+                  pl='2'
+                  pr='2'
+                  pb='0.5'
+                  pt='0.5'
+                  {...SiteStyles.BadgeStyle}
+                >
+                  <b>{buildPhases[0]}</b>
+                </Text>
               </HStack>
               <TableContainer
                 w='100%'
                 overflowY='scroll !important'
                 maxH='500px'
-                borderWidth='1px'
-                borderColor='blue.100'
                 borderRadius='md'
+                borderWidth='thin'
+                borderColor='#0f283d'
               >
-                <Table size='sm'>
-                  <Thead bg='gray.100'>
+                <Table className='custom-table' size='sm'>
+                  <Thead bg='#0f283d' h='35px'>
                     <Tr>
                       <Th>Requested Features</Th>
                     </Tr>
@@ -168,8 +173,9 @@ export const RequestDetailsModal = React.forwardRef(({ projectId }, ref) => {
                       return (
                         <Tr
                           key={index}
+                          transition='all 200ms'
                           _hover={{
-                            bg: 'gray.50'
+                            bg: '#0f283d50'
                           }}
                         >
                           <Td>
@@ -202,39 +208,59 @@ export const RequestDetailsModal = React.forwardRef(({ projectId }, ref) => {
             </VStack>
           )}
         </ModalBody>
-        <Divider />
         <ModalFooter>
           {!isFetching && data && (
-            <VStack w='full' justify='flex-start' align='flex-start'>
-              <HStack w='100%' pt='5'>
+            <VStack
+              w='full'
+              justify='flex-start'
+              align='flex-start'
+              bg='#0f283d'
+              p='5'
+              borderRadius='md'
+            >
+              <HStack w='100%'>
                 <Text fontSize='sm' fontWeight='medium' minW='max-content'>
                   Proposal Details
                 </Text>
-                <Divider colorScheme='blue' />
               </HStack>
               <HStack>
-                <Text fontSize='xs' display='flex' fontWeight='medium'>
+                <Text fontSize='sm' display='flex' fontWeight='medium'>
                   Widget Quoted:
                   <Tooltip label='AI Quoted development cost' hasArrow>
-                    <Badge borderRadius='md' ml='2' colorScheme='blue'>
+                    <Badge
+                      fontSize='sm'
+                      borderRadius='sm'
+                      ml='2'
+                      colorScheme='blue'
+                    >
                       {data.devCost} {widgetHook.data?.pricing?.currency}
                     </Badge>
                   </Tooltip>
                   <Tooltip label='AI Quoted development timeline' hasArrow>
-                    <Badge borderRadius='md' ml='2' colorScheme='purple'>
+                    <Badge
+                      fontSize='sm'
+                      borderRadius='sm'
+                      ml='2'
+                      colorScheme='purple'
+                    >
                       {data.devTime} Weeks
                     </Badge>
                   </Tooltip>
                 </Text>
                 {data.expectation && (
-                  <Text fontSize='xs' display='flex' fontWeight='medium'>
+                  <Text fontSize='sm' display='flex' fontWeight='medium'>
                     Client's Expectation:
                     {data.expectation.budget && (
                       <Tooltip
                         label="Client's development cost expectation"
                         hasArrow
                       >
-                        <Badge borderRadius='md' ml='2' colorScheme='blue'>
+                        <Badge
+                          fontSize='sm'
+                          borderRadius='sm'
+                          ml='2'
+                          colorScheme='blue'
+                        >
                           {data.expectation.budget}{' '}
                           {widgetHook.data?.pricing?.currency}
                         </Badge>
@@ -245,7 +271,12 @@ export const RequestDetailsModal = React.forwardRef(({ projectId }, ref) => {
                         label="Client's development timeline expectation"
                         hasArrow
                       >
-                        <Badge borderRadius='md' ml='2' colorScheme='purple'>
+                        <Badge
+                          fontSize='sm'
+                          borderRadius='sm'
+                          ml='2'
+                          colorScheme='purple'
+                        >
                           {data.expectation.timeline}
                         </Badge>
                       </Tooltip>
@@ -273,25 +304,12 @@ const DeleteButton = ({ onConfirm }) => {
       {({ onClose }) => (
         <>
           <PopoverTrigger>
-            <VStack
-              transition='all 200ms'
-              justify='center'
-              align='center'
-              p='2'
-              bg='gray.200'
-              borderRadius='md'
+            <IconButton
               pos='absolute'
               right='0'
-              _hover={{
-                bg: 'red.500',
-                color: 'white'
-              }}
-              onClick={e => {
-                e.stopPropagation()
-              }}
-            >
-              <BiTrash size={14} />
-            </VStack>
+              onClick={e => e.stopPropagation()}
+              {...SiteStyles.DeleteButton}
+            />
           </PopoverTrigger>
           <PopoverContent
             color='white'
@@ -366,26 +384,14 @@ export const ProjectSingle = ({
     <VStack
       minH='max-content'
       w='300px'
-      p='3'
-      bg='white'
       justify='flex-start'
       align='flex-start'
       textAlign='left'
-      shadow='sm'
-      borderWidth='1px'
-      borderColor='gray.200'
-      transition='all 200ms'
-      cursor='pointer'
-      borderRadius='md'
-      spacing='3'
-      _hover={{
-        shadow: 'md',
-        borderColor: 'blue.200'
-      }}
       role='group'
       pos='relative'
       onClick={onClick}
       {...style}
+      {...SiteStyles.ClickableContainer}
     >
       <HStack w='full' pos='relative'>
         <VStack
@@ -407,16 +413,14 @@ export const ProjectSingle = ({
           justify='flex-start'
         >
           <HStack>
-            <Text
-              fontSize='smaller'
-              transition='all 300ms'
-              _groupHover={{
-                color: 'blue.500'
-              }}
-            >
-              {appName}
+            <Text fontSize='smaller' transition='all 300ms'>
+              {trimString(appName, 14)}
             </Text>
-            {!isRead && <Badge colorScheme='blue'>NEW</Badge>}
+            {!isRead && (
+              <Badge bg='#543d63' color='white'>
+                NEW
+              </Badge>
+            )}
           </HStack>
           <Text
             display='flex'
@@ -435,9 +439,9 @@ export const ProjectSingle = ({
         {appDesc}
       </Text>
       <HStack>
-        <Text fontSize='x-small'>Widget Quoted:</Text>
+        <Text fontSize='xs'>Widget Quoted:</Text>
         <HStack
-          bg='gray.200'
+          bg='#543d63'
           pb='0.5'
           pt='0.5'
           pl='1'
