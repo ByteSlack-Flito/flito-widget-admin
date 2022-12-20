@@ -5,7 +5,6 @@
   text-transform: capitalize;
 }
 .infobox_desc a {
-  color: #5d06c7;
   font-weight: 700;
-  text-decoration: underline;
+  /* text-decoration: underline; */
 }

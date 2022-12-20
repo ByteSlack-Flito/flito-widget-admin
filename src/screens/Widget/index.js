@@ -13,7 +13,7 @@ import ReactDOMServer from 'react-dom/server'
 import { Link as ReactRouterLink } from 'react-router-dom'
 import { BiCheck, BiLinkExternal } from 'react-icons/bi'
 import { useSelector } from 'react-redux'
-import { ScreenContainer } from '../../components/global'
+import { ScreenContainer, SiteStyles } from '../../components/global'
 import { Constants } from '../../data/constants'
 import { useProfile, useWidget } from '../../data/database/users/profile'
 import { SiteRoutes } from '../../misc/routes'
@@ -41,7 +41,7 @@ const HelpLinks = [
 const WidgetScreen = () => {
   const { isFetching, data } = useProfile()
   const userState = useSelector(state => state.user)
-  
+
   const [copied, setCopied] = useState(false)
   const copyCode = useCallback(() => {
     !copied &&
@@ -161,16 +161,17 @@ const WidgetScreen = () => {
                   position='absolute'
                   top='3'
                   left='3'
-                  leftIcon={copied && <BiCheck color='green' />}
-                  colorScheme={copied ? 'gray' : 'teal'}
+                  leftIcon={copied && <BiCheck color='white' />}
+                  // colorScheme={copied ? 'gray' : 'teal'}
                   onClick={copyCode}
+                  {...SiteStyles.ButtonStyles}
                 >
                   {copied ? 'COPIED TO CLIPBOARD' : 'COPY'}
                 </Button>
                 <Code
                   p='3'
                   pt='12'
-                  colorScheme='teal'
+                  color='white'
                   // fontWeight='medium'
                   whiteSpace='pre'
                   display='block'
@@ -178,9 +179,10 @@ const WidgetScreen = () => {
                     '{widgetCode}',
                     userState.userId
                   )}
+                  bg='#0f283d'
                 />
               </Box>
-              <Text fontSize='sm' fontWeight='normal'>
+              <Text fontSize='md' fontWeight='normal'>
                 Paste the above code on any desired section of your website,
                 where you want to show the <b>Flito Cost Estimator Widget.</b>{' '}
                 Make sure to place the widget in a section that covers the

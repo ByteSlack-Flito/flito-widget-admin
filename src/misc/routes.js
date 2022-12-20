@@ -40,28 +40,6 @@ export const SiteRoutes = {
   },
 
   Engine: {
-    Widget: {
-      id: 2,
-      label: 'Widget',
-      Screens: () => {
-        return {
-          Widget: {
-            id: 201,
-            label: 'Get Code',
-            icon: <BiCodeAlt />,
-            path: `${ENGINE_ROUTE}/widget-code`,
-            element: <WidgetScreen />
-          },
-          Requests: {
-            id: 202,
-            label: 'Requests',
-            icon: <MdDashboardCustomize />,
-            path: `${ENGINE_ROUTE}/widget-requests`,
-            element: <ProjectRequestScreen />
-          }
-        }
-      }
-    },
     Setup: {
       id: 1,
       label: 'Setup',
@@ -95,6 +73,28 @@ export const SiteRoutes = {
           }
         }
       }
+    },
+    Widget: {
+      id: 2,
+      label: 'Widget',
+      Screens: () => {
+        return {
+          Widget: {
+            id: 201,
+            label: 'Get Code',
+            icon: <BiCodeAlt />,
+            path: `${ENGINE_ROUTE}/widget-code`,
+            element: <WidgetScreen />
+          },
+          Requests: {
+            id: 202,
+            label: 'Requests',
+            icon: <MdDashboardCustomize />,
+            path: `${ENGINE_ROUTE}/widget-requests`,
+            element: <ProjectRequestScreen />
+          }
+        }
+      }
     }
   }
 }
@@ -103,7 +103,7 @@ export const SiteRoutes = {
  *
  * @returns All the routes of the site
  */
-export function getRoutes (location) {
+export function getRoutes () {
   const onboardingRoutes = Object.keys(SiteRoutes.Onboarding).map(prop => {
     const initRoute = SiteRoutes.Onboarding[prop]
     if (initRoute.Screens) {

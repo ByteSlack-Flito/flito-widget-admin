@@ -46,19 +46,22 @@ export const MenuItem = ({
       <Button
         variant={isSelected ? 'solid' : 'ghost'}
         colorScheme='gray'
-        transition='all 300ms'
+        transition='all 100ms'
         onClick={() => performNavigation(path)}
         leftIcon={icon || <IconParser size={16} itemId={id} />}
         w='100%'
         justifyContent='flex-start'
         size='sm'
         fontSize='0.75rem'
-        bg={isSelected ? '#3181FF20' : ''}
+        bg={isSelected ? '#d885ff30' : ''}
+        _active={{
+          bg: '#d885ff30'
+        }}
         _hover={{
           bg: isSelected ? '#3181FF10' : '#3181FF20'
         }}
         borderRadius='5px'
-        color={isSelected ? '#3181FF' : 'gray.500'}
+        color={isSelected ? 'white' : 'whiteAlpha.700'}
       >
         {label}
       </Button>
@@ -81,7 +84,7 @@ export const MenuItem = ({
     return (
       <Tooltip label={label || 'Home'} hasArrow placement='right'>
         <Box
-          transition='all 300ms'
+          transition='all 200ms'
           onClick={() => performSideNavigation(path)}
           w='100%'
           bg={isSelected() ? '#3181FF20' : ''}
@@ -160,7 +163,7 @@ export const Menu = ({ data, onItemClick = ({ item = '' }) => { } }) => {
                   fontSize='x-small'
                   align='left'
                   fontWeight='semibold'
-                  color='gray.500'
+                  color='whiteAlpha.700'
                 >
                   {menuItem.label}
                 </Text>
@@ -192,15 +195,12 @@ export const Menu = ({ data, onItemClick = ({ item = '' }) => { } }) => {
         width: '100%'
       }}
     >
-      <Box w='20%'>
+      {/* <Box w='20%'>
         <Menu_Sidebar />
-      </Box>
+      </Box> */}
       <Box
-        w='80%'
+        w='full'
         pl='1'
-        ml='1'
-        borderLeftWidth='thin'
-        borderLeftColor='gray.200'
       >
         <Menu_Parent />
       </Box>

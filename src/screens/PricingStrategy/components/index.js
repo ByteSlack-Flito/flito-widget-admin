@@ -15,7 +15,10 @@ import {
   ModalHeader,
   Image,
   SimpleGrid,
-  Input
+  Input,
+  Badge,
+  AvatarGroup,
+  Avatar
 } from '@chakra-ui/react'
 import React, {
   useCallback,
@@ -29,12 +32,12 @@ import { BiCheck, BiCheckCircle, BiXCircle } from 'react-icons/bi'
 import { IoColorPaletteOutline } from 'react-icons/io5'
 import { DiReact } from 'react-icons/di'
 import { Link as ReactRouterLink } from 'react-router-dom'
-import { BsCode, BsCodeSlash } from 'react-icons/bs'
+import { BsCode, BsCodeSlash, BsFillCheckCircleFill } from 'react-icons/bs'
 import { TbTestPipeOff } from 'react-icons/tb'
 import { FaAws } from 'react-icons/fa'
 import { MdDevices, MdOutlineManageAccounts } from 'react-icons/md'
 import '../index.css'
-import { useToastGenerator } from '../../../components/global'
+import { SiteStyles, useToastGenerator } from '../../../components/global'
 import { groupBy } from '../../../misc/featureHelper'
 import { AnimatePresence, motion, useElementScroll } from 'framer-motion'
 import { useForm } from 'react-hook-form'
@@ -49,27 +52,26 @@ export const VariantAppView = ({ variant, apps, onClick, pricing }) => {
     <VStack
       transition='all 300ms'
       align='flex-start'
-      borderWidth='thin'
-      borderRadius='md'
-      borderColor='gray.200'
-      p='3'
       role='group'
-      cursor='pointer'
-      _hover={{
-        borderColor: 'teal.300'
-      }}
+      {...SiteStyles.ClickableContainer}
       onClick={onClick}
     >
-      {console.log('Rendered..')}
-      <Text fontSize='sm' fontWeight='medium' textTransform='capitalize'>
+      <Text fontSize='md' fontWeight='medium' textTransform='capitalize'>
         {variant} Apps
       </Text>
-      <HStack>
-        {apps
-          .filter((app, index) => index < 3)
-          .map(app => (
-            <Image src={app.iconSrc} h='20px' loading='lazy'/>
-          ))}
+      <HStack flexWrap='wrap' fontSize='sm'>
+        <Text>Examples: </Text>
+        <AvatarGroup size='xs' max={2}>
+          {apps
+            .filter((app, index) => index < 3)
+            .map((app, index) => (
+              <Avatar
+                key={`${app.name}${index}`}
+                name={app.label}
+                src={app.iconSrc}
+              />
+            ))}
+        </AvatarGroup>
       </HStack>
       <Text
         transition='all 300ms'
@@ -127,10 +129,12 @@ export const AddVariantPriceModal = React.forwardRef(
       const { fixedAppPrices } = widgetData.data
 
       const setFixedPrices = () => {
-        if(fixedAppPrices && fixedAppPrices.length > 0){
+        if (fixedAppPrices && fixedAppPrices.length > 0) {
           let spread = [...fixedAppPrices]
-          const currentVariantIndex = fixedAppPrices.findIndex(x => x.name === variantData.name)
-          if(currentVariantIndex > -1){
+          const currentVariantIndex = fixedAppPrices.findIndex(
+            x => x.name === variantData.name
+          )
+          if (currentVariantIndex > -1) {
             spread[currentVariantIndex] = priceData
           } else {
             spread = [...spread, priceData]
@@ -245,8 +249,8 @@ export const InfoBox = ({
 }) => {
   return type === 'success' ? (
     <HStack
-      bg='#f1e8fc'
-      color='#5d06c7'
+      bg='#5a207560'
+      color='white'
       pl='2'
       pr='4'
       pt='2'
@@ -256,10 +260,11 @@ export const InfoBox = ({
       borderRadius='sm'
       align='flex-start'
       borderRightRadius='md'
+      fontSize='sm'
       {...containerProps}
     >
-      <BiCheckCircle size='16' style={{ marginTop: '1px' }} />
-      <VStack fontSize='xs' fontWeight='medium'>
+      <BsFillCheckCircleFill size={20} style={{ marginTop: '3px' }} />
+      <VStack fontSize='md' fontWeight='medium'>
         <Text className='infobox_title'>
           {title}
           <br style={{ lineHeight: '10px' }} />
@@ -272,8 +277,8 @@ export const InfoBox = ({
     </HStack>
   ) : (
     <HStack
-      bg='#fce8e8'
-      color='red.700'
+      bg='#75204d60'
+      color='white'
       pl='2'
       pr='4'
       pt='2'
@@ -285,8 +290,8 @@ export const InfoBox = ({
       borderRightRadius='md'
       {...containerProps}
     >
-      <BiXCircle size='16' style={{ marginTop: '1px' }} />
-      <VStack fontSize='xs' fontWeight='medium' align='flex-start'>
+      <BiXCircle size={20} style={{ marginTop: '1px' }} />
+      <VStack fontSize='md' fontWeight='medium' align='flex-start'>
         <Text className='infobox_title'>
           {title}
           <br style={{ lineHeight: '10px' }} />

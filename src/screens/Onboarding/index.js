@@ -19,6 +19,10 @@ import {
 } from '@chakra-ui/react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { BsCheckSquareFill } from 'react-icons/bs'
+import { Player } from '@lottiefiles/react-lottie-player'
+import OnboardAnim from '../../assets/anims/onboard-anim.json'
+import { SiteStyles } from '../../components/global'
+import { StorageHelper } from '../../data/storage'
 
 const DID_YOU_KNOW = [
   "With Flito's Cost Estimator widget, you can attract more traffic to your site.",
@@ -31,22 +35,12 @@ export default ({}) => {
   const sidebarRef = useRef()
 
   const [formType, setFormType] = useState('signUp')
-  const [sidebarLoaded, setSidebarLoaded] = useState(false)
-
-  function loadSidebarImage () {
-    var src =
-      'https://firebasestorage.googleapis.com/v0/b/makemyapp-7aca9.appspot.com/o/flito-static%2Fflito-onboard-sidebar.jpg?alt=media&token=f57bf7d2-4998-4c99-814b-97c0438d444f'
-    var image = new Image()
-    image.addEventListener('load', function () {
-      sidebarRef.current.style.backgroundImage = 'url(' + src + ')'
-      setSidebarLoaded(true)
-    })
-    image.src = src
-  }
 
   useEffect(() => {
-    sidebarRef.current && loadSidebarImage()
-  }, [sidebarRef.current])
+    // sidebarRef.current && loadSidebarImage()
+    const hasToken = StorageHelper.GetItem('auth')
+    hasToken && setFormType('signIn')
+  }, [])
 
   function handleFormChange () {
     setFormType(prev => (prev === 'signIn' ? 'signUp' : 'signIn'))
@@ -69,7 +63,13 @@ export default ({}) => {
   }
 
   return (
-    <SimpleGrid columns={2} w='full' h='full'>
+    <SimpleGrid
+      columns={2}
+      w='full'
+      h='full'
+      bgGradient='radial(circle farthest-corner at 90% 90%, #543d63, #3b154d, #091927 300px)'
+      color='white'
+    >
       <VStack
         align='center'
         // justify='center'
@@ -81,72 +81,34 @@ export default ({}) => {
           <Heading display='flex'>{formHeaders().title}</Heading>
           <HStack fontWeight='medium'>
             <Text>{formHeaders().subTitle}</Text>
-            <Link color='blue' fontWeight='semibold' onClick={handleFormChange}>
+            <Link onClick={handleFormChange} {...SiteStyles.LinkStyles}>
               {formHeaders().link}
             </Link>
           </HStack>
           <Box h='5' />
           <AnimatePresence mode='wait'>
-            {formType === 'signUp' && <SignUpScreen />}
-            {formType === 'signIn' && <LoginScreen />}
+            <motion.div
+              key={formType}
+              initial={{ x: 20, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: -20, opacity: 0 }}
+              style={{
+                width: '100%'
+              }}
+            >
+              {formType === 'signUp' ? <SignUpScreen /> : <LoginScreen />}
+            </motion.div>
           </AnimatePresence>
         </VStack>
       </VStack>
-      <VStack ref={sidebarRef} bgSize='cover' position='relative'>
-        <AnimatePresence key='loader' mode='wait'>
-          {!sidebarLoaded && <motion.div
-            style={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%'
-            }}
-            exit={{ opacity: 0, y: -30, transition: { delay: 0.9 } }}
-          >
-            <Spinner size='lg' />
-          </motion.div>}
-        </AnimatePresence>
-        <AnimatePresence key='sidebar' mode='wait'>
-          {sidebarLoaded && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1, transition: { delay: 1 } }}
-              style={{
-                width: '100%',
-                height: '100%'
-              }}
-            >
-              <VStack
-                w='full'
-                h='full'
-                transition='all 300ms'
-                bgGradient='linear(to-b, transparent, blackAlpha.800)'
-                color='white'
-                align='flex-start'
-                justify='flex-end'
-                p='10'
-              >
-                {sidebarLoaded && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0, transition: { delay: 1.5 } }}
-                  >
-                    <VStack align='flex-start'>
-                      <Heading>Did you know ?</Heading>
-                      <List spacing={2} textAlign='left'>
-                        {DID_YOU_KNOW.map((item, index) => (
-                          <ListItem key={index}>
-                            <ListIcon as={BsCheckSquareFill} />
-                            {item}
-                          </ListItem>
-                        ))}
-                      </List>
-                    </VStack>
-                  </motion.div>
-                )}
-              </VStack>
-            </motion.div>
-          )}
-        </AnimatePresence>
+      <VStack
+        ref={sidebarRef}
+        bgSize='cover'
+        position='relative'
+        justify='center'
+        align='center'
+      >
+        <Player src={OnboardAnim} loop autoplay />
       </VStack>
     </SimpleGrid>
   )

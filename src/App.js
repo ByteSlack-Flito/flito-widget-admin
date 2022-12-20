@@ -26,11 +26,6 @@ import { signInWithLocal } from './data/database/users/auth'
 import { getProfile } from './data/database/users/profile'
 
 function App () {
-  //#region Setting site metadata
-  useEffect(() => {
-    document.title = Constants.Site.title
-  }, [])
-  //#endregion
 
   return (
     <ChakraProvider>
@@ -135,21 +130,24 @@ function ScreenRenderer () {
           h='100%'
           color='blackAlpha.700'
           fontWeight='bold'
+          // bg='red'
+          bgGradient='radial(circle farthest-corner at 10px 250px, #543d63, #3b154d, #091927 300px)'
         >
-          <GridItem pl='2' pr='2' bg='white' shadow='sm' area={'header'}>
+          <GridItem pl='2' pr='2' shadow='sm' area={'header'}>
             <Header />
           </GridItem>
           <GridItem
             area={'nav'}
-            shadow='7px 0px 15px 0px rgba(69,149,255,0.12)'
+            // shadow='10px 1px 5px 1px rgba(15,40,62)'
             pl='1'
             pr='2'
             zIndex='3'
+            position='relative'
           >
             <Spacer h='2' />
             <Menu data={getMenuItems()} />
           </GridItem>
-          <GridItem pl='4' area={'main'} overflow='scroll'>
+          <GridItem pl='4' area={'main'} overflow='scroll' color='white !important'>
             <Routes>
               {routes.Engine.map((route, index) => {
                 return !route.screens ? (
@@ -162,7 +160,7 @@ function ScreenRenderer () {
               })}
             </Routes>
           </GridItem>
-          <GridItem pl='2' area={'footer'} bg='#f5f0ff'>
+          <GridItem pl='2' area={'footer'}>
             <Footer />
           </GridItem>
         </Grid>

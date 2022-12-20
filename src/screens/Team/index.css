@@ -1,6 +1,18 @@
 .custom-table {
-    overflow: initial !important;
+  /* overflow: initial !important; */
+  border-bottom: none;
 }
 .custom-dropdown {
-    /* max-height: 180px; */
+  /* max-height: 180px; */
+}
+.custom-table th {
+  color: whitesmoke !important;
+  border-bottom: none;
+}
+.custom-table :is(tr, td, th, tbody, tfoot) {
+  border-bottom: none !important;
+}
+
+.table-container {
+  overflow: visible !important;
 }

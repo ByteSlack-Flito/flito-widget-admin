@@ -10,7 +10,11 @@ import {
   Input
 } from '@chakra-ui/react'
 import { useState, useEffect } from 'react'
-import { ScreenContainer, useToastGenerator } from '../../components/global'
+import {
+  ScreenContainer,
+  SiteStyles,
+  useToastGenerator
+} from '../../components/global'
 import HourlyPricing from './hourlyPricing'
 import Select from 'react-select'
 import Creatable from 'react-select/creatable'
@@ -70,11 +74,18 @@ const PricingStrategyScreen = () => {
         <Link
           as={ReactRouterLink}
           to={SiteRoutes.Engine.Setup.Screens().MyTeam.path}
+          {...SiteStyles.LinkStyles}
         >
           My Teams
         </Link>
-        , we have calculated average hourly rates for each role to generate
+        , we will calculate average hourly rates for each role to generate
         quotations.
+      </>
+    ),
+    fixed: (
+      <>
+        Based on the data you provide below, we will generate quotations. Please
+        cover as many App Categories as possible.
       </>
     ),
     error: (
@@ -146,6 +157,39 @@ const PricingStrategyScreen = () => {
     }
     toast.show(result)
   }
+
+  const ReactSelectStyles = {
+    control: (baseStyles, state) => ({
+      ...baseStyles,
+      background: '#0f283d',
+      borderColor: '#38B2AC'
+    }),
+    input: (baseStyles, state) => ({
+      ...baseStyles,
+      color: 'white !important'
+    }),
+    placeholder: baseStyles => ({
+      ...baseStyles,
+      color: 'white !important'
+    }),
+    singleValue: baseStyles => ({
+      ...baseStyles,
+      color: 'white !important',
+      backgroundColor: '#0f283d'
+    }),
+    menuList: baseStyles => ({
+      ...baseStyles,
+      background: '#143554'
+    }),
+    option: (baseStyles, state) => ({
+      ...baseStyles,
+      ':hover': {
+        backgroundColor: '#0f283d'
+      },
+      backgroundColor: '#143554'
+    })
+  }
+
   return (
     <ScreenContainer
       title='Pricing Strategy'
@@ -175,6 +219,7 @@ const PricingStrategyScreen = () => {
                 }}
                 value={pricingData.currency}
                 isLoading={isUpdating}
+                styles={ReactSelectStyles}
               />
             </VStack>
             <VStack alignItems='flex-start' spacing='1' width={'20vw'} pl='4'>
@@ -188,17 +233,19 @@ const PricingStrategyScreen = () => {
                 placeholder='Select strategy...'
                 isLoading={isUpdating}
                 value={pricingData.strategy}
+                styles={ReactSelectStyles}
               />
             </VStack>
-            <VStack alignItems='flex-start' spacing='1' width={'15vw'}>
+            <VStack alignItems='flex-start' spacing='1' width={'15vw'} pl='4'>
               <Text fontSize='xs' fontWeight='medium'>
-                Commission rate in %
+                Profit Margin in %
               </Text>
               <Creatable
                 components={{
                   DropdownIndicator: null,
                   NoOptionsMessage: Option_IsTyping
                 }}
+                styles={ReactSelectStyles}
                 formatCreateLabel={input => `Set Rate To "${input}"`}
                 className='react_select'
                 onChange={e => updatePricingStrategy('commissionRate', e.value)}
@@ -246,18 +293,11 @@ const PricingStrategyScreen = () => {
             {profileData?.team ? (
               <>
                 {/* <Spacer h='10' /> */}
-                {pricingData.strategy?.value === 'hourly' ? (
-                  <HourlyPricing
-                    teamData={profileData.team}
-                    currency={pricingData.currency?.value}
-                  />
-                ) : pricingData.strategy?.value === 'fixed' ? (
+                {pricingData.strategy?.value === 'fixed' && (
                   <FixedPricing
                     teamData={profileData.team}
                     currency={pricingData.currency?.value}
                   />
-                ) : (
-                  <></>
                 )}
               </>
             ) : (

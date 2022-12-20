@@ -9,10 +9,11 @@ import {
 } from '@chakra-ui/react'
 import { useCallback, useEffect, useId, useState } from 'react'
 import { AiOutlineDesktop } from 'react-icons/ai'
+import { BsCheck2 } from 'react-icons/bs'
 import { HiOutlineCursorClick } from 'react-icons/hi'
 import { ImMobile } from 'react-icons/im'
 import { useSelector } from 'react-redux'
-import { ScreenContainer, useToastGenerator } from '../../components/global'
+import { ScreenContainer, SiteStyles, useToastGenerator } from '../../components/global'
 import { useFirebaseInstance } from '../../data/database/users/auth'
 import { updateProfile, useWidget } from '../../data/database/users/profile'
 import { AppTypeSingle } from './components'
@@ -106,7 +107,6 @@ export const TechStackScreen = () => {
   }
   return (
     <ScreenContainer
-      title='Tech Stacks'
       description='Manage what applications you offer to develop for your clients.'
     >
       <SimpleGrid spacing='40px' columns={5}>
@@ -154,13 +154,22 @@ export const TechStackScreen = () => {
                         return (
                           <Button
                             key={platform}
-                            size='xs'
-                            colorScheme={!isSelected ? 'gray' : 'blue'}
+                            size='sm'
+                            color='white'
                             borderWidth='thin'
-                            borderColor={!isSelected ? 'gray.300' : 'blue.400'}
+                            borderColor={'#543d63'}
+                            bg={!isSelected ? 'transparent' : '#543d63'}
+                            leftIcon={isSelected && <BsCheck2 />}
+                            _hover={{
+                              bg: '#0f283d'
+                            }}
+                            _active={{
+                              bg: '#0f283d'
+                            }}
                             onClick={() =>
                               updateSelectedAppTypes(appType, platform)
                             }
+                            borderRadius='full'
                           >
                             {platform}
                           </Button>
@@ -177,14 +186,15 @@ export const TechStackScreen = () => {
       <Button
         disabled={!isFormValid()}
         size='sm'
-        colorScheme='teal'
+        // colorScheme='blue'
         variant='solid'
         fontWeight='semibold'
         mt='7'
         isLoading={isUpdating}
         onClick={performUpdate}
+        {...SiteStyles.ButtonStyles}
       >
-        Update Preferences
+        Update Stacks
       </Button>
     </ScreenContainer>
   )

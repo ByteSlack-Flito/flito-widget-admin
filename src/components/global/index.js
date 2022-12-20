@@ -1,7 +1,7 @@
 import './global.css'
 import Logo from '../../logo-trans.png'
 import '../global/global.css'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import {
   Button,
   Grid,
@@ -26,32 +26,15 @@ import { IoExitOutline } from 'react-icons/io5'
 import { TbExternalLink } from 'react-icons/tb'
 import moment from 'moment'
 import { AuthActions } from '../../data/actions/userActions'
-import { SiteRoutes } from '../../misc/routes'
+import { getRoutes, SiteRoutes } from '../../misc/routes'
 import { useDispatch } from 'react-redux'
 import { StorageHelper } from '../../data/storage'
 import { GrUser } from 'react-icons/gr'
 import { useCallback, useState } from 'react'
 import { signOut, useFirebaseInstance } from '../../data/database/users/auth'
-
-/**
- * The global Spacer component
- * @param {object} props Component props
- * @param {'small' | 'medium' | 'large'} props.size Defines the size of the component, affecting `padding`, `border` etc. properties. Defaults to `small`.
- * @param {number} props.times Multiply the size of the spacer.
- */
-export const Spacer = ({ size = 'small', times }) => {
-  const initSize = 10 * times
-  return !times ? (
-    <div className={`spacer_${size ? size : 'small'}`} />
-  ) : (
-    <div
-      style={{
-        height: initSize,
-        widows: initSize
-      }}
-    />
-  )
-}
+import { BsChevronRight } from 'react-icons/bs'
+import { AiOutlineRight } from 'react-icons/ai'
+import { BiUser, BiX } from 'react-icons/bi'
 
 export const Header = ({ onLinkClick = link => {} }) => {
   const [isLogginOut, setIsLoggingOut] = useState(false)
@@ -66,7 +49,7 @@ export const Header = ({ onLinkClick = link => {} }) => {
       StorageHelper.Remove('auth')
       dispatch({
         type: AuthActions.SET_USER,
-        data: undefined
+        data: null
       })
       navigate(SiteRoutes.Onboarding.Init.path)
     }
@@ -87,7 +70,23 @@ export const Header = ({ onLinkClick = link => {} }) => {
         <HStack align='center' h='100%' justify='flex-end'>
           <Popover isLazy>
             <PopoverTrigger>
-              <Button rightIcon={<IoExitOutline />} size='xs'>
+              <Button
+                rightIcon={<IoExitOutline />}
+                transition='all 200ms'
+                size='xs'
+                bg='#d885ff20'
+                color='whiteAlpha.600'
+                // borderColor='#d885ff70'
+                // borderWidth='thin'
+                fontWeight='light'
+                _active={{
+                  bg: '#d885ff20'
+                }}
+                _hover={{
+                  color: 'white',
+                  transform: 'scale(1.05)'
+                }}
+              >
                 Log Out
               </Button>
             </PopoverTrigger>
@@ -178,20 +177,52 @@ export const Footer = () => (
 /**
  * A global component to render screens with titles and descriptions.
  * @param {object} props Component Props
- * @param {string | JSX.Element} props.title Text/Component to render as the title of the screen. This will render in a pre-defined `<Text>` component.
  * @param {string | JSX.Element} props.description Text/Component to render as the description of the screen. This will render in a pre-defined `<Text>` component.
  * @param {JSX.Element} props.children Component(s) to render as the children of this component. Render all your screen components here.
  * @returns
  */
-export function ScreenContainer ({ title, description, children }) {
+export function ScreenContainer ({ description, children }) {
+  const location = useLocation()
+  const routes = getRoutes().Engine
+
+  function constructBreadcrumb () {
+    let value = {
+      parent: 'Parent',
+      screen: 'Screen'
+    }
+    routes.map(parent => {
+      const screen = parent.screens.find(sub => sub.path === location.pathname)
+      if (screen) {
+        value.parent = parent.label
+        value.screen = screen.label
+      }
+    })
+    return value
+  }
+
   return (
     <Grid gridTemplateRows='auto 1fr' w='100%' h='100%'>
       <GridItem>
         <VStack align='flex-start' pt='3'>
-          <Text fontSize='lg' fontWeight='normal'>
+          {/* <Text fontSize='lg' fontWeight='normal'>
             {title}
-          </Text>
-          <Text fontSize='sm' fontWeight='normal'>
+          </Text> */}
+          {/* <HStack
+            bg='#3181FF15'
+            fontSize='sm'
+            w='max-content'
+            pt='1'
+            pb='1'
+            pl='2'
+            pr='2'
+            borderRadius='md'
+            fontWeight='normal'
+          >
+            <Text>{constructBreadcrumb().parent}</Text>
+            <AiOutlineRight size={10} />
+            <Text>{constructBreadcrumb().screen}</Text>
+          </HStack> */}
+          <Text fontSize='lg' fontWeight='normal'>
             {description}
           </Text>
         </VStack>
@@ -251,16 +282,80 @@ export const UserInfo = ({
     size === 'compact' && (
       <Tooltip hasArrow label='Click to copy email'>
         <Button
-          leftIcon={<GrUser />}
-          //   rightIcon={<TbExternalLink size={12} />}
+          leftIcon={<BiUser style={{ color: 'white' }} />}
           size='xs'
-          variant='solid'
-          colorScheme='gray'
           ml='2'
+          {...ButtonStyles}
         >
           {name} - {email}
         </Button>
       </Tooltip>
     )
   )
+}
+
+const LinkStyles = {
+  color: 'teal',
+  fontWeight: 'semibold'
+}
+const ButtonStyles = {
+  transition: 'all 300ms',
+  bg: '#0f283d',
+  dropShadow: 'md',
+  borderWidth: 'thin',
+  borderColor: 'teal.400',
+  color: 'white',
+  _active: {
+    bg: 'teal'
+  },
+  _hover: {
+    bg: 'teal'
+  }
+}
+
+const InputStyles = {
+  bg: '#0f283d',
+  border: 'none'
+}
+const ClickableContainer = {
+  userSelect: 'none',
+  borderWidth: 'thin',
+  borderColor: '#543d63',
+  cursor: 'pointer',
+  borderRadius: 'md',
+  _hover: {
+    bg: '#0f283d',
+    borderColor: 'transparent',
+    // color: '#3b154d',
+    shadow: 'md'
+  },
+  p: '5'
+}
+const DeleteButton = {
+  bg: '#14344f',
+  variant: 'solid',
+  p: '2',
+  size: 'xs',
+  h: '30px',
+  _active: {
+    bg: '#3d0f1b'
+  },
+  _hover: {
+    bg: '#61162a'
+  },
+  icon: <BiX size={16} />
+}
+
+const BadgeStyle = {
+  bg: '#543d63',
+  color: 'white'
+}
+
+export const SiteStyles = {
+  LinkStyles,
+  ButtonStyles,
+  InputStyles,
+  ClickableContainer,
+  DeleteButton,
+  BadgeStyle
 }
