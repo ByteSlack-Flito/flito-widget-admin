@@ -84,7 +84,7 @@ export const MenuItem = ({
     return (
       <Tooltip label={label || 'Home'} hasArrow placement='right'>
         <Box
-          transition='all 300ms'
+          transition='all 200ms'
           onClick={() => performSideNavigation(path)}
           w='100%'
           bg={isSelected() ? '#3181FF20' : ''}

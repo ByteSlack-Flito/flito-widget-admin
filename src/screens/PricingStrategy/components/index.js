@@ -277,8 +277,8 @@ export const InfoBox = ({
     </HStack>
   ) : (
     <HStack
-      bg='#fce8e8'
-      color='red.700'
+      bg='#75204d60'
+      color='white'
       pl='2'
       pr='4'
       pt='2'
@@ -290,8 +290,8 @@ export const InfoBox = ({
       borderRightRadius='md'
       {...containerProps}
     >
-      <BsFillCheckCircleFill size='16' style={{ marginTop: '1px' }} />
-      <VStack fontSize='xs' fontWeight='medium' align='flex-start'>
+      <BiXCircle size={20} style={{ marginTop: '1px' }} />
+      <VStack fontSize='md' fontWeight='medium' align='flex-start'>
         <Text className='infobox_title'>
           {title}
           <br style={{ lineHeight: '10px' }} />

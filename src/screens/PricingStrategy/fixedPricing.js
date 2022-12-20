@@ -65,12 +65,13 @@ const FixedPricing = ({ none }) => {
   }
 
   const renderIncompleteSetup = () => {
-    const setupCompleted = data?.length >= Object.keys(variantApps?.data)?.length
+    // console.log('Data:', data)
+    const setupCompleted = data?.fixedAppPrices?.length >= 3
     return !setupCompleted ? (
       <InfoBox
         type='error'
         title='Set-up Required'
-        description='You need to complete the setup below to enable our AI to generate quotations based on Fixed Pricing'
+        description='Please provide details of at-least 3 application categories.'
       ></InfoBox>
     ) : (
       <></>
@@ -91,12 +92,12 @@ const FixedPricing = ({ none }) => {
         <>
           {renderIncompleteSetup()}
           <VStack w='full' spacing='1' align='flex-start'>
-            <Text fontSize='md' fontWeight='medium'>
+            <Text fontSize='lg' fontWeight='medium'>
               How much will you charge for similar apps?
             </Text>
-            <Text fontSize='xs' fontWeight='semibold' color='red.400'>
-              Please provide details for all categories. The more pricing info
-              you provide, the better our AI will work.
+            <Text fontSize='md' fontWeight='normal'>
+              Please provide details for as many categories as possible. The more pricing info
+              you provide, the more accurate <i>estimations</i> will be generated.
             </Text>
           </VStack>
           <SimpleGrid columns={4} gap='3' w='98%' minChildWidth='250px'>

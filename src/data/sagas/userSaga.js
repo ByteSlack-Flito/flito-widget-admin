@@ -17,5 +17,5 @@ function * performSetUser (payload) {
 }
 
 export default function * userSaga () {
-  yield takeEvery(AuthActions.SET_USER_SUCCESS, performSetUser)
+  // yield takeEvery(AuthActions.SET_USER_SUCCESS, performSetUser)
 }

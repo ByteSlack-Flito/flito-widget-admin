@@ -138,10 +138,11 @@ function ScreenRenderer () {
           </GridItem>
           <GridItem
             area={'nav'}
-            // shadow='7px 0px 15px 0px rgba(69,149,255,0.12)'
+            // shadow='10px 1px 5px 1px rgba(15,40,62)'
             pl='1'
             pr='2'
             zIndex='3'
+            position='relative'
           >
             <Spacer h='2' />
             <Menu data={getMenuItems()} />

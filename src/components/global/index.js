@@ -49,7 +49,7 @@ export const Header = ({ onLinkClick = link => {} }) => {
       StorageHelper.Remove('auth')
       dispatch({
         type: AuthActions.SET_USER,
-        data: undefined
+        data: null
       })
       navigate(SiteRoutes.Onboarding.Init.path)
     }
