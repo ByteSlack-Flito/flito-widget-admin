@@ -13,6 +13,8 @@ import { TechStackScreen } from '../screens/TechStacks'
 import { BiCodeAlt } from 'react-icons/bi'
 import { AiOutlineAppstoreAdd } from 'react-icons/ai'
 import ProjectRequestScreen from '../screens/ProjectRequests'
+import { BsCalendarDate } from 'react-icons/bs'
+import { IntegrationsScreen } from '../screens/Integrations'
 
 const ENGINE_ROUTE = '/engine'
 const PROJECT_ROUTE = `${ENGINE_ROUTE}/project/:projectId`
@@ -92,6 +94,21 @@ export const SiteRoutes = {
             icon: <MdDashboardCustomize />,
             path: `${ENGINE_ROUTE}/widget-requests`,
             element: <ProjectRequestScreen />
+          }
+        }
+      }
+    },
+    Integrations: {
+      id: 3,
+      label: 'Integrations',
+      Screens: () => {
+        return {
+          Calendly: {
+            id: 301,
+            label: 'Calendly',
+            icon: <BsCalendarDate />,
+            path: `${ENGINE_ROUTE}/integration/calendly`,
+            element: <IntegrationsScreen.CalendlyScreen />
           }
         }
       }
