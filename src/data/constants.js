@@ -55,5 +55,11 @@ export const Constants = {
     src='https://widget.flito.io/{widgetCode}'
     style='border: none; min-height: 500px;'
     width='100%'>
-  </iframe>`
+  </iframe>`,
+
+  CustomServicePricingOptions: [
+    { label: 'Fixed', value: 'fixed' },
+    { label: 'On-going', value: 'on-going' },
+
+  ]
 }

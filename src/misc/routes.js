@@ -53,7 +53,7 @@ export const SiteRoutes = {
           TechStacks: {
             id: 301,
             icon: <AiOutlineAppstoreAdd />,
-            label: 'My Stacks',
+            label: 'My Services',
             path: `${ENGINE_ROUTE}/my-tech-stack`,
             element: <TechStackScreen />
           },

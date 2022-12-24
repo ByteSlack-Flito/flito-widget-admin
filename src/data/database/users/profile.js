@@ -167,7 +167,8 @@ export const useWidget = (fetchByDefault = true) => {
     isUpdating,
     data,
     update,
-    getLatest
+    getLatest,
+    get
   }
   // return [isFetching, isUpdating, data, update]
 }
