@@ -19,16 +19,12 @@ import { HexColorPicker } from 'react-colorful'
 
 const ColorPicker = ({ label, value, onColorChange = () => {} }) => {
   const [isColorOpen, setIsColorOpen] = useState(false)
-  const [color, setColor] = useState()
 
-  useEffect(() => {
-    setColor(value)
-  }, [value])
-
-  useEffect(() => {
-    if (color && String(color).length >= 3 && color !== value)
-      validateHex(color) && onColorChange(color)
-  }, [color])
+  function updateColor (color) {
+    if (validateHex(color)) {
+      onColorChange(color)
+    }
+  }
 
   /**
    * Validates if given value is a valid 3-digit or 6-digit hex-color code
@@ -57,7 +53,7 @@ const ColorPicker = ({ label, value, onColorChange = () => {} }) => {
                 <Box
                   w='full'
                   h='full'
-                  bg={color}
+                  bg={value}
                   borderRadius='md'
                   borderWidth='thin'
                   borderColor='#543d63'
@@ -66,7 +62,7 @@ const ColorPicker = ({ label, value, onColorChange = () => {} }) => {
               <PopoverContent maxW='max-content' bg='#0f283d' border='none'>
                 <PopoverArrow bg='#0f283d' />
                 <PopoverBody cursor='default' maxW='max-content'>
-                  <HexColorPicker onChange={val => setColor(val)} />
+                  <HexColorPicker onChange={val => updateColor(val)} />
                 </PopoverBody>
               </PopoverContent>
             </Popover>
@@ -76,8 +72,8 @@ const ColorPicker = ({ label, value, onColorChange = () => {} }) => {
           placeholder='#ffffff'
           {...SiteStyles.InputStyles}
           maxW='200px'
-          value={color}
-          onChange={e => setColor(e.target.value)}
+          value={value}
+          onChange={e => updateColor(e.target.value)}
         />
       </InputGroup>
     </VStack>

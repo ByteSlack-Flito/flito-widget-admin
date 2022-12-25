@@ -18,6 +18,7 @@ import { Previewer, PreviewerScreen } from './previewer'
 const Steps = () => {
   const { data, isFetching, isUpdating, update } = useWidget()
   const toast = useToastGenerator()
+  const [dataSetFromAPI, setDataSetFromAPI] = useState(false)
   const [globalStyles, setGlobalStyles] = useState({
     welcomeText: 'Estimate your app in seconds',
     backgroundColor: '#ffffff',
@@ -61,9 +62,13 @@ const Steps = () => {
   }
 
   useEffect(() => {
-    if(data?.styles?.steps){
-      setGlobalStyles(data.styles.steps.global)
-      setButtonStyles(data.styles.steps.button)
+    if (data?.styles?.steps) {
+      if (!dataSetFromAPI) {
+        setGlobalStyles(data.styles.steps.global)
+        setButtonStyles(data.styles.steps.button)
+        // setDataSetFromAPI(true)
+        console.log('called...')
+      }
     }
   }, [data])
 
@@ -171,13 +176,15 @@ const Steps = () => {
           </Previewer>
         </SimpleGrid>
       )}
-      {!isFetching && data && <Button
-        {...SiteStyles.ButtonStyles}
-        onClick={performUpdate}
-        isLoading={isUpdating}
-      >
-        Update Style
-      </Button>}
+      {!isFetching && data && (
+        <Button
+          {...SiteStyles.ButtonStyles}
+          onClick={performUpdate}
+          isLoading={isUpdating}
+        >
+          Update Style
+        </Button>
+      )}
     </VStack>
   )
 }
