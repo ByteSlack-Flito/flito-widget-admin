@@ -62,7 +62,7 @@ const ColorPicker = ({ label, value, onColorChange = () => {} }) => {
               <PopoverContent maxW='max-content' bg='#0f283d' border='none'>
                 <PopoverArrow bg='#0f283d' />
                 <PopoverBody cursor='default' maxW='max-content'>
-                  <HexColorPicker onChange={val => updateColor(val)} />
+                  <HexColorPicker color={value} onChange={val => updateColor(val)} />
                 </PopoverBody>
               </PopoverContent>
             </Popover>
