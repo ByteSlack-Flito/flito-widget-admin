@@ -15,6 +15,8 @@ import { AiOutlineAppstoreAdd } from 'react-icons/ai'
 import ProjectRequestScreen from '../screens/ProjectRequests'
 import { BsCalendarDate } from 'react-icons/bs'
 import { IntegrationsScreen } from '../screens/Integrations'
+import { IoColorPaletteOutline } from 'react-icons/io5'
+import { ThemeScreen } from '../screens/Theme'
 
 const ENGINE_ROUTE = '/engine'
 const PROJECT_ROUTE = `${ENGINE_ROUTE}/project/:projectId`
@@ -98,17 +100,17 @@ export const SiteRoutes = {
         }
       }
     },
-    Integrations: {
+    Customize: {
       id: 3,
-      label: 'Integrations',
+      label: 'Customize',
       Screens: () => {
         return {
-          Calendly: {
+          Theme: {
             id: 301,
-            label: 'Calendly',
-            icon: <BsCalendarDate />,
-            path: `${ENGINE_ROUTE}/integration/calendly`,
-            element: <IntegrationsScreen.CalendlyScreen />
+            label: 'Color & Content',
+            icon: <IoColorPaletteOutline />,
+            path: `${ENGINE_ROUTE}/theme-setup`,
+            element: <ThemeScreen />
           }
         }
       }
