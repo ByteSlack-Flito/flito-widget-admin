@@ -11,11 +11,13 @@ import {
   PopoverTrigger,
   PopoverContent,
   PopoverArrow,
-  PopoverBody
+  PopoverBody,
+  HStack
 } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import { SiteStyles } from '../../components/global'
 import { HexColorPicker } from 'react-colorful'
+import { motion, AnimatePresence } from 'framer-motion'
 
 const ColorPicker = ({ label, value, onColorChange = () => {} }) => {
   const [isColorOpen, setIsColorOpen] = useState(false)
@@ -62,7 +64,10 @@ const ColorPicker = ({ label, value, onColorChange = () => {} }) => {
               <PopoverContent maxW='max-content' bg='#0f283d' border='none'>
                 <PopoverArrow bg='#0f283d' />
                 <PopoverBody cursor='default' maxW='max-content'>
-                  <HexColorPicker color={value} onChange={val => updateColor(val)} />
+                  <HexColorPicker
+                    color={value}
+                    onChange={val => updateColor(val)}
+                  />
                 </PopoverBody>
               </PopoverContent>
             </Popover>
@@ -82,4 +87,61 @@ const ColorPicker = ({ label, value, onColorChange = () => {} }) => {
 
 export const ThemeComponents = {
   ColorPicker
+}
+
+export const CustomTabs = ({
+  containerProps,
+  tabProps,
+  tabContainerProps,
+  tabs,
+  children
+}) => {
+  const [currentIndex, setCurrentIndex] = useState(0)
+  function renderTab () {
+    if (children)
+      return (
+        <motion.div
+          key={`${tabs[currentIndex]}${currentIndex}`}
+          style={{ width: '100%', height: '100%' }}
+          initial={{ opacity: 0, x: 10 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -10 }}
+        >
+          {children[currentIndex]}
+        </motion.div>
+      )
+  }
+
+  const getTabProps = index =>
+    index == currentIndex
+      ? {
+          ...tabProps,
+          ...tabProps._selected
+        }
+      : {
+          ...tabProps
+        }
+  return (
+    <VStack
+      w='full'
+      h='full'
+      justify='flex-start'
+      align='flex-start'
+      {...containerProps}
+    >
+      <HStack w='full' h='max-content' borderBottomWidth='thin' {...tabContainerProps}>
+        {tabs.map((label, index) => (
+          <Button
+            key={`${label}${index}`}
+            {...getTabProps(index)}
+            borderBottomRadius='none'
+            onClick={() => setCurrentIndex(index)}
+          >
+            {label}
+          </Button>
+        ))}
+      </HStack>
+      <AnimatePresence mode='wait'>{renderTab()}</AnimatePresence>
+    </VStack>
+  )
 }
