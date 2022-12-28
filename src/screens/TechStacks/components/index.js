@@ -38,11 +38,20 @@ import {
   Thead,
   Tooltip,
   Tr,
-  Textarea
+  Textarea,
+  SimpleGrid,
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionIcon,
+  AccordionPanel,
+  InputGroup,
+  InputLeftElement,
+  InputLeftAddon
 } from '@chakra-ui/react'
 import React, { useEffect, useImperativeHandle, useRef, useState } from 'react'
 import validator from 'validator'
-import { BiCheck, BiPlus, BiX } from 'react-icons/bi'
+import { BiCheck, BiPlus, BiTrash, BiX } from 'react-icons/bi'
 
 import DropDown from 'react-dropdown'
 import 'react-dropdown/style.css'
@@ -59,6 +68,8 @@ import { Constants } from '../../../data/constants'
 import { BsChevronDown } from 'react-icons/bs'
 import { uuidv4 } from '@firebase/util'
 import './components.css'
+import { useMicroServices } from '../../../data/database/users/services'
+import { StringHelper } from '../../../data/extensions/stringHelper'
 
 function getSelectedStyle (selected) {
   if (selected)
@@ -149,12 +160,11 @@ const CreateService = ({ onClick }) => {
 
 export const AddServiceModal = React.forwardRef(({ onSuccessClose }, ref) => {
   const [isOpen, setIsOpen] = useState(false)
-  const [microList, setMicroList] = useState([])
+  const [microServices, setMicroServices] = useState([])
   const [serviceDetails, setServiceDetails] = useState({
-    name: '',
-    description: ''
+    name: ''
   })
-  const { isFetching, isUpdating, data, update } = useWidget()
+  const { isUpdating, add } = useMicroServices()
   const toast = useToastGenerator()
 
   function open () {
@@ -165,37 +175,100 @@ export const AddServiceModal = React.forwardRef(({ onSuccessClose }, ref) => {
     open
   }))
 
-  function addMicroToList (key) {
-    setMicroList(prev => [
+  function addMicroService (key) {
+    setMicroServices(prev => [
       ...prev,
       {
-        uid: uuidv4(),
-        name: '',
-        enabled: true
+        name: ''
       }
     ])
   }
 
-  function removeMicroService (index) {
-    let invitees = [...microList]
-    invitees.splice(index, 1)
-    setMicroList(invitees)
+  function addVariationToMicro (microIndex) {
+    setMicroServices(prev => {
+      let spread = [...prev]
+
+      const microService = { ...spread[microIndex] }
+      if (microService) {
+        const micro_variations = microService.variations
+          ? [...microService.variations]
+          : []
+        microService.variations = [...micro_variations, { name: '' }]
+      }
+
+      spread[microIndex] = microService
+      return spread
+    })
   }
 
-  function updateMicroService ({ key, nestedKey, val, microIndex }) {
-    setMicroList(prev => {
+  function removeMicro (microIndex) {
+    let spread = [...microServices]
+    spread.splice(microIndex, 1)
+    setMicroServices(prev => {
+      let spread = [...microServices]
+      spread.splice(microIndex, 1)
+
+      return spread
+    })
+  }
+
+  function removeVariation ({ microIndex, variationIndex }) {
+    setMicroServices(prev => {
       let spread = [...prev]
-      // console.log('Main:', spread)
+      const microService = { ...spread[microIndex] }
+      if (microService) {
+        const micro_variations = [...microService.variations]
+        micro_variations.splice(variationIndex, 1)
+
+        microService.variations = micro_variations
+      }
+      spread[microIndex] = microService
+
+      return spread
+    })
+  }
+
+  function updateMicroService ({ key, nestedKey, value, microIndex }) {
+    setMicroServices(prev => {
+      let spread = [...prev]
       const updIndex = microIndex
       if (nestedKey) {
-        // console.log(`Key: ${key}, neseted: ${nestedKey}, val: ${val}`)
         if (!spread[updIndex][key]) {
           spread[updIndex][key] = {}
         }
-        spread[updIndex][key][nestedKey] = val
+        spread[updIndex][key][nestedKey] = value
       } else {
-        spread[updIndex][key] = val
+        spread[updIndex][key] = value
       }
+      return spread
+    })
+  }
+
+  function updateMicro_Variation ({
+    key,
+    nestedKey,
+    value,
+    microIndex,
+    variationIndex
+  }) {
+    setMicroServices(prev => {
+      let spread = [...prev]
+
+      const microService = spread[microIndex]
+
+      if (microService && microService?.variations?.length > 0) {
+        const micro_variations = [...microService.variations]
+        const updatingIndex = variationIndex
+        if (nestedKey) {
+          if (!micro_variations[updatingIndex][key]) {
+            micro_variations[updatingIndex][key] = {}
+          }
+          micro_variations[updatingIndex][key][nestedKey] = value
+        } else {
+          micro_variations[updatingIndex][key] = value
+        }
+      }
+
       return spread
     })
   }
@@ -203,11 +276,9 @@ export const AddServiceModal = React.forwardRef(({ onSuccessClose }, ref) => {
   async function performUpdate () {
     const service = {
       ...serviceDetails,
-      uid: uuidv4(),
-      microServices: microList,
-      enabled: true
+      microServices: microServices
     }
-    const result = await update({ serviceTypes: arrayUnion(service) })
+    const result = await add(service)
     toast.show(result)
     if (result.success) {
       setIsOpen(false)
@@ -215,30 +286,31 @@ export const AddServiceModal = React.forwardRef(({ onSuccessClose }, ref) => {
     }
   }
 
-  const pricingOptions = {
-    Options: {
-      key: 'pricing.type',
-      values: Constants.CustomServicePricingOptions
-    }
-  }
-
   function formValidity () {
-    if (microList?.length <= 0) {
+    if (microServices?.length <= 0) {
       return {
         isValid: false,
         message: 'Add at-least one micro service'
       }
     }
 
-    const propertyCountMet =
-      microList.every(micro => {
-        let spread = { ...micro }
-        return spread?.name && spread?.pricing?.type && spread?.pricing?.amount
-      }) &&
-      Object.keys(serviceDetails).every(
-        key =>
-          serviceDetails[key] !== undefined && serviceDetails[key]?.length > 0
+    const service_propValid = !StringHelper.isPropsEmpty(serviceDetails)
+
+    const microService_propValid = microServices.every(
+      micro => !StringHelper.isPropsEmpty(micro)
+    )
+
+    const variation_propValid = microServices.every(micro =>
+      micro.variations?.every(
+        variation =>
+          !StringHelper.isPropsEmpty(variation) &&
+          variation.pricing?.type &&
+          variation.pricing?.amount
       )
+    )
+
+    const propertyCountMet =
+      service_propValid && microService_propValid && variation_propValid
 
     if (propertyCountMet) {
       return {
@@ -247,7 +319,7 @@ export const AddServiceModal = React.forwardRef(({ onSuccessClose }, ref) => {
     } else {
       return {
         isValid: false,
-        message: 'One or more properties have not been set yet.'
+        message: 'Property not set for one or more variations.'
       }
     }
   }
@@ -256,14 +328,20 @@ export const AddServiceModal = React.forwardRef(({ onSuccessClose }, ref) => {
     <Modal
       onClose={() => setIsOpen(false)}
       isOpen={isOpen}
-      size={'3xl'}
+      size={'4xl'}
       motionPreset='slideInBottom'
-      onCloseComplete={() => setMicroList([])}
+      onCloseComplete={() => {
+        setMicroServices([])
+        setServiceDetails()
+      }}
+      closeOnEsc={false}
+      closeOnOverlayClick={false}
+      scrollBehavior='inside'
     >
       <ModalOverlay />
-      <ModalContent color='white' bg='#143554'>
+      <ModalContent color='white' bg='#091927' h='full'>
         <ModalHeader
-          // bg='#143554'
+          bg='#143554'
           display='flex'
           justifyContent='space-between'
           alignItems='center'
@@ -272,240 +350,315 @@ export const AddServiceModal = React.forwardRef(({ onSuccessClose }, ref) => {
             Offer A New Service
           </Text>
         </ModalHeader>
-        <ModalCloseButton mt='0.5' />
-        <ModalBody pt='5' pb='5'>
-          <VStack align='flex-start'>
+        <ModalCloseButton mt='1.5' />
+        <ModalBody h='100%'>
+          <VStack
+            w='full'
+            h='max-content'
+            justify='flex-start'
+            align='start'
+            pt='3'
+          >
             <Input
-              placeholder='Service Name'
-              size='md'
-              // {...SiteStyles}
+              placeholder='Add Your Service Name'
               onChange={e =>
                 setServiceDetails(prev => ({ ...prev, name: e.target.value }))
               }
               {...SiteStyles.InputStyles}
             />
-            <Textarea
-              placeholder='Explain the service in a few words'
-              size='md'
-              maxH='100px'
+            <Input
+              placeholder={`Explain ${serviceDetails?.name || 'this'} service in a few words`}
               onChange={e =>
                 setServiceDetails(prev => ({
                   ...prev,
                   description: e.target.value
                 }))
               }
-              // {...SiteStyles}
               {...SiteStyles.InputStyles}
             />
-            {microList?.length > 0 && (
-              <TableContainer
-                className='table-container'
-                w='100%'
-                maxH='500px'
-                borderRadius='md'
-                borderWidth='thin'
-                borderColor='teal.700'
-                mt='3'
-                pos='relative'
-              >
-                <Table className='custom-table' size='sm'>
-                  <Thead bg='#0f283d' h='35px'>
-                    <Tr>
-                      <Th>Name</Th>
-                      <Th>Pricing Options</Th>
-                      {/* <Th>Employment Type</Th>*/}
-                      <Th>Rate</Th>
-                      <Th></Th>
-                    </Tr>
-                  </Thead>
-                  <Tbody fontWeight='normal'>
-                    {microList?.map((micro, index) => (
-                      <Tr
-                        transition='all 200ms'
-                        _hover={{
-                          bg: '#0f283d50'
-                        }}
-                        key={index}
-                      >
-                        <Td>
-                          <Input
-                            size='sm'
-                            placeholder='Set Name'
-                            onChange={e =>
-                              updateMicroService({
-                                key: 'name',
-                                val: e.target.value,
-                                microIndex: index
-                              })
-                            }
-                            {...SiteStyles.InputStyles}
-                          />
-                        </Td>
-                        <Td>
-                          <Menu closeOnSelect={false}>
-                            <MenuButton
-                              as={Button}
-                              rightIcon={
-                                microList[index]?.pricing?.type ? (
-                                  <BiCheck />
-                                ) : (
-                                  <BsChevronDown />
-                                )
-                              }
-                              {...SiteStyles.ButtonStyles}
-                              size='sm'
-                            >
-                              {microList[index]?.pricing?.type
-                                ? 'Selected'
-                                : 'Select'}
-                            </MenuButton>
-                            <MenuList
-                              minWidth='240px'
-                              maxH='200px'
-                              overflow='scroll'
-                              bg='#143554'
-                            >
-                              {Object.keys(pricingOptions).map(
-                                (tag, tagIndex) => (
-                                  <>
-                                    <MenuOptionGroup
-                                      // defaultValue='asc'
-                                      title={tag}
-                                      type='radio'
-                                      key={`${tag}${tagIndex}`}
-                                    >
-                                      {pricingOptions[tag].values.map(
-                                        (tagItem, tagItemIndex) => (
-                                          <MenuItemOption
-                                            key={`${tagItem}${tagItemIndex}`}
-                                            value={tagItem.value}
-                                            _hover={{
-                                              bg: '#0f283d'
-                                            }}
-                                            _focus={{
-                                              bg: '#0f283d'
-                                            }}
-                                            onClick={e => {
-                                              const key = pricingOptions[
-                                                tag
-                                              ].key?.includes('.')
-                                                ? pricingOptions[tag].key.split(
-                                                    '.'
-                                                  )[0]
-                                                : pricingOptions[tag].key
-
-                                              const nestedKey = pricingOptions[
-                                                tag
-                                              ].key?.includes('.')
-                                                ? pricingOptions[tag].key.split(
-                                                    '.'
-                                                  )[1]
-                                                : null
-
-                                              updateMicroService({
-                                                key: key,
-                                                nestedKey: nestedKey,
-                                                val: tagItem.value,
-                                                microIndex: index
-                                              })
-                                            }}
-                                          >
-                                            {tagItem.label}
-                                          </MenuItemOption>
-                                        )
-                                      )}
-                                    </MenuOptionGroup>
-                                    {index <
-                                      Object.keys(pricingOptions).length -
-                                        1 && <MenuDivider />}
-                                  </>
-                                )
-                              )}
-                            </MenuList>
-                          </Menu>
-                        </Td>
-                        <Td maxW='200px'>
-                          <Input
-                            size='sm'
-                            placeholder='Amount'
-                            onChange={e =>
-                              updateMicroService({
-                                key: 'pricing',
-                                nestedKey: 'amount',
-                                val: e.target.value,
-                                microIndex: index
-                              })
-                            }
-                            {...SiteStyles.InputStyles}
-                          />
-                          {/* </HStack> */}
-                        </Td>
-                        <Td textAlign='right'>
-                          <IconButton
-                            // onClick={e => e.stopPropagation()}
-                            bg='#0f283d'
-                            variant='solid'
-                            p='2'
-                            size='xs'
-                            _active={{
-                              bg: '#3d0f1b'
-                            }}
-                            _hover={{
-                              bg: '#61162a'
-                            }}
-                            icon={<BiX size={16} />}
-                            onClick={() => removeMicroService(index)}
-                          />
-                        </Td>
-                      </Tr>
-                    ))}
-                  </Tbody>
-                </Table>
-              </TableContainer>
-            )}
-
+            <Box h='2px' />
+            <Accordion
+              w='full'
+              allowMultiple={true}
+              defaultIndex={[0]}
+              allowToggle={false}
+            >
+              {microServices?.map((micro, index) => (
+                <SingleMicroService
+                  key={`${index}`}
+                  {...micro}
+                  onUpdate={values =>
+                    updateMicroService({ ...values, microIndex: index })
+                  }
+                  onVariationUpdate={values =>
+                    updateMicro_Variation({ ...values, microIndex: index })
+                  }
+                  onAddVariation={() => addVariationToMicro(index)}
+                  onRemove={() => removeMicro(index)}
+                  onRemoveVariation={({ variationIndex }) =>
+                    removeVariation({ microIndex: index, variationIndex })
+                  }
+                />
+              ))}
+            </Accordion>
             <Button
               size='sm'
-              // isDisabled={!formValidity().isValid}
-              onClick={addMicroToList}
+              onClick={addMicroService}
               leftIcon={<BiPlus />}
               {...SiteStyles.ButtonStyles}
+              borderStyle='dashed'
             >
-              {microList.length <= 0 ? 'Add micro-service' : 'Add another'}
+              Add New Micro-Service
             </Button>
           </VStack>
         </ModalBody>
-        {!formValidity().message?.includes('at-least one') && (
-          <ModalFooter>
-            <Tooltip
-              placement='top'
-              hasArrow
-              label={formValidity().message}
-              bg='white'
-              color='#0f283d'
-              p='2'
-              pl='4'
-              pr='4'
+
+        <ModalFooter>
+          <Tooltip
+            placement='top'
+            hasArrow
+            label={formValidity().message}
+            bg='white'
+            color='#0f283d'
+            p='2'
+            pl='4'
+            pr='4'
+          >
+            <Button
+              size='sm'
+              // isDisabled={!formValidity().isValid}
+              onClick={e => {
+                formValidity().isValid && performUpdate()
+              }}
+              cursor={formValidity().isValid ? 'pointer' : 'not-allowed'}
+              isLoading={isUpdating}
+              {...SiteStyles.ButtonStyles}
             >
-              <Button
-                size='sm'
-                // isDisabled={!formValidity().isValid}
-                onClick={e => {
-                  formValidity().isValid && performUpdate()
-                }}
-                cursor={formValidity().isValid ? 'pointer' : 'not-allowed'}
-                isLoading={isUpdating}
-                {...SiteStyles.ButtonStyles}
-              >
-                Create Service
-              </Button>
-            </Tooltip>
-          </ModalFooter>
-        )}
+              Create Service
+            </Button>
+          </Tooltip>
+        </ModalFooter>
       </ModalContent>
     </Modal>
   )
 })
+
+/**
+ *
+ * @param {Object} props
+ * @param {''} props.name The name of the micro service
+ * @param {''} props.stepQuestion The question to ask for this micro service
+ * @param {0} props.basePrice The base price for this micro service
+ * @param {[{ name: '', uid: '', pricing: { type: '', rate: 0 } }] | []} props.variations The base price for this micro service
+ * @param {({key, nestedKey, value}) => {}} props.onUpdate Function invoked when the micro-service has been updated
+ * @param {({key, nestedKey, value, variationIndex}) => {}} props.onVariationUpdate Function invoked when any of the variation has been updated
+ * @param {({}) => {}} props.onRemove Function invoked when the micro-service has been removed
+ * @param {({variationIndex}) => {}} props.onRemoveVariation Function invoked when any of the variations has been removed
+ * @param {() => {}} props.onAddVariation Function invoked when any of the variation has been removed
+ * @returns
+ */
+const SingleMicroService = ({
+  name,
+  stepQuestion,
+  basePrice,
+  variations,
+  onUpdate,
+  onVariationUpdate,
+  onRemove,
+  onRemoveVariation,
+  onAddVariation
+}) => {
+  const pricingOptions = {
+    key: 'pricing.type',
+    values: Constants.CustomServicePricingOptions
+  }
+
+  return (
+    <AccordionItem
+      borderWidth='thin'
+      borderRadius='sm'
+      borderColor='#143554'
+      overflow='visible'
+    >
+      {({ isExpanded }) => (
+        <>
+          <AccordionButton cursor='default'>
+            <Box as='span' flex='1' textAlign='left'>
+              <Text>{name || 'Micro Service 1'}</Text>
+            </Box>
+            <IconButton
+              icon={<BiTrash />}
+              mr='2'
+              {...SiteStyles.DeleteButton}
+              onClick={e => {
+                e.stopPropagation()
+                onRemove()
+              }}
+            />
+            <AccordionIcon cursor='pointer' />
+          </AccordionButton>
+          <AccordionPanel pb={4}>
+            <VStack align='flex-start' spacing='4'>
+              <Input
+                {...SiteStyles.InputStyles}
+                placeholder='Micro Service Name'
+                value={name || ''}
+                onChange={e => onUpdate({ key: 'name', value: e.target.value })}
+              />
+              <Input
+                {...SiteStyles.InputStyles}
+                value={stepQuestion || ''}
+                placeholder='Step Question. Ex. How Much Traffic Do You Want'
+                onChange={e =>
+                  onUpdate({ key: 'stepQuestion', value: e.target.value })
+                }
+              />
+              <InputGroup>
+                <InputLeftAddon
+                  bg='#143554'
+                  children={'Base Price :'}
+                  border='none'
+                />
+                <Input
+                  {...SiteStyles.InputStyles}
+                  placeholder='$10.00'
+                  value={basePrice || ''}
+                  onChange={e =>
+                    onUpdate({ key: 'basePrice', value: e.target.value })
+                  }
+                />
+              </InputGroup>
+              {variations?.length > 0 && (
+                <TableContainer
+                  className='table-container'
+                  w='100%'
+                  maxH='500px'
+                  borderRadius='md'
+                  borderWidth='thin'
+                  borderColor='teal.700'
+                  mt='3'
+                  pos='relative'
+                >
+                  <Table className='custom-table' size='sm'>
+                    <Thead bg='#0f283d' h='35px' borderTopRadius='md'>
+                      <Tr>
+                        <Th borderTopLeftRadius='md'>Variation Name</Th>
+                        <Th>Pricing Type</Th>
+                        {/* <Th>Employment Type</Th>*/}
+                        <Th>Rate</Th>
+                        <Th borderTopRightRadius='md'></Th>
+                      </Tr>
+                    </Thead>
+                    <Tbody fontWeight='normal'>
+                      {variations?.map((micro, index) => (
+                        <Tr
+                          transition='all 200ms'
+                          _hover={{
+                            bg: '#0f283d50'
+                          }}
+                          key={`${index}`}
+                        >
+                          <Td>
+                            <Input
+                              size='sm'
+                              placeholder='Set Name'
+                              onChange={e =>
+                                onVariationUpdate({
+                                  key: 'name',
+                                  value: e.target.value,
+                                  variationIndex: index
+                                })
+                              }
+                              value={micro.name || ''}
+                              {...SiteStyles.InputStyles}
+                            />
+                          </Td>
+                          <Td>
+                            <RadioGroup
+                              size='sm'
+                              onChange={val => {
+                                const key = 'pricing'
+                                const nestedKey = 'type'
+                                onVariationUpdate({
+                                  key: key,
+                                  nestedKey: nestedKey,
+                                  value: val,
+                                  variationIndex: index
+                                })
+                              }}
+                              value={micro?.pricing?.type}
+                            >
+                              <HStack>
+                                {pricingOptions.values.map((pricing, index) => (
+                                  <Radio
+                                    key={`${pricing.value}${index}`}
+                                    value={pricing.value}
+                                  >
+                                    {pricing.label}
+                                  </Radio>
+                                ))}
+                              </HStack>
+                            </RadioGroup>
+                          </Td>
+                          <Td maxW='200px'>
+                            <Input
+                              size='sm'
+                              placeholder='$10.00'
+                              onChange={e =>
+                                onVariationUpdate({
+                                  key: 'pricing',
+                                  nestedKey: 'amount',
+                                  value: e.target.value,
+                                  variationIndex: index
+                                })
+                              }
+                              value={micro?.pricing?.amount || ''}
+                              {...SiteStyles.InputStyles}
+                            />
+                            {/* </HStack> */}
+                          </Td>
+                          <Td textAlign='right'>
+                            <IconButton
+                              // onClick={e => e.stopPropagation()}
+                              bg='#0f283d'
+                              variant='solid'
+                              p='2'
+                              size='xs'
+                              _active={{
+                                bg: '#3d0f1b'
+                              }}
+                              _hover={{
+                                bg: '#61162a'
+                              }}
+                              icon={<BiX size={16} />}
+                              onClick={() =>
+                                onRemoveVariation({ variationIndex: index })
+                              }
+                            />
+                          </Td>
+                        </Tr>
+                      ))}
+                    </Tbody>
+                  </Table>
+                </TableContainer>
+              )}
+              <Button
+                size='xs'
+                // isDisabled={!formValidity().isValid}
+                onClick={onAddVariation}
+                leftIcon={<BiPlus />}
+                colorScheme='cyan'
+                // {...SiteStyles.ButtonStyles}
+              >
+                Add Variation
+              </Button>
+            </VStack>
+          </AccordionPanel>
+        </>
+      )}
+    </AccordionItem>
+  )
+}
 
 export const StackCreatable = {
   CreateService

@@ -317,6 +317,20 @@ const InputStyles = {
   bg: '#0f283d',
   border: 'none'
 }
+
+const FocusableInputStyles = {
+  transition: 'padding-left 300ms',
+  bg: 'transparent',
+  border: 'none !important',
+  pl: 0,
+  resize: 'none',
+  _focus: {
+    ...InputStyles,
+    pl: '4',
+    resize: 'vertical'
+  },
+  boxShadow: 'none !important'
+}
 const ClickableContainer = {
   userSelect: 'none',
   borderWidth: 'thin',
@@ -355,6 +369,7 @@ export const SiteStyles = {
   LinkStyles,
   ButtonStyles,
   InputStyles,
+  FocusableInputStyles,
   ClickableContainer,
   DeleteButton,
   BadgeStyle
