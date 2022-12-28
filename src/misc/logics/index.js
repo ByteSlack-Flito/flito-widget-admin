@@ -1,4 +1,4 @@
-export function filterData(source = [], query = '', ingoreProps = []) {
+export function filterData (source = [], query = '', ingoreProps = []) {
   let filteredList = []
 
   if (query.length > 0) {
@@ -31,7 +31,7 @@ export function filterData(source = [], query = '', ingoreProps = []) {
   return query.length > 0 ? filteredList : []
 }
 
-export function getRandomItems(arr, n) {
+export function getRandomItems (arr, n) {
   var result = new Array(n),
     len = arr.length,
     taken = new Array(len)
@@ -45,7 +45,7 @@ export function getRandomItems(arr, n) {
   return result
 }
 
-export function getNumberKMBT(n) {
+export function getNumberKMBT (n) {
   if (n < 1e3) return n
   if (n >= 1e3 && n < 1e6) return +(n / 1e3).toFixed(1) + 'K'
   if (n >= 1e6 && n < 1e9) return +(n / 1e6).toFixed(1) + 'M'
@@ -54,13 +54,9 @@ export function getNumberKMBT(n) {
   return 0
 }
 
-export function getUrlExt(url, getIfImageOrVideo) {
+export function getUrlExt (url, getIfImageOrVideo) {
   // console.log('Url is:', url)
-  const type = url
-    .split(/[#?]/)[0]
-    .split('.')
-    .pop()
-    .trim()
+  const type = url.split(/[#?]/)[0].split('.').pop().trim()
   if (getIfImageOrVideo) {
     if (type.match(/gif|bmp|jpg|jpeg|png|svg|apng/g)) return 'image'
     else return 'other'
@@ -68,7 +64,7 @@ export function getUrlExt(url, getIfImageOrVideo) {
   return type
 }
 
-export function getRandomInteger(min, max) {
+export function getRandomInteger (min, max) {
   return Math.floor(Math.random() * (max - min)) + min
 }
 export const colorCodes = [
@@ -78,7 +74,7 @@ export const colorCodes = [
   { background: '#b5710b', color: '#fff' },
   { background: '#2b3b4d', color: '#fff' }
 ]
-export function randomColorSelector() {
+export function randomColorSelector () {
   return colorCodes[(Math.random() * colorCodes.length) | 0]
 }
 
@@ -88,12 +84,12 @@ export function randomColorSelector() {
  * @param {*} maxHrPerWeek Maximum hour(s) to be considered for a week. Defaults to `40` as full-time.
  * @returns An `int` value representing the weeks count
  */
-export function getWeeksFromHours(hours, maxHrPerWeek = 40) {
+export function getWeeksFromHours (hours, maxHrPerWeek = 40) {
   if (hours) return Math.ceil(hours / maxHrPerWeek)
   return 0
 }
 
-export function getProfileInitials(userProfile) {
+export function getProfileInitials (userProfile) {
   if (userProfile.firstName === 'Your' && userProfile.lastName === 'Name') {
     return userProfile.email.charAt(0).toUpperCase()
   } else {
@@ -101,47 +97,49 @@ export function getProfileInitials(userProfile) {
   }
 }
 
-export function GetCardType(number) {
+export function GetCardType (number) {
   // visa
-  var re = new RegExp("^4");
-  if (number.match(re) != null)
-    return "Visa";
+  var re = new RegExp('^4')
+  if (number.match(re) != null) return 'Visa'
 
-  // Mastercard 
+  // Mastercard
   // Updated for Mastercard 2017 BINs expansion
-  if (/^(5[1-5][0-9]{14}|2(22[1-9][0-9]{12}|2[3-9][0-9]{13}|[3-6][0-9]{14}|7[0-1][0-9]{13}|720[0-9]{12}))$/.test(number))
-    return "Mastercard";
+  if (
+    /^(5[1-5][0-9]{14}|2(22[1-9][0-9]{12}|2[3-9][0-9]{13}|[3-6][0-9]{14}|7[0-1][0-9]{13}|720[0-9]{12}))$/.test(
+      number
+    )
+  )
+    return 'Mastercard'
 
   // AMEX
-  re = new RegExp("^3[47]");
-  if (number.match(re) != null)
-    return "AMEX";
+  re = new RegExp('^3[47]')
+  if (number.match(re) != null) return 'AMEX'
 
   // Discover
-  re = new RegExp("^(6011|622(12[6-9]|1[3-9][0-9]|[2-8][0-9]{2}|9[0-1][0-9]|92[0-5]|64[4-9])|65)");
-  if (number.match(re) != null)
-    return "Discover";
+  re = new RegExp(
+    '^(6011|622(12[6-9]|1[3-9][0-9]|[2-8][0-9]{2}|9[0-1][0-9]|92[0-5]|64[4-9])|65)'
+  )
+  if (number.match(re) != null) return 'Discover'
 
   // Diners
-  re = new RegExp("^36");
-  if (number.match(re) != null)
-    return "Diners";
+  re = new RegExp('^36')
+  if (number.match(re) != null) return 'Diners'
 
   // Diners - Carte Blanche
-  re = new RegExp("^30[0-5]");
-  if (number.match(re) != null)
-    return "Diners - Carte Blanche";
+  re = new RegExp('^30[0-5]')
+  if (number.match(re) != null) return 'Diners - Carte Blanche'
 
   // JCB
-  re = new RegExp("^35(2[89]|[3-8][0-9])");
-  if (number.match(re) != null)
-    return "JCB";
+  re = new RegExp('^35(2[89]|[3-8][0-9])')
+  if (number.match(re) != null) return 'JCB'
 
   // Visa Electron
-  re = new RegExp("^(4026|417500|4508|4844|491(3|7))");
-  if (number.match(re) != null)
-    return "Visa Electron";
+  re = new RegExp('^(4026|417500|4508|4844|491(3|7))')
+  if (number.match(re) != null) return 'Visa Electron'
 
-  return "";
+  return ''
 }
 
+export function generateArray (length) {
+  return Array.from(Array(length))
+}

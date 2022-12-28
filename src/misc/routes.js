@@ -13,6 +13,10 @@ import { TechStackScreen } from '../screens/TechStacks'
 import { BiCodeAlt } from 'react-icons/bi'
 import { AiOutlineAppstoreAdd } from 'react-icons/ai'
 import ProjectRequestScreen from '../screens/ProjectRequests'
+import { BsCalendarDate } from 'react-icons/bs'
+import { IntegrationsScreen } from '../screens/Integrations'
+import { IoColorPaletteOutline } from 'react-icons/io5'
+import { ThemeScreen } from '../screens/Theme'
 
 const ENGINE_ROUTE = '/engine'
 const PROJECT_ROUTE = `${ENGINE_ROUTE}/project/:projectId`
@@ -53,7 +57,7 @@ export const SiteRoutes = {
           TechStacks: {
             id: 301,
             icon: <AiOutlineAppstoreAdd />,
-            label: 'My Stacks',
+            label: 'My Services',
             path: `${ENGINE_ROUTE}/my-tech-stack`,
             element: <TechStackScreen />
           },
@@ -92,6 +96,21 @@ export const SiteRoutes = {
             icon: <MdDashboardCustomize />,
             path: `${ENGINE_ROUTE}/widget-requests`,
             element: <ProjectRequestScreen />
+          }
+        }
+      }
+    },
+    Customize: {
+      id: 3,
+      label: 'Customize',
+      Screens: () => {
+        return {
+          Theme: {
+            id: 301,
+            label: 'Color & Content',
+            icon: <IoColorPaletteOutline />,
+            path: `${ENGINE_ROUTE}/theme-setup`,
+            element: <ThemeScreen />
           }
         }
       }
