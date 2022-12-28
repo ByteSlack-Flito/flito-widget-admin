@@ -324,7 +324,7 @@ export const TechStackScreen = () => {
         onClick={performUpdate}
         {...SiteStyles.ButtonStyles}
       >
-        Update Stacks
+        Update Services
       </Button>
     </ScreenContainer>
   )
