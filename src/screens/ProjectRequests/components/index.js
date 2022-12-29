@@ -292,24 +292,31 @@ export const RequestDetailsModal = React.forwardRef(({ projectId }, ref) => {
   )
 })
 
-const DeleteButton = ({ onConfirm }) => {
+export const DeleteButton = ({
+  onConfirm,
+  customButton,
+  popoverTitle,
+  popoverBody
+}) => {
   const [isBusy, setBusy] = useState(false)
 
   function performConfirm () {
     setBusy(true)
-    onConfirm()
+    onConfirm && onConfirm()
   }
   return (
-    <Popover placement='right' closeOnEsc closeOnBlur closeDelay={2000}>
+    <Popover placement='right' closeOnEsc closeOnBlur closeDelay={2000} onClose={() => setBusy(false)}>
       {({ onClose }) => (
         <>
           <PopoverTrigger>
-            <IconButton
-              pos='absolute'
-              right='0'
-              onClick={e => e.stopPropagation()}
-              {...SiteStyles.DeleteButton}
-            />
+            {customButton || (
+              <IconButton
+                pos='absolute'
+                right='0'
+                onClick={e => e.stopPropagation()}
+                {...SiteStyles.DeleteButton}
+              />
+            )}
           </PopoverTrigger>
           <PopoverContent
             color='white'
@@ -321,11 +328,15 @@ const DeleteButton = ({ onConfirm }) => {
             }}
           >
             <PopoverHeader pt={4} fontWeight='bold' border='0' fontSize='sm'>
-              Delete Request?
+              {popoverTitle || 'Delete Request?'}
             </PopoverHeader>
             <PopoverCloseButton mt='2' />
-            <PopoverArrow bg='blue.800' />
-
+            <PopoverArrow bg='blue.800' boxShadow='none !important'/>
+            {popoverBody && (
+              <PopoverBody fontSize='sm' fontWeight='normal'>
+                {popoverBody}
+              </PopoverBody>
+            )}
             <PopoverFooter
               border='0'
               display='flex'

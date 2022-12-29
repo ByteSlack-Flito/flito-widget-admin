@@ -54,6 +54,6 @@ export function trimString (source, length, ellipsis = '.', ellipsisCount = 3) {
     return
   }
   if (source.length <= length) return source
-  
+
   return source.substring(0, length) + ellipsis.repeat(ellipsisCount)
 }

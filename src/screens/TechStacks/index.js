@@ -5,6 +5,7 @@ import {
   SimpleGrid,
   Spinner,
   Text,
+  Tooltip,
   useToast,
   VStack
 } from '@chakra-ui/react'
@@ -21,28 +22,30 @@ import {
 } from '../../components/global'
 import { useFirebaseInstance } from '../../data/database/users/auth'
 import { updateProfile, useWidget } from '../../data/database/users/profile'
+import { useMicroServices } from '../../data/database/users/services'
+import { StringHelper } from '../../data/extensions/stringHelper'
 import { AppTypeSingle, StackCreatable, StackModals } from './components'
 
 const AppTypes = [
   {
     icon: <ImMobile size={14} />,
     value: 'mobile-app',
-    title: 'Mobile Apps',
-    description: 'Native & Hybrid Apps For Cross-Platform Devices',
+    title: 'Mobile App',
+    description: 'Native & Hybrid Mobile Apps Development',
     platforms: ['Android', 'iOS', 'AndroidTV', 'tvOS', 'watchOS', 'wearOS']
   },
   {
     icon: <HiOutlineCursorClick size={14} />,
     value: 'web-app',
-    title: 'Websites & Web Apps',
-    description: 'Responsive Website and Web Apps for modern browsers.',
+    title: 'Websites & Web App',
+    description: 'Responsive Website and Web Apps development.',
     platforms: ['Static Websites', 'SPA', 'PWA']
   },
   {
     icon: <AiOutlineDesktop size={14} />,
     value: 'desktop-app',
-    title: 'Desktop Apps',
-    description: 'Classic Desktop Applications that run locally.',
+    title: 'Desktop App',
+    description: 'Classic Desktop Applications development.',
     platforms: ['Windows', 'Linux', 'macOS']
   }
 ]
@@ -53,6 +56,7 @@ export const TechStackScreen = () => {
   const [selectedServiceTypes, setSelectedServiceTypes] = useState([])
   const { userId } = useSelector(state => state.user)
   const { isFetching, isUpdating, data, update, get } = useWidget()
+  const microServiceHook = useMicroServices()
   const toast = useToastGenerator()
 
   const serviceModalRef = useRef()
@@ -98,62 +102,58 @@ export const TechStackScreen = () => {
     })
   }
 
-  const updateSelectedServiceTypes = (service, microService) => {
+  function updateService (service) {
     setSelectedServiceTypes(prev => {
-      let items = [...prev]
+      const spread = [...prev]
+      const existing_index = spread.findIndex(x => x.uid === service.uid)
 
-      const existing = items.find(x => x.uid === service.uid)
-      if (existing) {
-        const existingIdx = items.findIndex(x => x.uid === existing.uid)
-        if (microService) {
-          const exsServices = existing.microServices ? [...existing.microServices] : null
-          const updatedServices = () => {
-            if (exsServices) {
-              const exsMicroIndex = exsServices?.findIndex(
-                x => x.uid === microService.uid
-              )
-              if (exsMicroIndex > -1) {
-                // console.log('Found micro at:', exsMicroIndex)
-                const updatedExsService = {
-                  ...exsServices[exsMicroIndex],
-                  enabled: !exsServices[exsMicroIndex].enabled
-                }
-                exsServices[exsMicroIndex] = updatedExsService
-                // console.log('Updated exs at:', exsServices[exsMicroIndex].enabled)
-                return exsServices
-              } else {
-                return [...exsServices, microService]
-              }
-            } else {
-              return [microService]
-            }
-          }
-          let updated = {
-            ...existing,
-            microServices: updatedServices()
-          }
-          items[existingIdx] = updated
-          // console.log('Retuning:', items)
-        } else {
-          items.splice(existingIdx, 1)
-        }
-      } else {
-        const serviceOnly = {
+      /// If service is not selected, we add it aka make it selected. Or if it is already added,
+      /// we remove it aka de-select it.
+      if (existing_index <= -1) {
+        spread.push({
           ...service,
-          microServices: null
-        }
-        items = [...items, serviceOnly]
+          microServices: []
+        })
+      } else {
+        spread.splice(existing_index, 1)
       }
 
-      return items
+      return spread
+    })
+  }
+
+  const updateMicroService = (serviceUID, microUID) => {
+    setSelectedServiceTypes(prev => {
+      const spread = [...prev]
+      const existing_service_index = spread.findIndex(x => x.uid === serviceUID)
+      const existing_service = { ...spread[existing_service_index] }
+
+      const existing_microServices = [...existing_service.microServices]
+
+      if (existing_microServices.includes(microUID)) {
+        existing_service.microServices = [
+          ...existing_microServices.filter(x => x !== microUID)
+        ]
+      } else {
+        existing_service.microServices = [...existing_microServices, microUID]
+      }
+
+      spread[existing_service_index] = existing_service
+
+      return spread
     })
   }
 
   function isFormValid () {
-    return (
+    const isAppTypesValid =
       selectedAppTypes.length > 0 &&
       selectedAppTypes.every(x => x.platforms?.length > 0)
+
+    const isServicesValid = selectedServiceTypes?.every(
+      x => x.microServices?.length > 0
     )
+
+    return isAppTypesValid && isServicesValid
   }
 
   useEffect(() => data && setSelectedAppTypes(data.appTypes), [data])
@@ -165,27 +165,23 @@ export const TechStackScreen = () => {
     toast.show(result)
   }
 
-  function showCreateServiceModal () {
-    serviceModalRef?.current?.open()
+  function showCreateServiceModal (service) {
+    serviceModalRef?.current?.open(service)
   }
 
   return (
-    <ScreenContainer description='Manage what applications you offer to develop for your clients.'>
-      {/* <SimpleGrid spacing='40px' pr='5'> */}
-      <VStack
-        align='flex-start'
-        // gridColumnStart={1}
-        // gridColumnEnd={5}
-        w='full'
-        h='max-content'
-        spacing='2'
-      >
+    <ScreenContainer description='Manage what services you offer to your clients.'>
+      <VStack align='flex-start' w='full' h='max-content' spacing='2'>
         <StackModals.AddServiceModal
           ref={serviceModalRef}
-          onSuccessClose={get}
+          onSuccessClose={() => {
+            microServiceHook.getAll()
+          }}
         />
-        {isFetching && <Spinner size='md' color='blue.400' />}
-        {!isFetching && (
+        {(isFetching || microServiceHook.isFetching) && (
+          <Spinner size='md' color='blue.400' />
+        )}
+        {!isFetching && !microServiceHook.isFetching && (
           <>
             <Flex gap='3' w='full' wrap='wrap'>
               {AppTypes.map(type => {
@@ -201,23 +197,24 @@ export const TechStackScreen = () => {
                   />
                 )
               })}
-              {data.serviceTypes?.map((service, index) => {
+              {microServiceHook.data?.map((service, index) => {
                 const existing = selectedServiceTypes.find(
                   x => x.uid === service.uid
                 )
                 return (
                   <AppTypeSingle
+                    isEditable={true}
                     isSelected={existing}
-                    // selectedPlatforms={existing?.selectedPlatforms}
                     icon={<AiOutlineAppstoreAdd />}
                     key={index}
                     title={service?.name}
                     description={service?.description}
-                    onSelectChange={() => updateSelectedServiceTypes(service)}
+                    onSelectChange={() => updateService(service)}
+                    onEdit={() => showCreateServiceModal(service)}
                   />
                 )
               })}
-              <StackCreatable.CreateService onClick={showCreateServiceModal} />
+              <StackCreatable.CreateService onClick={() => showCreateServiceModal()} />
             </Flex>
 
             {selectedAppTypes?.map(({ appType }) => {
@@ -266,20 +263,18 @@ export const TechStackScreen = () => {
 
             {selectedServiceTypes?.map((service, index) => {
               const exsMicroServices = service.microServices
-              const { microServices } = data.serviceTypes.find(
+              const { microServices } = microServiceHook.data.find(
                 x => x.uid === service.uid
               )
               return (
-                <VStack align='flex-start' key={service.uid}>
+                <VStack align='flex-start' key={`${service.uid}${index}`}>
                   <Text fontWeight='medium' fontSize='sm'>
                     Select micro-services for <b>{service.name}</b>
                   </Text>
 
                   <HStack align='flex-start' w='full'>
                     {microServices.map(micro => {
-                      const isSelected = exsMicroServices?.find(
-                        x => x.uid === micro.uid
-                      )?.enabled
+                      const isSelected = exsMicroServices.includes(micro.uid)
                       // console.log('Micro selected:', isSelected, selectedServiceTypes[0].microServices)
                       return (
                         <Button
@@ -297,7 +292,7 @@ export const TechStackScreen = () => {
                             bg: '#0f283d'
                           }}
                           onClick={() =>
-                            updateSelectedServiceTypes(service, micro)
+                            updateMicroService(service.uid, micro.uid)
                           }
                           borderRadius='full'
                         >
@@ -313,19 +308,35 @@ export const TechStackScreen = () => {
         )}
       </VStack>
       {/* </SimpleGrid> */}
-      <Button
-        disabled={!isFormValid()}
-        size='sm'
-        // colorScheme='blue'
-        variant='solid'
-        fontWeight='semibold'
-        mt='7'
-        isLoading={isUpdating}
-        onClick={performUpdate}
-        {...SiteStyles.ButtonStyles}
+      <Tooltip
+        placement='right'
+        label={
+          !isFormValid() &&
+          `Please select at-least one micro-service for all services you have selected`
+        }
+        hasArrow
+        bg='white'
+        color='black'
+        pt='1.5'
+        pb='1.5'
+        p='3'
       >
-        Update Services
-      </Button>
+        <Button
+          cursor={isFormValid() ? 'pointer' : 'not-allowed'}
+          size='sm'
+          // colorScheme='blue'
+          variant='solid'
+          fontWeight='semibold'
+          mt='7'
+          isLoading={isUpdating}
+          onClick={() => {
+            isFormValid() && performUpdate()
+          }}
+          {...SiteStyles.ButtonStyles}
+        >
+          Update Services
+        </Button>
+      </Tooltip>
     </ScreenContainer>
   )
 }

@@ -345,6 +345,20 @@ const ClickableContainer = {
   },
   p: '5'
 }
+const DeleteButton_Main = {
+  ...ButtonStyles,
+  borderColor: 'red.400',
+  _hover: {
+    bg: 'red.600',
+    borderColor: 'red.400',
+    color: 'white'
+  },
+  _active: {
+    bg: 'red.400',
+    borderColor: 'red.400',
+    color: 'white'
+  }
+}
 const DeleteButton = {
   bg: '#14344f',
   variant: 'solid',
@@ -372,5 +386,6 @@ export const SiteStyles = {
   FocusableInputStyles,
   ClickableContainer,
   DeleteButton,
+  DeleteButton_Main,
   BadgeStyle
 }
