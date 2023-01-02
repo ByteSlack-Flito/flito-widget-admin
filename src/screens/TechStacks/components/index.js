@@ -72,7 +72,7 @@ import { Constants } from '../../../data/constants'
 import { BsChevronDown } from 'react-icons/bs'
 import { uuidv4 } from '@firebase/util'
 import './components.css'
-import { useMicroServices } from '../../../data/database/users/services'
+import { useServicesHook } from '../../../data/database/users/services'
 import { StringHelper } from '../../../data/extensions/stringHelper'
 import { FiEdit, FiEdit2 } from 'react-icons/fi'
 import { AiFillTool, AiOutlineSetting } from 'react-icons/ai'
@@ -213,7 +213,7 @@ export const AddServiceModal = React.forwardRef(({ onSuccessClose }, ref) => {
     enabled: false,
     name: ''
   })
-  const { isUpdating, add, update, isDeleting, _delete } = useMicroServices()
+  const { isUpdating, add, update, isDeleting, _delete } = useServicesHook()
   const toast = useToastGenerator()
 
   function open (param) {
@@ -399,15 +399,6 @@ export const AddServiceModal = React.forwardRef(({ onSuccessClose }, ref) => {
     }
   }
 
-  async function performTest () {
-    const api = process.env.REACT_APP_API_URL
-    const result = await axios.post(`${api}/static/generateSample`, {
-      uid: 'nuAmtvjqwVMeDyWN7QPJP8qXUZe2'
-    })
-
-    console.log('API Response is:', result.status)
-  }
-
   return (
     <Modal
       onClose={() => setIsOpen(false)}
@@ -569,9 +560,6 @@ export const AddServiceModal = React.forwardRef(({ onSuccessClose }, ref) => {
                 }
               ></DeleteButton>
             )}
-            <Button {...SiteStyles.ButtonStyles} onClick={performTest}>
-              Create Test
-            </Button>
             <Tooltip
               placement='top'
               hasArrow

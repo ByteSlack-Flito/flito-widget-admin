@@ -25,7 +25,7 @@ import { useForm } from 'react-hook-form'
 
 import { ReactSelectStyles } from '../../PricingStrategy'
 import { uuidv4 } from '@firebase/util'
-import { useMicroServices } from '../../../data/database/users/services'
+import { useServicesHook } from '../../../data/database/users/services'
 import { StringHelper } from '../../../data/extensions/stringHelper'
 import { useWidget } from '../../../data/database/users/profile'
 import { AppTypes } from '../../TechStacks'
@@ -44,7 +44,7 @@ export const AddFeatureModal = React.forwardRef(
     const [isOpen, setIsOpen] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
     const [isExistingData, setIsExistingData] = useState(false)
-    const { data, isFetching } = useMicroServices()
+    const { data, isFetching } = useServicesHook()
     const widgetHook = useWidget()
     const toast = useToastGenerator()
 

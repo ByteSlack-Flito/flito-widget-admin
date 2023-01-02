@@ -19,9 +19,9 @@ import { getCollection } from '../index.js'
 import { useFirebaseInstance } from './auth.js'
 
 const collectionName = `profiles`
-const sub_collectionName = 'custom-services'
+const sub_collectionName = 'custom-features'
 
-async function createService (fireInstance, profileID, { data, merge }) {
+async function createFeature (fireInstance, profileID, { data, merge }) {
   if (!fireInstance) return
 
   const collection_ref = collection(
@@ -45,16 +45,16 @@ async function createService (fireInstance, profileID, { data, merge }) {
     return {
       error: {
         ...error,
-        message: "Couldn't create/set service data."
+        message: "Couldn't create/set feature data."
       }
     }
   }
 }
 
-async function updateService (
+async function updateFeature (
   fireInstance,
   profileID,
-  serviceID,
+  featureId,
   { data, merge }
 ) {
   if (!fireInstance) return
@@ -64,13 +64,13 @@ async function updateService (
     collectionName,
     profileID,
     sub_collectionName,
-    serviceID
+    featureId
   )
   try {
     let spread = { ...data }
     if (spread.uid) delete spread.uid
 
-    const new_docRef = await setDoc(doc_ref, spread, {
+    await setDoc(doc_ref, spread, {
       merge: merge
     })
     const new_doc = {
@@ -87,12 +87,12 @@ async function updateService (
     return {
       error: {
         ...error,
-        message: "Couldn't update the service."
+        message: "Couldn't update the feature."
       }
     }
   }
 }
-async function deleteService (fireInstance, profileID, serviceID) {
+async function deleteFeature (fireInstance, profileID, featureID) {
   if (!fireInstance) return
 
   const doc_ref = doc(
@@ -100,7 +100,7 @@ async function deleteService (fireInstance, profileID, serviceID) {
     collectionName,
     profileID,
     sub_collectionName,
-    serviceID
+    featureID
   )
   try {
     await deleteDoc(doc_ref)
@@ -120,7 +120,7 @@ async function deleteService (fireInstance, profileID, serviceID) {
   }
 }
 
-export const useServicesHook = (serviceId, preventFetch) => {
+export const useFeaturesHook = (featureId, preventFetch) => {
   const fireInstance = useFirebaseInstance()
   const userId = useSelector(state => state?.user?.userId)
   const [data, setData] = useState()
@@ -130,25 +130,25 @@ export const useServicesHook = (serviceId, preventFetch) => {
 
   useEffect(() => {
     if (userId) {
-      if (serviceId) get()
+      if (featureId) get()
       else getAll()
     }
-  }, [userId, serviceId])
+  }, [userId, featureId])
 
   async function get () {
-    if (serviceId) {
+    if (featureId) {
       setIsFetching(true)
-      const service_docRef = doc(
+      const feature_docRef = doc(
         getFirestore(fireInstance),
         collectionName,
         userId,
         sub_collectionName,
-        serviceId
+        featureId
       )
-      const service_doc = await getDoc(service_docRef)
+      const feature_doc = await getDoc(feature_docRef)
 
-      if (service_doc.exists()) {
-        setDoc(service_doc.data())
+      if (feature_doc.exists()) {
+        setDoc(feature_doc.data())
       } else {
         setData()
       }
@@ -179,25 +179,25 @@ export const useServicesHook = (serviceId, preventFetch) => {
 
   async function add (data, merge = true) {
     setIsUpdating(true)
-    const serviceResult = await createService(fireInstance, userId, {
+    const serviceResult = await createFeature(fireInstance, userId, {
       data: data,
       merge: merge
     })
     setIsUpdating(false)
     return serviceResult
   }
-  async function update (serviceID, data, merge = true) {
+  async function update (featureId, data, merge = true) {
     setIsUpdating(true)
-    const serviceResult = await updateService(fireInstance, userId, serviceID, {
+    const serviceResult = await updateFeature(fireInstance, userId, featureId, {
       data: data,
       merge: merge
     })
     setIsUpdating(false)
     return serviceResult
   }
-  async function _delete (serviceID) {
+  async function _delete (featureId) {
     setIsDeleting(true)
-    const serviceResult = await deleteService(fireInstance, userId, serviceID)
+    const serviceResult = await deleteFeature(fireInstance, userId, featureId)
     setIsDeleting(false)
     return serviceResult
   }

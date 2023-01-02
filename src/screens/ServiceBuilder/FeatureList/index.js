@@ -12,215 +12,179 @@ import {
   Badge,
   Spinner,
   Button,
-  HStack
+  HStack,
+  Tooltip
 } from '@chakra-ui/react'
 import axios from 'axios'
 import { useEffect, useRef, useState } from 'react'
 import { BiPlus } from 'react-icons/bi'
 import { ScreenContainer, SiteStyles } from '../../../components/global'
+import { useFeaturesHook } from '../../../data/database/users/features'
+import { useServicesHook } from '../../../data/database/users/services'
+import { trimString } from '../../../data/extensions/stringHelper'
 import { InfoBox } from '../../PricingStrategy/components'
+import { DeleteButton } from '../../ProjectRequests/components'
 import { AppTypes } from '../../TechStacks'
 import { AddFeatureModal } from './components'
 
 export const FeatureList = ({}) => {
-  const [featureList, setFeatureList] = useState()
-  const [isLoading, setIsLoading] = useState(true)
-
   const featureModalRef = useRef()
+  const { data, isFetching } = useFeaturesHook()
+  const serviceHooks = useServicesHook()
+  const [featureList, setFeatureLsit] = useState()
 
   useEffect(() => {
-    getFeatureList()
-  }, [])
+    data && serviceHooks.data && constructFeatures()
+  }, [data, serviceHooks.data])
 
-  async function getFeatureList () {
-    setIsLoading(true)
-    const api = process.env.REACT_APP_API_URL
+  async function constructFeatures () {
+    const features = data?.map(ft => {
+      const associationInfo = () => {
+        const services = serviceHooks.data?.filter(x =>
+          ft.association.services.includes(x.uid?.toString())
+        )
+        const microService = serviceHooks.data
+          ?.find(x => x.uid === ft.association.microService.serviceID)
+          ?.microServices.find(
+            x => x.sampleID == ft.association.microService.microUID
+          )
 
-    const featureList = await axios.get(`${api}/static/getFeatureList`)
-    setFeatureList(featureList.data)
-    setIsLoading(false)
-  }
+        return { services, microService }
+      }
+      return {
+        ...ft,
+        association: associationInfo()
+      }
+    })
 
-  const getDefaultVariations = () => {
-    const variations = []
-    // AppTypes.map(type =>
-    //   type.platforms.map(platform => variations.push(platform))
-    // )
-
-    return variations
+    setFeatureLsit(features || [])
   }
 
   function openAddFeature () {
     featureModalRef.current?.open()
   }
 
-  function getCategoryList () {
-    const categories = []
-    featureList?.map(feature => {
-      if (!categories.find(x => x.value === feature.parent.id)) {
-        categories.push({
-          label: feature.parent.title,
-          value: feature.parent.id
-        })
-      }
-    })
-    return categories
-  }
+  const isLoading = (isFetching || serviceHooks.isFetching) && featureList
 
   return (
-    <ScreenContainer
-      title='Feature List'
-      description='Manage all the features you want to offer for different services.'
-    >
+    <ScreenContainer description='Manage all the features you want to offer for different services.'>
       {isLoading && <Spinner size='md' color='blue.400' />}
       {!isLoading && (
         <VStack align='flex-start' w='full' h='100%' spacing='2'>
-          <AddFeatureModal
-            ref={featureModalRef}
-            categoryList={getCategoryList()}
-          />
-          {featureList?.length <= 0 ? (
-            <InfoBox
-              type='error'
-              title="Couldn't fetch features"
-              description={
-                <>
-                  Sorry, but something went wrong on our end. We will be fixing
-                  this shortly.
-                </>
-              }
-            />
-          ) : (
-            <VStack maxH='100%' h='100%' w='100%' align='flex-start'>
-              <HStack>
-                <Button
-                  leftIcon={<BiPlus />}
-                  size='sm'
-                  {...SiteStyles.ButtonStyles}
-                  borderStyle='dashed'
-                  onClick={() => openAddFeature()}
-                >
-                  Create Feature
-                </Button>
-                <Button
-                  leftIcon={<BiPlus />}
-                  size='sm'
-                  {...SiteStyles.ButtonStyles}
-                  borderStyle='dashed'
-                  onClick={() => openAddFeature()}
-                >
-                  Create Feature Category
-                </Button>
-              </HStack>
-              <TableContainer
-                className='table-container'
-                w='100%'
-                h='100%'
-                borderRadius='md'
-                borderWidth='thin'
-                borderColor='teal.700'
-                mt='3'
-                pos='relative'
-              >
-                <Table className='custom-table' size='sm' h='full'>
-                  <Thead bg='#0f283d' h='35px' borderTopRadius='md'>
-                    <Tr>
-                      <Th borderTopLeftRadius='md'>Feature Name</Th>
-                      <Th>Affected Services</Th>
-                      <Th>Affected Variations</Th>
-                      <Th borderTopRightRadius='md'></Th>
-                    </Tr>
-                  </Thead>
-                  <Tbody fontWeight='normal' overflowY='scroll'>
-                    {featureList?.map((feature, index) => (
-                      <Tr
-                        _hover={{
-                          bg: '#0f283d70'
-                        }}
-                        key={feature.id}
-                      >
-                        <Td>
-                          <VStack align='flex-start' pt='2' pb='2'>
-                            <Text
-                              color='blue.400'
-                              fontSize='xs'
-                              fontWeight='semibold'
-                            >
-                              {feature.parent?.title}
-                            </Text>
-                            <Text fontSize='sm'>{feature.title}</Text>
-                            <Text
-                              fontSize='sm'
-                              maxW='90%'
-                              whiteSpace='initial'
-                              lineHeight='5'
-                              color='whiteAlpha.600'
-                            >
-                              {feature.description}
-                            </Text>
-                          </VStack>
-                        </Td>
-                        <Td maxW='200px'>
-                          <Flex gap='2' flexWrap='wrap'>
-                            {/* {AppTypes.map(appType => (
-                              <Text
-                                size='xs'
-                                key={appType.value}
-                                variant='solid'
+          <AddFeatureModal ref={featureModalRef} />
+
+          <VStack maxH='100%' h='100%' w='100%' align='flex-start'>
+            <Button
+              leftIcon={<BiPlus />}
+              size='sm'
+              {...SiteStyles.ButtonStyles}
+              borderStyle='dashed'
+              onClick={() => openAddFeature()}
+            >
+              Create New
+            </Button>
+            <TableContainer
+              className='table-container'
+              w='100%'
+              h='100%'
+              borderRadius='md'
+              borderWidth='thin'
+              borderColor='teal.700'
+              mt='3'
+              pos='relative'
+            >
+              <Table className='custom-table' size='sm' h='full'>
+                <Thead bg='#0f283d' h='35px' borderTopRadius='md'>
+                  <Tr>
+                    <Th borderTopLeftRadius='md'>Feature</Th>
+                    <Th>Affected Services</Th>
+                    <Th>Affected Variation</Th>
+                    <Th borderTopRightRadius='md'></Th>
+                  </Tr>
+                </Thead>
+                <Tbody fontWeight='normal' overflowY='scroll'>
+                  {featureList?.map((feature, index) => (
+                    <Tr
+                      _hover={{
+                        bg: '#0f283d70'
+                      }}
+                      key={feature.uid}
+                    >
+                      <Td>
+                        <VStack align='flex-start' pt='2' pb='2' spacing='0.5'>
+                          <Text fontSize='sm'>{feature.name}</Text>
+                          <Text
+                            fontSize='xs'
+                            maxW='90%'
+                            whiteSpace='initial'
+                            lineHeight='5'
+                            color='whiteAlpha.600'
+                          >
+                            {feature.description}
+                          </Text>
+                        </VStack>
+                      </Td>
+                      <Td maxW='200px'>
+                        <Flex gap='2' flexWrap='wrap'>
+                          {feature.association.services?.map(
+                            affected_service => (
+                              <Tooltip
+                                key={affected_service.uid}
+                                label={affected_service.name}
+                                placement='bottom'
+                                hasArrow
                                 bg='#1a405e'
-                                fontSize='0.70rem'
-                                p='0.5'
-                                pl='2'
-                                pr='2'
-                                borderRadius='full'
+                                fontSize='0.75rem'
                               >
-                                {appType.title}
-                              </Text>
-                            ))} */}
-                          </Flex>
-                        </Td>
-                        <Td maxW='200px'>
-                          <Flex gap='2' flexWrap='wrap'>
-                            {getDefaultVariations().map(
-                              (variation, index) =>
-                                index <= 3 && (
-                                  <Text
-                                    size='xs'
-                                    key={variation}
-                                    variant='solid'
-                                    bg='#1a405e'
-                                    fontSize='0.70rem'
-                                    p='0.5'
-                                    pl='2'
-                                    pr='2'
-                                    borderRadius='full'
-                                  >
-                                    {variation}
-                                  </Text>
-                                )
-                            )}
-                            <Text
-                              size='xs'
-                              variant='solid'
-                              bg='#1a405e'
-                              fontSize='0.70rem'
-                              p='0.5'
-                              pl='2'
-                              pr='2'
-                              borderRadius='full'
-                            >
-                              +{getDefaultVariations().length - 4} Others
-                            </Text>
-                          </Flex>
-                        </Td>
-                        <Td textAlign='right'></Td>
-                      </Tr>
-                    ))}
-                  </Tbody>
-                </Table>
-              </TableContainer>
-            </VStack>
-          )}
+                                <Text
+                                  size='xs'
+                                  variant='solid'
+                                  bg='#1a405e'
+                                  fontSize='0.70rem'
+                                  p='0.5'
+                                  pl='2'
+                                  pr='2'
+                                  borderRadius='full'
+                                >
+                                  {trimString(affected_service.name, 10, '.')}
+                                </Text>
+                              </Tooltip>
+                            )
+                          )}
+                        </Flex>
+                      </Td>
+                      <Td maxW='200px'>
+                        <Flex gap='2' flexWrap='wrap'>
+                          <Text
+                            size='xs'
+                            variant='solid'
+                            bg='green.800'
+                            fontSize='0.70rem'
+                            p='0.5'
+                            pl='2'
+                            pr='2'
+                            borderRadius='full'
+                          >
+                            {feature.association.microService.name}
+                          </Text>
+                        </Flex>
+                      </Td>
+                      <Td textAlign='right'>
+                        <DeleteButton
+                          popoverProps={{
+                            placement: 'bottom'
+                          }}
+                          buttonProps={{
+                            pos: 'relative'
+                          }}
+                        />
+                      </Td>
+                    </Tr>
+                  ))}
+                </Tbody>
+              </Table>
+            </TableContainer>
+          </VStack>
         </VStack>
       )}
     </ScreenContainer>

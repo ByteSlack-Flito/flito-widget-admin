@@ -18,12 +18,12 @@ import { useSelector } from 'react-redux'
 import { ScreenContainer, SiteStyles } from '../../components/global'
 import { useFirebaseInstance } from '../../data/database/users/auth'
 import { updateProfile, useWidget } from '../../data/database/users/profile'
-import { useMicroServices } from '../../data/database/users/services'
+import { useServicesHook } from '../../data/database/users/services'
 import { StringHelper } from '../../data/extensions/stringHelper'
 import { AppTypeSingle, StackCreatable, StackModals } from './components'
 
 export const TechStackScreen = () => {
-  const { isFetching, data, getAll } = useMicroServices()
+  const { isFetching, data, getAll } = useServicesHook()
 
   const serviceModalRef = useRef()
 

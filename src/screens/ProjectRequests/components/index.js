@@ -296,7 +296,9 @@ export const DeleteButton = ({
   onConfirm,
   customButton,
   popoverTitle,
-  popoverBody
+  popoverBody,
+  buttonProps,
+  popoverProps
 }) => {
   const [isBusy, setBusy] = useState(false)
 
@@ -305,7 +307,14 @@ export const DeleteButton = ({
     onConfirm && onConfirm()
   }
   return (
-    <Popover placement='right' closeOnEsc closeOnBlur closeDelay={2000} onClose={() => setBusy(false)}>
+    <Popover
+      placement='right'
+      closeOnEsc
+      closeOnBlur
+      closeDelay={2000}
+      onClose={() => setBusy(false)}
+      {...popoverProps}
+    >
       {({ onClose }) => (
         <>
           <PopoverTrigger>
@@ -315,6 +324,7 @@ export const DeleteButton = ({
                 right='0'
                 onClick={e => e.stopPropagation()}
                 {...SiteStyles.DeleteButton}
+                {...buttonProps}
               />
             )}
           </PopoverTrigger>
@@ -326,12 +336,13 @@ export const DeleteButton = ({
             onClick={e => {
               e.stopPropagation()
             }}
+            textAlign='left'
           >
             <PopoverHeader pt={4} fontWeight='bold' border='0' fontSize='sm'>
               {popoverTitle || 'Delete Request?'}
             </PopoverHeader>
             <PopoverCloseButton mt='2' />
-            <PopoverArrow bg='blue.800' boxShadow='none !important'/>
+            <PopoverArrow bg='blue.800' boxShadow='none !important' />
             {popoverBody && (
               <PopoverBody fontSize='sm' fontWeight='normal'>
                 {popoverBody}
