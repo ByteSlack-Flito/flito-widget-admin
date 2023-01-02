@@ -102,12 +102,12 @@ export const CustomTabs = ({
       return (
         <motion.div
           key={`${tabs[currentIndex]}${currentIndex}`}
-          style={{ width: '100%', height: '100%' }}
+          style={{ width: '100%', height: '100%', overflowY: 'scroll' }}
           initial={{ opacity: 0, x: 10 }}
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -10 }}
         >
-          {children[currentIndex]}
+          {Array.isArray(children) ? children[currentIndex] : children}
         </motion.div>
       )
   }

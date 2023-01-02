@@ -28,7 +28,7 @@ import React, {
   useRef,
   useState
 } from 'react'
-import { BiCheck, BiCheckCircle, BiXCircle } from 'react-icons/bi'
+import { BiCheck, BiCheckCircle, BiPlus, BiXCircle } from 'react-icons/bi'
 import { IoColorPaletteOutline } from 'react-icons/io5'
 import { DiReact } from 'react-icons/di'
 import { Link as ReactRouterLink } from 'react-router-dom'
@@ -44,6 +44,8 @@ import { useForm } from 'react-hook-form'
 import { useWidget } from '../../../data/database/users/profile'
 import { useSelector } from 'react-redux'
 import { arrayUnion } from 'firebase/firestore'
+import Select from 'react-select'
+import { ReactSelectStyles } from '..'
 
 export const VariantAppView = ({ variant, apps, onClick, pricing }) => {
   const { data } = useWidget()
@@ -59,7 +61,7 @@ export const VariantAppView = ({ variant, apps, onClick, pricing }) => {
       <Text fontSize='md' fontWeight='medium' textTransform='capitalize'>
         {variant} Apps
       </Text>
-      <HStack flexWrap='wrap' fontSize='sm'>
+      {/* <HStack flexWrap='wrap' fontSize='sm'>
         <Text>Examples: </Text>
         <AvatarGroup size='xs' max={2}>
           {apps
@@ -72,7 +74,7 @@ export const VariantAppView = ({ variant, apps, onClick, pricing }) => {
               />
             ))}
         </AvatarGroup>
-      </HStack>
+      </HStack> */}
       <Text
         transition='all 300ms'
         fontSize='xs'
@@ -93,11 +95,22 @@ export const VariantAppView = ({ variant, apps, onClick, pricing }) => {
   )
 }
 
+const LoadingOption = props => (
+  <div {...props}>
+    <VStack p='3' fontSize='sm' fontWeight='normal'>
+      <Text>
+        You are either not providing the specific service(s). Please go to My
+        Services and complete the set-up
+      </Text>
+    </VStack>
+  </div>
+)
+
 export const AddVariantPriceModal = React.forwardRef(
   ({ onSuccessClose }, ref) => {
     const [isOpen, setIsOpen] = useState(false)
     const [variantData, setVariantData] = useState()
-    const { profile } = useSelector(state => state.user)
+    const profile = useSelector(state => state?.user?.profile)
     const { update, isUpdating, getLatest } = useWidget(false)
     const toast = useToastGenerator()
 
@@ -166,24 +179,50 @@ export const AddVariantPriceModal = React.forwardRef(
       <Modal
         onClose={handleClose}
         isOpen={isOpen}
-        size={'2xl'}
+        size={'4xl'}
         motionPreset='slideInBottom'
         // onCloseComplete={() => reset()}
+        scrollBehavior='inside'
       >
         <ModalOverlay />
-        <ModalContent>
+        <ModalContent color='white' bg='#091927' h='full'>
           <ModalHeader
-            bg='gray.50'
             display='flex'
             justifyContent='space-between'
             alignItems='center'
             fontSize='md'
           >
-            <Text>Set Price In {profile?.widget?.pricing?.currency || ''}</Text>
+            <Text>Pricing Strategy Setup For</Text>
           </ModalHeader>
-          <ModalCloseButton mt='1' />
-          <ModalBody pt='5' pb='5'>
-            <VStack>
+          <ModalCloseButton
+            mt='1'
+            _hover={{
+              bg: '#143554'
+            }}
+          />
+          <ModalBody pb='5'>
+            <Button
+              {...SiteStyles.ButtonStyles}
+              borderStyle='dashed'
+              leftIcon={<BiPlus />}
+              size='sm'
+            >
+              Create Variation
+            </Button>
+            <Select
+              // options={currencies}
+              className='react_select'
+              isMulti
+              placeholder='Select currency...'
+              // onChange={e => updatePricingStrategy('currency', e.value)}
+              components={{
+                NoOptionsMessage: LoadingOption
+              }}
+              // value={pricingData.currency}
+              isLoading={isUpdating}
+              styles={ReactSelectStyles}
+            />
+            {/* <VStack>
               <Text fontSize='md'>
                 How much will you charge for{' '}
                 <span
@@ -208,10 +247,9 @@ export const AddVariantPriceModal = React.forwardRef(
                   <Input placeholder='Max. Amount' {...register('maxAmount')} />
                 </HStack>
               </form>
-            </VStack>
+            </VStack> */}
           </ModalBody>
-          <Divider />
-          <ModalFooter bg='gray.50'>
+          <ModalFooter bg='#143554' border='none'>
             <Button
               size='sm'
               colorScheme='blue'

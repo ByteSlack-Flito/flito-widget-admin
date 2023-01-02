@@ -122,7 +122,7 @@ async function deleteService (fireInstance, profileID, serviceID) {
 
 export const useMicroServices = (serviceId, preventFetch) => {
   const fireInstance = useFirebaseInstance()
-  const { userId } = useSelector(state => state.user)
+  const userId = useSelector(state => state?.user?.userId)
   const [data, setData] = useState()
   const [isFetching, setIsFetching] = useState(true)
   const [isUpdating, setIsUpdating] = useState(false)

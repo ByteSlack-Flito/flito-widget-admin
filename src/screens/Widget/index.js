@@ -40,14 +40,14 @@ const HelpLinks = [
 
 const WidgetScreen = () => {
   const { isFetching, data } = useProfile()
-  const userState = useSelector(state => state.user)
+  const userState = useSelector(state => state?.user)
 
   const [copied, setCopied] = useState(false)
   const copyCode = useCallback(() => {
     !copied &&
       navigator.clipboard
         .writeText(
-          Constants.WidgetCode.replace('{widgetCode}', userState.userId)
+          Constants.WidgetCode.replace('{widgetCode}', userState?.userId)
         )
         .then(() => {
           setCopied(true)
@@ -177,7 +177,7 @@ const WidgetScreen = () => {
                   display='block'
                   children={Constants.WidgetCode.replace(
                     '{widgetCode}',
-                    userState.userId
+                    userState?.userId
                   )}
                   bg='#0f283d'
                 />

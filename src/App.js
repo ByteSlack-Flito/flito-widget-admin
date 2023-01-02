@@ -41,7 +41,7 @@ function App () {
 export default App
 
 function ScreenRenderer () {
-  const userState = useSelector(state => state.user)
+  const userState = useSelector(state => state?.user)
   const firebaseApp = useSelector(state => state.firebaseApp)
   const location = useLocation()
   const navigate = useNavigate()
@@ -53,7 +53,7 @@ function ScreenRenderer () {
       type: FirebaseActions.INIT,
       data: {}
     })
-    if (userState.userId) {
+    if (userState?.userId) {
       navigate(
         location.pathname === '/'
           ? SiteRoutes.Engine.Widget.Screens().Widget.path
@@ -61,7 +61,7 @@ function ScreenRenderer () {
         true
       )
     }
-  }, [userState.userId])
+  }, [userState?.userId])
 
   useEffect(() => {
     if (firebaseApp.instance) {
@@ -119,7 +119,7 @@ function ScreenRenderer () {
           </div>
         </>
       )
-    } else if (userState.userId) {
+    } else if (userState?.userId) {
       return (
         <Grid
           templateAreas={`"header header"

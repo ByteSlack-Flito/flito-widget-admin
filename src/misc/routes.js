@@ -13,10 +13,13 @@ import { TechStackScreen } from '../screens/TechStacks'
 import { BiCodeAlt } from 'react-icons/bi'
 import { AiOutlineAppstoreAdd } from 'react-icons/ai'
 import ProjectRequestScreen from '../screens/ProjectRequests'
-import { BsCalendarDate } from 'react-icons/bs'
+import { BsCalendarDate, BsTools } from 'react-icons/bs'
 import { IntegrationsScreen } from '../screens/Integrations'
 import { IoColorPaletteOutline } from 'react-icons/io5'
 import { ThemeScreen } from '../screens/Theme'
+import { IoIosApps } from 'react-icons/io'
+import { ServiceBuilderScreen } from '../screens/ServiceBuilder'
+import { FiBox } from 'react-icons/fi'
 
 const ENGINE_ROUTE = '/engine'
 const PROJECT_ROUTE = `${ENGINE_ROUTE}/project/:projectId`
@@ -45,8 +48,8 @@ export const SiteRoutes = {
 
   Engine: {
     Setup: {
-      id: 1,
-      label: 'Setup',
+      id: 2,
+      label: 'Quick Setup',
       Screens: () => {
         return {
           Init: {
@@ -55,61 +58,63 @@ export const SiteRoutes = {
             element: <Navigate to={`${ENGINE_ROUTE}/my-tech-stack`} />
           },
           TechStacks: {
-            id: 301,
+            id: 201,
             icon: <AiOutlineAppstoreAdd />,
             label: 'My Services',
             path: `${ENGINE_ROUTE}/my-tech-stack`,
             element: <TechStackScreen />
           },
+          ServiceBuilder: {
+            id: 202,
+            label: 'Service Bundles',
+            icon: <FiBox />,
+            path: `${ENGINE_ROUTE}/service-bundles`,
+            element: <ServiceBuilderScreen />
+          },
           MyTeam: {
-            id: 302,
+            id: 203,
             icon: <GiTeamIdea />,
             label: 'My Team',
             path: `${ENGINE_ROUTE}/my-team`,
+            ignoreRendering: true,
             element: <TeamScreen />
-          },
-          PricingStrategy: {
-            id: 303,
-            label: 'Pricing Strategy',
-            icon: <MdOutlineAttachMoney />,
-            path: `${ENGINE_ROUTE}/pricing-strategy`,
-            element: <PricingStrategyScreen />
           }
+          // PricingStrategy: {
+          //   id: 204,
+          //   label: 'Pricing Strategy',
+          //   icon: <MdOutlineAttachMoney />,
+          //   path: `${ENGINE_ROUTE}/pricing-strategy`,
+          //   element: <PricingStrategyScreen />
+          // }
         }
       }
     },
+
     Widget: {
-      id: 2,
-      label: 'Widget',
+      id: 4,
+      label: 'The Widget',
       Screens: () => {
         return {
           Widget: {
-            id: 201,
+            id: 401,
             label: 'Get Code',
             icon: <BiCodeAlt />,
             path: `${ENGINE_ROUTE}/widget-code`,
             element: <WidgetScreen />
           },
           Requests: {
-            id: 202,
+            id: 402,
             label: 'Requests',
             icon: <MdDashboardCustomize />,
             path: `${ENGINE_ROUTE}/widget-requests`,
             element: <ProjectRequestScreen />
-          }
-        }
-      }
-    },
-    Customize: {
-      id: 3,
-      label: 'Customize',
-      Screens: () => {
-        return {
+          },
           Theme: {
-            id: 301,
+            id: 403,
             label: 'Color & Content',
             icon: <IoColorPaletteOutline />,
             path: `${ENGINE_ROUTE}/theme-setup`,
+            ignoreRendering: true,
             element: <ThemeScreen />
           }
         }
