@@ -8,7 +8,7 @@ import {
 import { Constants } from '../constants'
 
 function * performSetUser (payload) {
-  const { userId } = payload.data
+  const userId = payload?.data?.userId
 
   if (userId) {
     // yield put(setUser(userId))

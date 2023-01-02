@@ -32,7 +32,7 @@ import { SiteStyles } from '../../../components/global'
 // eslint-disable-next-line import/no-anonymous-default-export
 export default ({ onSwitchRequest = () => {} }) => {
   const [globalLoading, setGlobalLoading] = useState(false)
-  const user = useSelector(state => state.user)
+  const user = useSelector(state => state?.user)
   const dispatch = useDispatch()
   const instance = useFirebaseInstance()
   const toast = useToast()
@@ -97,7 +97,7 @@ export default ({ onSwitchRequest = () => {} }) => {
 
   function isBusy (isSubmitting) {
     if (isSubmitting) {
-      if (user.error?.message) {
+      if (user?.error?.message) {
         return false
       }
       return true

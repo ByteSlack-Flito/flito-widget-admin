@@ -49,7 +49,9 @@ import {
   InputGroup,
   InputLeftElement,
   InputLeftAddon,
-  Spinner
+  Spinner,
+  Switch,
+  Checkbox
 } from '@chakra-ui/react'
 import React, { useEffect, useImperativeHandle, useRef, useState } from 'react'
 import validator from 'validator'
@@ -75,6 +77,7 @@ import { StringHelper } from '../../../data/extensions/stringHelper'
 import { FiEdit, FiEdit2 } from 'react-icons/fi'
 import { AiFillTool, AiOutlineSetting } from 'react-icons/ai'
 import { DeleteButton } from '../../ProjectRequests/components'
+import axios from 'axios'
 
 function getSelectedStyle (selected) {
   if (selected)
@@ -94,41 +97,42 @@ function getSelectedStyle (selected) {
 
 export const AppTypeSingle = ({
   isEditable,
-  isSelected,
+  isEnabled,
   icon,
   value,
   title,
   description,
-  onSelectChange,
+  onClick = () => {},
   onEdit
 }) => {
   return (
     <Box
       transition='all 200ms'
-      w='250px'
-      h='full'
+      w='300px'
+      h='auto'
       {...SiteStyles.ClickableContainer}
-      onClick={() => onSelectChange(value)}
+      onClick={onClick}
       justifyContent='space-between'
-      {...getSelectedStyle(isSelected)}
+      {...getSelectedStyle(isEnabled)}
     >
       <VStack textAlign='left' align='flex-start' role='group'>
         <HStack w='full' justify='space-between'>
-          <HStack>
+          <HStack align='flex-start'>
             <AnimatePresence mode='wait'>
               <motion.div
-                key={isSelected}
+                key={isEnabled}
                 initial={{ x: 10, opacity: 1 }}
                 animate={{ x: 0, opacity: 1 }}
                 exit={{ x: -10, opacity: 0 }}
                 style={{
-                  width: '20px'
+                  width: '20px',
+                  marginTop: '4px'
                 }}
               >
-                {isSelected ? <BsFillCheckCircleFill color='white' /> : icon}
+                {isEnabled ? <BsFillCheckCircleFill color='white' /> : icon}
               </motion.div>
             </AnimatePresence>
-            <Text fontSize='md' fontWeight='normal' display='flex'>
+            <Text fontSize='md' fontWeight='normal'>
               {title}
             </Text>
           </HStack>
@@ -204,6 +208,8 @@ export const AddServiceModal = React.forwardRef(({ onSuccessClose }, ref) => {
   const [isLoading, setIsLoading] = useState(false)
   const [isExistingData, setIsExistingData] = useState(false)
   const [serviceDetails, setServiceDetails] = useState({
+    chargeType: 'bundle',
+    description: '',
     enabled: false,
     name: ''
   })
@@ -234,7 +240,7 @@ export const AddServiceModal = React.forwardRef(({ onSuccessClose }, ref) => {
     open
   }))
 
-  function addMicroService (key) {
+  function addMicroService () {
     setMicroServices(prev => [
       ...prev,
       {
@@ -268,10 +274,10 @@ export const AddServiceModal = React.forwardRef(({ onSuccessClose }, ref) => {
     let spread = [...microServices]
     spread.splice(microIndex, 1)
     setMicroServices(prev => {
-      let spread = [...microServices]
-      spread.splice(microIndex, 1)
+      const spreadMicros = [...prev]
+      spreadMicros.splice(microIndex, 1)
 
-      return spread
+      return spreadMicros
     })
   }
 
@@ -373,21 +379,13 @@ export const AddServiceModal = React.forwardRef(({ onSuccessClose }, ref) => {
       'enabled'
     ])
 
+    console.log('Service prop:', serviceDetails)
+
     const microService_propValid = microServices.every(
       micro => !StringHelper.isPropsEmpty(micro, ['enabled'])
     )
 
-    const variation_propValid = microServices.every(micro =>
-      micro.variations?.every(
-        variation =>
-          !StringHelper.isPropsEmpty(variation) &&
-          variation.pricing?.type &&
-          variation.pricing?.amount
-      )
-    )
-
-    const propertyCountMet =
-      service_propValid && microService_propValid && variation_propValid
+    const propertyCountMet = service_propValid && microService_propValid
 
     if (propertyCountMet) {
       return {
@@ -396,9 +394,18 @@ export const AddServiceModal = React.forwardRef(({ onSuccessClose }, ref) => {
     } else {
       return {
         isValid: false,
-        message: 'Property not set for one or more variations.'
+        message: 'One or more micro-services have missing properties.'
       }
     }
+  }
+
+  async function performTest () {
+    const api = process.env.REACT_APP_API_URL
+    const result = await axios.post(`${api}/static/generateSample`, {
+      uid: 'nuAmtvjqwVMeDyWN7QPJP8qXUZe2'
+    })
+
+    console.log('API Response is:', result.status)
   }
 
   return (
@@ -427,9 +434,12 @@ export const AddServiceModal = React.forwardRef(({ onSuccessClose }, ref) => {
             Offer A New Service
           </Text>
         </ModalHeader>
-        <ModalCloseButton mt='1.5' _hover={{
-          bg: '#143554'
-        }}/>
+        <ModalCloseButton
+          mt='1.5'
+          _hover={{
+            bg: '#143554'
+          }}
+        />
         <ModalBody h='100%' position='relative'>
           {isLoading && (
             <Spinner
@@ -448,6 +458,19 @@ export const AddServiceModal = React.forwardRef(({ onSuccessClose }, ref) => {
               align='start'
               pt='3'
             >
+              {isExistingData && (
+                <Checkbox
+                  defaultChecked={serviceDetails?.enabled}
+                  onClick={() =>
+                    setServiceDetails(prev => ({
+                      ...prev,
+                      enabled: !prev.enabled
+                    }))
+                  }
+                >
+                  Service is Enabled
+                </Checkbox>
+              )}
               <Input
                 placeholder='Add Your Service Name'
                 onChange={e =>
@@ -469,7 +492,22 @@ export const AddServiceModal = React.forwardRef(({ onSuccessClose }, ref) => {
                 }
                 {...SiteStyles.InputStyles}
               />
-              <Box h='2px' />
+              <Text>How do you want to charge for this service?</Text>
+              <RadioGroup
+                value={serviceDetails?.chargeType}
+                onChange={val =>
+                  setServiceDetails(prev => ({
+                    ...prev,
+                    chargeType: val
+                  }))
+                }
+              >
+                <HStack>
+                  <Radio value='bundle'>Bundle Wise</Radio>
+                  <Radio value='feature'>Feature Wise</Radio>
+                </HStack>
+              </RadioGroup>
+              <Box h='5px' />
               <Accordion
                 w='full'
                 allowMultiple={true}
@@ -508,7 +546,9 @@ export const AddServiceModal = React.forwardRef(({ onSuccessClose }, ref) => {
         </ModalBody>
 
         {!isLoading && (
-          <ModalFooter justifyContent={isExistingData ? 'space-between' : 'flex-end'}>
+          <ModalFooter
+            justifyContent={isExistingData ? 'space-between' : 'flex-end'}
+          >
             {isExistingData && (
               <DeleteButton
                 onConfirm={performDelete}
@@ -529,6 +569,9 @@ export const AddServiceModal = React.forwardRef(({ onSuccessClose }, ref) => {
                 }
               ></DeleteButton>
             )}
+            <Button {...SiteStyles.ButtonStyles} onClick={performTest}>
+              Create Test
+            </Button>
             <Tooltip
               placement='top'
               hasArrow
@@ -599,7 +642,7 @@ const SingleMicroService = ({
         <>
           <AccordionButton cursor='default'>
             <Box as='span' flex='1' textAlign='left'>
-              <Text>{name || 'Micro Service 1'}</Text>
+              <Text>{name || 'Micro Service Name'}</Text>
             </Box>
             <IconButton
               icon={<BiTrash />}
@@ -616,7 +659,7 @@ const SingleMicroService = ({
             <VStack align='flex-start' spacing='4'>
               <Input
                 {...SiteStyles.InputStyles}
-                placeholder='Micro Service Name'
+                placeholder={'Micro Service Name'}
                 value={name || ''}
                 onChange={e => onUpdate({ key: 'name', value: e.target.value })}
               />
@@ -628,21 +671,6 @@ const SingleMicroService = ({
                   onUpdate({ key: 'stepQuestion', value: e.target.value })
                 }
               />
-              {/* <InputGroup>
-                <InputLeftAddon
-                  bg='#143554'
-                  children={'Base Price :'}
-                  border='none'
-                />
-                <Input
-                  {...SiteStyles.InputStyles}
-                  placeholder='$10.00'
-                  value={basePrice || ''}
-                  onChange={e =>
-                    onUpdate({ key: 'basePrice', value: e.target.value })
-                  }
-                />
-              </InputGroup> */}
               {variations?.length > 0 && (
                 <TableContainer
                   className='table-container'
@@ -757,16 +785,16 @@ const SingleMicroService = ({
                   </Table>
                 </TableContainer>
               )}
-              <Button
-                size='xs'
-                // isDisabled={!formValidity().isValid}
-                onClick={onAddVariation}
-                leftIcon={<BiPlus />}
-                colorScheme='cyan'
-                // {...SiteStyles.ButtonStyles}
-              >
-                Add Variation
-              </Button>
+              {/* {isDigital && (
+                <Button
+                  size='xs'
+                  onClick={onAddVariation}
+                  leftIcon={<BiPlus />}
+                  colorScheme='cyan'
+                >
+                  Add Variation
+                </Button>
+              )} */}
             </VStack>
           </AccordionPanel>
         </>

@@ -36,7 +36,7 @@ import { SiteStyles } from '../../../components/global'
 
 export default ({ onSwitchRequest = () => {}, projectMetaData }) => {
   const dispatch = useDispatch()
-  const user = useSelector(state => state.user)
+  const user = useSelector(state => state?.user)
   const instance = useFirebaseInstance()
   const toumodalRef = useRef()
   const toast = useToast()

@@ -54,7 +54,7 @@ export async function updateProfile (
 
 export const useProfile = () => {
   const fireInstance = useFirebaseInstance()
-  const { userId } = useSelector(state => state.user)
+  const userId = useSelector(state => state?.user?.userId)
   const [data, setData] = useState()
   const [isFetching, setIsFetching] = useState(true)
   const [isUpdating, setIsUpdating] = useState(false)
@@ -115,7 +115,7 @@ export async function getProfile (userId, fireInstance) {
 
 export const useWidget = (fetchByDefault = true) => {
   const fireInstance = useFirebaseInstance()
-  const { userId } = useSelector(state => state.user)
+  const userId = useSelector(state => state?.user?.userId)
   const [isFetching, setIsFetching] = useState(true)
   const [isUpdating, setIsUpdating] = useState(false)
   const [data, setData] = useState()
