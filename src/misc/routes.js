@@ -20,6 +20,7 @@ import { ThemeScreen } from '../screens/Theme'
 import { IoIosApps } from 'react-icons/io'
 import { ServiceBuilderScreen } from '../screens/ServiceBuilder'
 import { FiBox } from 'react-icons/fi'
+import CreateFeature from '../screens/ServiceBuilder/FeatureList/createFeature'
 
 const ENGINE_ROUTE = '/engine'
 const PROJECT_ROUTE = `${ENGINE_ROUTE}/project/:projectId`
@@ -70,6 +71,14 @@ export const SiteRoutes = {
             icon: <FiBox />,
             path: `${ENGINE_ROUTE}/service-bundles`,
             element: <ServiceBuilderScreen />
+          },
+          CreateService: {
+            id: 20201,
+            label: 'Service Bundles',
+            icon: <FiBox />,
+            path: `${ENGINE_ROUTE}/service-bundles/create-service`,
+            ignoreRendering: true,
+            element: <CreateFeature />
           },
           MyTeam: {
             id: 203,

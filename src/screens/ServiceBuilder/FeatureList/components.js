@@ -28,7 +28,6 @@ import { uuidv4 } from '@firebase/util'
 import { useServicesHook } from '../../../data/database/users/services'
 import { StringHelper } from '../../../data/extensions/stringHelper'
 import { useWidget } from '../../../data/database/users/profile'
-import { AppTypes } from '../../TechStacks'
 
 export const AddFeatureModal = React.forwardRef(
   ({ onSuccessClose, categoryList }, ref) => {

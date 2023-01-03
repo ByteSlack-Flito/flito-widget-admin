@@ -1,11 +1,11 @@
 import { FirebaseError } from 'firebase/app'
-import { getAuth } from 'firebase/auth'
 import {
   doc,
   addDoc,
   setDoc,
   getDoc,
   getFirestore,
+  writeBatch,
   updateDoc,
   arrayUnion,
   arrayRemove,
@@ -21,7 +21,11 @@ import { useFirebaseInstance } from './auth.js'
 const collectionName = `profiles`
 const sub_collectionName = 'custom-features'
 
-async function createFeature (fireInstance, profileID, { data, merge }) {
+async function createFeature (
+  fireInstance,
+  profileID,
+  { data, merge, isMultiple }
+) {
   if (!fireInstance) return
 
   const collection_ref = collection(
@@ -31,13 +35,26 @@ async function createFeature (fireInstance, profileID, { data, merge }) {
     sub_collectionName
   )
   try {
-    const new_docRef = await addDoc(collection_ref, data, {
-      merge: merge
-    })
-    const new_doc = (await getDoc(new_docRef))?.data()
-    return { success: true, data: new_doc }
+    if (!isMultiple) {
+      const new_docRef = await addDoc(collection_ref, data, {
+        merge: merge
+      })
+      const new_doc = (await getDoc(new_docRef))?.data()
+
+      return { success: true, data: new_doc }
+    } else {
+      const batch = writeBatch(getFirestore(fireInstance))
+      data?.map(single => {
+        const new_docRef = doc(collection_ref)
+        batch.set(new_docRef, single)
+      })
+
+      await batch.commit()
+      return { success: true }
+    }
   } catch (ex) {
     let error = new FirebaseError()
+    console.log('Error is:', ex)
     error = {
       ...error,
       ...ex
@@ -120,7 +137,7 @@ async function deleteFeature (fireInstance, profileID, featureID) {
   }
 }
 
-export const useFeaturesHook = (featureId, preventFetch) => {
+export const useFeaturesHook = (featureId, preventFetch = false) => {
   const fireInstance = useFirebaseInstance()
   const userId = useSelector(state => state?.user?.userId)
   const [data, setData] = useState()
@@ -129,7 +146,7 @@ export const useFeaturesHook = (featureId, preventFetch) => {
   const [isDeleting, setIsDeleting] = useState(false)
 
   useEffect(() => {
-    if (userId) {
+    if (userId && !preventFetch) {
       if (featureId) get()
       else getAll()
     }
@@ -179,27 +196,38 @@ export const useFeaturesHook = (featureId, preventFetch) => {
 
   async function add (data, merge = true) {
     setIsUpdating(true)
-    const serviceResult = await createFeature(fireInstance, userId, {
+    const featureResult = await createFeature(fireInstance, userId, {
       data: data,
       merge: merge
     })
     setIsUpdating(false)
-    return serviceResult
+    return featureResult
   }
+
+  async function addMultiple (data, merge = true) {
+    setIsUpdating(true)
+    const featureResult = await createFeature(fireInstance, userId, {
+      data: data,
+      isMultiple: true
+    })
+    setIsUpdating(false)
+    return featureResult
+  }
+
   async function update (featureId, data, merge = true) {
     setIsUpdating(true)
-    const serviceResult = await updateFeature(fireInstance, userId, featureId, {
+    const featureResult = await updateFeature(fireInstance, userId, featureId, {
       data: data,
       merge: merge
     })
     setIsUpdating(false)
-    return serviceResult
+    return featureResult
   }
   async function _delete (featureId) {
     setIsDeleting(true)
-    const serviceResult = await deleteFeature(fireInstance, userId, featureId)
+    const featureResult = await deleteFeature(fireInstance, userId, featureId)
     setIsDeleting(false)
-    return serviceResult
+    return featureResult
   }
 
   return {
@@ -210,6 +238,7 @@ export const useFeaturesHook = (featureId, preventFetch) => {
     get,
     getAll,
     add,
+    addMultiple,
     update,
     _delete
   }

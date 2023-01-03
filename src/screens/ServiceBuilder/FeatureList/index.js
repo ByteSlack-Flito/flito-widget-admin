@@ -13,15 +13,19 @@ import {
   Spinner,
   Button,
   HStack,
-  Tooltip
+  Tooltip,
+  IconButton
 } from '@chakra-ui/react'
 import axios from 'axios'
 import { useEffect, useRef, useState } from 'react'
 import { BiPlus } from 'react-icons/bi'
+import { FiEdit2 } from 'react-icons/fi'
+import { useNavigate } from 'react-router-dom'
 import { ScreenContainer, SiteStyles } from '../../../components/global'
 import { useFeaturesHook } from '../../../data/database/users/features'
 import { useServicesHook } from '../../../data/database/users/services'
 import { trimString } from '../../../data/extensions/stringHelper'
+import { SiteRoutes } from '../../../misc/routes'
 import { InfoBox } from '../../PricingStrategy/components'
 import { DeleteButton } from '../../ProjectRequests/components'
 import { AppTypes } from '../../TechStacks'
@@ -32,6 +36,7 @@ export const FeatureList = ({}) => {
   const { data, isFetching } = useFeaturesHook()
   const serviceHooks = useServicesHook()
   const [featureList, setFeatureLsit] = useState()
+  const navigate = useNavigate()
 
   useEffect(() => {
     data && serviceHooks.data && constructFeatures()
@@ -46,11 +51,14 @@ export const FeatureList = ({}) => {
         const microService = serviceHooks.data
           ?.find(x => x.uid === ft.association.microService.serviceID)
           ?.microServices.find(
-            x => x.sampleID == ft.association.microService.microUID
+            x =>
+              x.sampleID == ft.association.microService.microUID ||
+              x.uid === ft.association.microService.microUID
           )
 
         return { services, microService }
       }
+      
       return {
         ...ft,
         association: associationInfo()
@@ -60,8 +68,16 @@ export const FeatureList = ({}) => {
     setFeatureLsit(features || [])
   }
 
-  function openAddFeature () {
-    featureModalRef.current?.open()
+  function gotoCreateFeature () {
+    const constructServices = () => {
+      return serviceHooks.data?.map(service => ({
+        value: service.uid,
+        label: service.name
+      }))
+    }
+    navigate(SiteRoutes.Engine.Setup.Screens().CreateService.path, {
+      state: {}
+    })
   }
 
   const isLoading = (isFetching || serviceHooks.isFetching) && featureList
@@ -71,15 +87,13 @@ export const FeatureList = ({}) => {
       {isLoading && <Spinner size='md' color='blue.400' />}
       {!isLoading && (
         <VStack align='flex-start' w='full' h='100%' spacing='2'>
-          <AddFeatureModal ref={featureModalRef} />
-
           <VStack maxH='100%' h='100%' w='100%' align='flex-start'>
             <Button
               leftIcon={<BiPlus />}
               size='sm'
               {...SiteStyles.ButtonStyles}
               borderStyle='dashed'
-              onClick={() => openAddFeature()}
+              onClick={gotoCreateFeature}
             >
               Create New
             </Button>
@@ -126,7 +140,7 @@ export const FeatureList = ({}) => {
                       </Td>
                       <Td maxW='200px'>
                         <Flex gap='2' flexWrap='wrap'>
-                          {feature.association.services?.map(
+                          {feature.association?.services?.map(
                             affected_service => (
                               <Tooltip
                                 key={affected_service.uid}
@@ -165,18 +179,20 @@ export const FeatureList = ({}) => {
                             pr='2'
                             borderRadius='full'
                           >
-                            {feature.association.microService.name}
+                            {feature.association?.microService?.name}
                           </Text>
                         </Flex>
                       </Td>
                       <Td textAlign='right'>
-                        <DeleteButton
-                          popoverProps={{
-                            placement: 'bottom'
+                        <IconButton
+                          {...SiteStyles.DeleteButton}
+                          _hover={{
+                            bg: 'teal.600'
                           }}
-                          buttonProps={{
-                            pos: 'relative'
+                          _active={{
+                            bg: 'teal.600'
                           }}
+                          icon={<FiEdit2 />}
                         />
                       </Td>
                     </Tr>

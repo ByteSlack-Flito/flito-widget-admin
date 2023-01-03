@@ -295,7 +295,7 @@ export const ScreenContainer = ({ title, description, children }) => {
           </Text>
         </VStack>
       </GridItem>
-      <GridItem justifyContent='flex-start' textAlign='left' pt='3'>
+      <GridItem justifyContent='flex-start' textAlign='left' pt='3' pr='2'>
         {children}
       </GridItem>
     </Grid>

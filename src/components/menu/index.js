@@ -1,16 +1,11 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import IconParser from '../../misc/iconParser'
 import './index.css'
-import {
-  Avatar,
-  Box,
-  Button,
-  Text,
-  Tooltip
-} from '@chakra-ui/react'
+import { Avatar, Box, Button, Text, Tooltip } from '@chakra-ui/react'
 import { AiOutlineHome } from 'react-icons/ai'
 import { SiteRoutes } from '../../misc/routes'
+import { BsPlusCircleDotted } from 'react-icons/bs'
 
 export const MenuItem = ({
   id,
@@ -25,13 +20,13 @@ export const MenuItem = ({
   const location = useLocation()
   const navigate = useNavigate()
 
-  function performNavigation() {
+  function performNavigation () {
     navigate(projectId ? path.replace(':projectId', projectId) : path, {
       replace: true
     })
   }
 
-  function performSideNavigation() {
+  function performSideNavigation () {
     if (projectId)
       navigate(
         SiteRoutes.Project.Dashboard.path.replace(':projectId', projectId)
@@ -40,7 +35,14 @@ export const MenuItem = ({
   }
 
   const Reguler = () => {
-    const isSelected = location.pathname === path
+    const isSelected =
+      location.pathname === path || location.pathname.includes(path)
+
+    const isPath_for_creatingNew =
+      isSelected &&
+      ['create', 'new', 'add', 'generate'].some(key =>
+        location.pathname.toLowerCase().includes(key)
+      )
 
     return (
       <Button
@@ -49,6 +51,7 @@ export const MenuItem = ({
         transition='all 100ms'
         onClick={() => performNavigation(path)}
         leftIcon={icon || <IconParser size={16} itemId={id} />}
+        position='relative'
         w='100%'
         justifyContent='flex-start'
         size='sm'
@@ -69,7 +72,7 @@ export const MenuItem = ({
   }
 
   const Sidebar = () => {
-    function isSelected() {
+    function isSelected () {
       if (label && projectId)
         return location.pathname.includes(`/project/${projectId}`)
       else {
@@ -123,13 +126,10 @@ export const MenuItem = ({
   return variant === 'regular' ? <Reguler /> : <Sidebar />
 }
 
-export const Menu = ({ data, onItemClick = ({ item = '' }) => { } }) => {
+export const Menu = ({ data, onItemClick = ({ item = '' }) => {} }) => {
   const location = useLocation()
-  function getProjectBasedURL(path) {
-    const idFromURL = location.pathname
-      .split('/project/')
-      .pop()
-      .split('/')[0]
+  function getProjectBasedURL (path) {
+    const idFromURL = location.pathname.split('/project/').pop().split('/')[0]
     if (idFromURL) return path.replace(':projectId', idFromURL)
     return path
   }
@@ -145,13 +145,7 @@ export const Menu = ({ data, onItemClick = ({ item = '' }) => { } }) => {
     <div style={{ position: 'relative' }}>
       {data?.map(menuItem => {
         if (!menuItem.screens && !menuItem.ignoreRendering) {
-          return (
-            <MenuItem
-              key={menuItem.path}
-              {...menuItem}
-              path={getProjectBasedURL(menuItem.path)}
-            />
-          )
+          return <MenuItem key={menuItem.path} {...menuItem} />
         } else {
           return (
             <div key={menuItem.id}>
@@ -198,10 +192,7 @@ export const Menu = ({ data, onItemClick = ({ item = '' }) => { } }) => {
       {/* <Box w='20%'>
         <Menu_Sidebar />
       </Box> */}
-      <Box
-        w='full'
-        pl='1'
-      >
+      <Box w='full' pl='1'>
         <Menu_Parent />
       </Box>
     </div>
