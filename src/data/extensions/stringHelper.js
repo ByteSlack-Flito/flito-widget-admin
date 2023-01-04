@@ -21,6 +21,9 @@ export const StringHelper = {
   isPropsEmpty (obj = {}, ignoreProps = []) {
     return Object.keys(obj).some(prop => {
       if (!ignoreProps.includes(prop)) {
+        if(Array.isArray(obj[prop])){
+          return obj[prop].length <= 0
+        }
         return !obj[prop] && !obj[prop].trim()
       }
     })

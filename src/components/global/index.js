@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import './global.css'
 import Logo from '../../logo-trans.png'
 import '../global/global.css'
@@ -23,7 +23,7 @@ import {
   useToast,
   Tooltip
 } from '@chakra-ui/react'
-import { IoExitOutline } from 'react-icons/io5'
+import { IoArrowBackSharp, IoExitOutline } from 'react-icons/io5'
 import { TbExternalLink } from 'react-icons/tb'
 import moment from 'moment'
 import { AuthActions } from '../../data/actions/userActions'
@@ -31,11 +31,11 @@ import { getRoutes, SiteRoutes } from '../../misc/routes'
 import { useDispatch } from 'react-redux'
 import { StorageHelper } from '../../data/storage'
 import { GrUser } from 'react-icons/gr'
-import { useCallback, useState } from 'react'
 import { signOut, useFirebaseInstance } from '../../data/database/users/auth'
 import { BsChevronRight } from 'react-icons/bs'
 import { AiOutlineRight } from 'react-icons/ai'
 import { BiUser, BiX } from 'react-icons/bi'
+import { IoIosArrowRoundBack } from 'react-icons/io'
 
 const ButtonStyles = {
   transition: 'all 300ms',
@@ -277,14 +277,40 @@ export const Footer = () => (
  * @param {object} props Component Props
  * @param {string | JSX.Element} props.title Text/Component to render as the description of the screen. This will render in a pre-defined `<Text>` component.
  * @param {string | JSX.Element} props.description Text/Component to render as the description of the screen. This will render in a pre-defined `<Text>` component.
+ * @param {true | false} props.allowGoBack If `true`, it will render an additional button at the top-left corner, which allows to go back.
+ * @param {true | false} props.preventChildScroll
  * @param {JSX.Element} props.children Component(s) to render as the children of this component. Render all your screen components here.
  * @returns
  */
-export const ScreenContainer = ({ title, description, children }) => {
+export const ScreenContainer = ({
+  title,
+  description,
+  children,
+  allowGoBack,
+  preventChildScroll
+}) => {
+  const navigate = useNavigate()
   return (
     <Grid gridTemplateRows='auto 1fr' w='100%' h='100%'>
       <GridItem>
         <VStack align='flex-start' pt='3'>
+          {allowGoBack && (
+            <Button
+              transition='all 300ms'
+              variant='unstyled'
+              fontSize='sm'
+              display='flex'
+              leftIcon={<IoArrowBackSharp />}
+              h='max-content'
+              p='1'
+              onClick={() => navigate(-1)}
+              _hover={{
+                color: 'teal.400'
+              }}
+            >
+              Go Back
+            </Button>
+          )}
           {title && (
             <Text fontSize='lg' fontWeight='normal'>
               {title}
@@ -295,7 +321,13 @@ export const ScreenContainer = ({ title, description, children }) => {
           </Text>
         </VStack>
       </GridItem>
-      <GridItem justifyContent='flex-start' textAlign='left' pt='3' pr='2'>
+      <GridItem
+        justifyContent='flex-start'
+        textAlign='left'
+        pt='3'
+        pr='2'
+        overflow={preventChildScroll ? 'hidden' : 'scroll'}
+      >
         {children}
       </GridItem>
     </Grid>

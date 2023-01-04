@@ -1,11 +1,11 @@
 import { FirebaseError } from 'firebase/app'
-import { getAuth } from 'firebase/auth'
 import {
   doc,
   addDoc,
   setDoc,
   getDoc,
   getFirestore,
+  writeBatch,
   updateDoc,
   arrayUnion,
   arrayRemove,
@@ -20,9 +20,13 @@ import { getCollection } from '../index.js'
 import { useFirebaseInstance } from './auth.js'
 
 const collectionName = `profiles`
-const sub_collectionName = 'custom-services'
+const sub_collectionName = 'service-bundles'
 
-async function createService (fireInstance, profileID, { data, merge }) {
+async function createbundle (
+  fireInstance,
+  profileID,
+  { data, merge, isMultiple }
+) {
   if (!fireInstance) return
 
   const collection_ref = collection(
@@ -32,13 +36,26 @@ async function createService (fireInstance, profileID, { data, merge }) {
     sub_collectionName
   )
   try {
-    const new_docRef = await addDoc(collection_ref, data, {
-      merge: merge
-    })
-    const new_doc = (await getDoc(new_docRef))?.data()
-    return { success: true, data: new_doc }
+    if (!isMultiple) {
+      const new_docRef = await addDoc(collection_ref, data, {
+        merge: merge
+      })
+      const new_doc = (await getDoc(new_docRef))?.data()
+
+      return { success: true, data: new_doc }
+    } else {
+      const batch = writeBatch(getFirestore(fireInstance))
+      data?.map(single => {
+        const new_docRef = doc(collection_ref)
+        batch.set(new_docRef, single)
+      })
+
+      await batch.commit()
+      return { success: true }
+    }
   } catch (ex) {
     let error = new FirebaseError()
+    console.log('Error is:', ex)
     error = {
       ...error,
       ...ex
@@ -46,16 +63,16 @@ async function createService (fireInstance, profileID, { data, merge }) {
     return {
       error: {
         ...error,
-        message: "Couldn't create/set service data."
+        message: "Couldn't create/set bundle data."
       }
     }
   }
 }
 
-async function updateService (
+async function updatebundle (
   fireInstance,
   profileID,
-  serviceID,
+  bundleId,
   { data, merge }
 ) {
   if (!fireInstance) return
@@ -65,13 +82,13 @@ async function updateService (
     collectionName,
     profileID,
     sub_collectionName,
-    serviceID
+    bundleId
   )
   try {
     let spread = { ...data }
     if (spread.uid) delete spread.uid
 
-    const new_docRef = await setDoc(doc_ref, spread, {
+    await setDoc(doc_ref, spread, {
       merge: merge
     })
     const new_doc = {
@@ -88,12 +105,12 @@ async function updateService (
     return {
       error: {
         ...error,
-        message: "Couldn't update the service."
+        message: "Couldn't update the bundle."
       }
     }
   }
 }
-async function deleteService (fireInstance, profileID, serviceID) {
+async function deletebundle (fireInstance, profileID, bundleId) {
   if (!fireInstance) return
 
   const doc_ref = doc(
@@ -101,7 +118,7 @@ async function deleteService (fireInstance, profileID, serviceID) {
     collectionName,
     profileID,
     sub_collectionName,
-    serviceID
+    bundleId
   )
   try {
     await deleteDoc(doc_ref)
@@ -121,7 +138,7 @@ async function deleteService (fireInstance, profileID, serviceID) {
   }
 }
 
-export const useServicesHook = (serviceId, preventFetch) => {
+export const useBundlesHook = (bundleId, preventFetch = false) => {
   const fireInstance = useFirebaseInstance()
   const userId = useSelector(state => state?.user?.userId)
   const [data, setData] = useState()
@@ -130,26 +147,26 @@ export const useServicesHook = (serviceId, preventFetch) => {
   const [isDeleting, setIsDeleting] = useState(false)
 
   useEffect(() => {
-    if (userId) {
-      if (serviceId) get()
+    if (userId && !preventFetch) {
+      if (bundleId) get()
       else getAll()
     }
-  }, [userId, serviceId])
+  }, [userId, bundleId])
 
   async function get () {
-    if (serviceId) {
+    if (bundleId) {
       setIsFetching(true)
-      const service_docRef = doc(
+      const bundle_docRef = doc(
         getFirestore(fireInstance),
         collectionName,
         userId,
         sub_collectionName,
-        serviceId
+        bundleId
       )
-      const service_doc = await getDoc(service_docRef)
+      const bundle_doc = await getDoc(bundle_docRef)
 
-      if (service_doc.exists()) {
-        setDoc(service_doc.data())
+      if (bundle_doc.exists()) {
+        setDoc(bundle_doc.data())
       } else {
         setData()
       }
@@ -180,27 +197,38 @@ export const useServicesHook = (serviceId, preventFetch) => {
 
   async function add (data, merge = true) {
     setIsUpdating(true)
-    const serviceResult = await createService(fireInstance, userId, {
-      data: { ...data, createdAt: Timestamp.now() },
+    const bundleResult = await createbundle(fireInstance, userId, {
+      data: {...data, createdAt: Timestamp.now()},
       merge: merge
     })
     setIsUpdating(false)
-    return serviceResult
+    return bundleResult
   }
-  async function update (serviceID, data, merge = true) {
+
+  async function addMultiple (data, merge = true) {
     setIsUpdating(true)
-    const serviceResult = await updateService(fireInstance, userId, serviceID, {
+    const bundleResult = await createbundle(fireInstance, userId, {
+      data: data,
+      isMultiple: true
+    })
+    setIsUpdating(false)
+    return bundleResult
+  }
+
+  async function update (bundleId, data, merge = true) {
+    setIsUpdating(true)
+    const bundleResult = await updatebundle(fireInstance, userId, bundleId, {
       data: data,
       merge: merge
     })
     setIsUpdating(false)
-    return serviceResult
+    return bundleResult
   }
-  async function _delete (serviceID) {
+  async function _delete (bundleId) {
     setIsDeleting(true)
-    const serviceResult = await deleteService(fireInstance, userId, serviceID)
+    const bundleResult = await deletebundle(fireInstance, userId, bundleId)
     setIsDeleting(false)
-    return serviceResult
+    return bundleResult
   }
 
   return {
@@ -211,6 +239,7 @@ export const useServicesHook = (serviceId, preventFetch) => {
     get,
     getAll,
     add,
+    addMultiple,
     update,
     _delete
   }

@@ -21,6 +21,7 @@ import { IoIosApps } from 'react-icons/io'
 import { ServiceBuilderScreen } from '../screens/ServiceBuilder'
 import { FiBox } from 'react-icons/fi'
 import CreateFeature from '../screens/ServiceBuilder/FeatureList/createFeature'
+import CreateBundle from '../screens/ServiceBuilder/Bundles/createBundle'
 
 const ENGINE_ROUTE = '/engine'
 const PROJECT_ROUTE = `${ENGINE_ROUTE}/project/:projectId`
@@ -58,11 +59,11 @@ export const SiteRoutes = {
             ignoreRendering: true,
             element: <Navigate to={`${ENGINE_ROUTE}/my-tech-stack`} />
           },
-          TechStacks: {
+          MyServices: {
             id: 201,
             icon: <AiOutlineAppstoreAdd />,
             label: 'My Services',
-            path: `${ENGINE_ROUTE}/my-tech-stack`,
+            path: `${ENGINE_ROUTE}/my-services`,
             element: <TechStackScreen />
           },
           ServiceBuilder: {
@@ -72,11 +73,18 @@ export const SiteRoutes = {
             path: `${ENGINE_ROUTE}/service-bundles`,
             element: <ServiceBuilderScreen />
           },
+          CreateBundle: {
+            id: 202,
+            label: 'Create Bundles',
+            path: `${ENGINE_ROUTE}/service-bundles/create-bundle`,
+            ignoreRendering: true,
+            element: <CreateBundle />
+          },
           CreateService: {
             id: 20201,
-            label: 'Service Bundles',
+            label: 'Create Feature',
             icon: <FiBox />,
-            path: `${ENGINE_ROUTE}/service-bundles/create-service`,
+            path: `${ENGINE_ROUTE}/service-bundles/create-feature`,
             ignoreRendering: true,
             element: <CreateFeature />
           },

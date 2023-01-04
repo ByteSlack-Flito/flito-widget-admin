@@ -37,18 +37,28 @@ import { StringHelper } from '../../../data/extensions/stringHelper'
 import { useFeaturesHook } from '../../../data/database/users/features'
 import { SiteRoutes } from '../../../misc/routes'
 
+const NoSimilarMico = ({ innerProps }) => (
+  <div {...innerProps}>
+    <VStack justify='center' align='center' p='2' w='100%' flexWrap='wrap'>
+      <Text fontSize='xs' whiteSpace='pre-line'>
+        The services you selected don't have any common micro-services
+      </Text>
+    </VStack>
+  </div>
+)
+
 export default () => {
   const routeState = useLocation().state
   const serviceHook = useServicesHook()
   const [services, setServices] = useState()
   const [microServices, setMicroServices] = useState([])
   const [featureList, setFeatureLsit] = useState()
-  const { addMultiple, isUpdating } = useFeaturesHook(0, true)
+  const { addMultiple, isUpdating, update } = useFeaturesHook(0, true)
   const navigate = useNavigate()
   const toast = useToastGenerator()
 
   function getScreenContent () {
-    return routeState?.existingData
+    return routeState?.data
       ? {
           title: 'Edit Feature/Option',
           description:
@@ -68,6 +78,28 @@ export default () => {
   useEffect(() => {
     mergeMicroServices()
   }, [services])
+
+  useEffect(() => {
+    if (routeState?.data && serviceHook.data && microServices) {
+      const constructExistingFeature = () => {
+        const micro = microServices?.find(
+          x => x.value === routeState?.data.association.microService.microUID
+        )
+
+        return {
+          name: routeState?.data.name,
+          price: routeState?.data.price,
+          description: routeState?.data.description || '',
+          microService: micro
+        }
+      }
+      setFeatureLsit([constructExistingFeature()])
+      const found_services = routeState?.data.association.services.map(single =>
+        constructServices?.find(x => x.value === single)
+      )
+      setServices(found_services)
+    }
+  }, [routeState?.data, serviceHook.data, microServices])
 
   function mergeMicroServices () {
     if (services) {
@@ -115,6 +147,13 @@ export default () => {
             value: mergedMicro.uid
           }))
         )
+        if (mergedMicros?.length <= 0) {
+          setFeatureLsit(prev => {
+            const spread = [...prev]
+            const updated = spread.map(x => ({ ...x, microService: null }))
+            return updated
+          })
+        }
       } else {
         const serviceRef = serviceHook.data?.find(
           x => x.uid === services[0]?.value
@@ -188,7 +227,6 @@ export default () => {
   async function finaliseFeatures () {
     if (isFormValid) {
       const formatted = featureList.map(single => {
-        console.log('Micro:', single.microService)
         const association = {
           services: services.map(x => x.value),
           microService: {
@@ -198,19 +236,16 @@ export default () => {
         }
         return {
           name: single.name,
+          price: single.price,
           association
         }
       })
 
-      //   console.log('Formatted is:', formatted)
       const result = await addMultiple(formatted)
       toast.show(result)
 
       if (result.success) {
-        setTimeout(
-          () => navigate(SiteRoutes.Engine.Setup.Screens().ServiceBuilder.path),
-          1500
-        )
+        setTimeout(() => navigate(-1), 1000)
       }
     }
   }
@@ -226,8 +261,12 @@ export default () => {
         opacity: 1,
         x: 0
       }}
+      style={{
+        height: '100%',
+        width: '100%'
+      }}
     >
-      <ScreenContainer {...getScreenContent()}>
+      <ScreenContainer {...getScreenContent()} allowGoBack>
         <VStack align='flex-start' w='400px'>
           <Text fontSize='sm' fontWeight='semibold'>
             Select Service(s)
@@ -308,6 +347,9 @@ export default () => {
                             updateFeature(index, 'microService', val)
                           }
                           value={feature.microService}
+                          components={{
+                            NoOptionsMessage: NoSimilarMico
+                          }}
                         />
                       </Td>
                       <Td maxW='200px'>

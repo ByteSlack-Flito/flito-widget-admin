@@ -1,4 +1,5 @@
 import { FirebaseError } from 'firebase/app'
+import { Timestamp } from 'firebase/firestore'
 import {
   doc,
   addDoc,
@@ -46,7 +47,7 @@ async function createFeature (
       const batch = writeBatch(getFirestore(fireInstance))
       data?.map(single => {
         const new_docRef = doc(collection_ref)
-        batch.set(new_docRef, single)
+        batch.set(new_docRef, { ...single, createdAt: Timestamp.now() })
       })
 
       await batch.commit()
@@ -197,7 +198,7 @@ export const useFeaturesHook = (featureId, preventFetch = false) => {
   async function add (data, merge = true) {
     setIsUpdating(true)
     const featureResult = await createFeature(fireInstance, userId, {
-      data: data,
+      data: { ...data, createdAt: Timestamp.now() },
       merge: merge
     })
     setIsUpdating(false)

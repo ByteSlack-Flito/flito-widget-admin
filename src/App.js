@@ -56,7 +56,7 @@ function ScreenRenderer () {
     if (userState?.userId) {
       navigate(
         location.pathname === '/'
-          ? SiteRoutes.Engine.Widget.Screens().Widget.path
+          ? SiteRoutes.Engine.Setup.Screens().MyServices.path
           : location.pathname,
         true
       )

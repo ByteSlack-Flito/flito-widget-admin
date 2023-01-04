@@ -111,7 +111,7 @@ const WidgetScreen = () => {
         Please go to{' '}
         <Link
           as={ReactRouterLink}
-          to={SiteRoutes.Engine.Setup.Screens().TechStacks.path}
+          to={SiteRoutes.Engine.Setup.Screens().MyServices.path}
           pl='1'
           pr='1'
           color='blue.500'
