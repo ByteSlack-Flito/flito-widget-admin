@@ -8,7 +8,7 @@ import {
   useStatStyles,
   VStack
 } from '@chakra-ui/react'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import ReactDOMServer from 'react-dom/server'
 import { Link as ReactRouterLink } from 'react-router-dom'
 import { BiCheck, BiLinkExternal } from 'react-icons/bi'
@@ -18,6 +18,7 @@ import { Constants } from '../../data/constants'
 import { useProfile, useWidget } from '../../data/database/users/profile'
 import { SiteRoutes } from '../../misc/routes'
 import { InfoBox } from '../PricingStrategy/components'
+import axios from 'axios'
 
 const HelpLinks = [
   {
@@ -39,101 +40,63 @@ const HelpLinks = [
 ]
 
 const WidgetScreen = () => {
-  const { isFetching, data } = useProfile()
-  const userState = useSelector(state => state.user)
-
+  const [isFetching, setIsFetching] = useState(true)
+  const [isValid, setIsValid] = useState(true)
   const [copied, setCopied] = useState(false)
+  const user = useSelector(state => state?.user)
+
   const copyCode = useCallback(() => {
     !copied &&
       navigator.clipboard
-        .writeText(
-          Constants.WidgetCode.replace('{widgetCode}', userState.userId)
-        )
+        .writeText(Constants.WidgetCode.replace('{widgetCode}', user?.userId))
         .then(() => {
           setCopied(true)
           setTimeout(() => setCopied(false), 1500)
         })
   }, [])
 
-  function isValid () {
-    const validity = {
-      appType:
-        data?.widget?.appTypes?.length > 0 &&
-        data?.widget?.appTypes?.every(x => x.platforms?.length > 0),
-      team: data?.team?.length > 0,
-      pricing:
-        data?.widget?.pricing &&
-        data?.widget?.pricing?.currency?.length > 0 &&
-        data?.widget?.pricing?.strategy?.length > 0
-    }
-    return {
-      ...validity,
-      all: Object.keys(validity).every(key => !!validity[key])
-    }
-  }
+  const validation_erros = (
+    <>
+      {' '}
+      Please go to{' '}
+      <Link
+        as={ReactRouterLink}
+        to={SiteRoutes.Engine.Setup.Screens().MyServices.path}
+        pl='1'
+        pr='1'
+        color='blue.500'
+      >
+        My Services
+      </Link>
+      and{' '}
+      <Link
+        as={ReactRouterLink}
+        to={SiteRoutes.Engine.Setup.Screens().ServiceBuilder.path}
+        pl='1'
+        pr='1'
+        color='blue.500'
+      >
+        Service Bundles
+      </Link>{' '}
+      to complete the setup.
+    </>
+  )
 
-  const validation_erros = {
-    team: (
-      <>
-        {' '}
-        Please go to{' '}
-        <Link
-          as={ReactRouterLink}
-          to={SiteRoutes.Engine.Setup.Screens().MyTeam.path}
-          pl='1'
-          pr='1'
-          color='blue.500'
-        >
-          My Team
-        </Link>
-        and add team-members.
-      </>
-    ),
-    pricing: (
-      <>
-        {' '}
-        Please go to{' '}
-        <Link
-          as={ReactRouterLink}
-          to={SiteRoutes.Engine.Setup.Screens().PricingStrategy.path}
-          pl='1'
-          pr='1'
-          color='blue.500'
-        >
-          Pricing Strategy
-        </Link>
-        and set up your currency and quotation type.
-      </>
-    ),
-    appType: (
-      <>
-        {' '}
-        Please go to{' '}
-        <Link
-          as={ReactRouterLink}
-          to={SiteRoutes.Engine.Setup.Screens().TechStacks.path}
-          pl='1'
-          pr='1'
-          color='blue.500'
-        >
-          My Stacks
-        </Link>
-        and set up your tech-stacks.
-      </>
-    )
-  }
+  useEffect(() => {
+    checkDataValidity()
+  }, [])
 
-  function constructErrors () {
-    const validity = isValid()
-    delete validity.all
-    return Object.keys(validity).map(
-      vKey =>
-        !validity[vKey] && (
-          <>
-            {validation_erros[vKey]} <br style={{ lineHeight: '25px' }} />
-          </>
-        )
-    )
+  async function checkDataValidity () {
+    const api = process.env.REACT_APP_API_URL
+    try {
+      const result = await axios.get(
+        `${api}/static/getDataValidity?uid=${user?.userId}`
+      )
+      setIsValid(result.status == 200)
+    } catch (ex) {
+      setIsValid(false)
+    }
+    setIsFetching(false)
   }
 
   return (
@@ -145,12 +108,12 @@ const WidgetScreen = () => {
         <Spinner size='md' color='blue.400' />
       ) : (
         <>
-          {!isValid().all ? (
+          {!isValid ? (
             <VStack spacing='3' align='flex-start' w='full'>
               <InfoBox
                 type='error'
                 title={`Please complete other steps.`}
-                description={constructErrors()}
+                description={validation_erros}
               />
             </VStack>
           ) : (
@@ -177,7 +140,7 @@ const WidgetScreen = () => {
                   display='block'
                   children={Constants.WidgetCode.replace(
                     '{widgetCode}',
-                    userState.userId
+                    user?.userId
                   )}
                   bg='#0f283d'
                 />

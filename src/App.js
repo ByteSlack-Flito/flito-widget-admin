@@ -11,6 +11,7 @@ import { Constants } from './data/constants'
 import { FirebaseActions } from './data/actions'
 import { AuthActions, ProfileActions } from './data/actions/userActions'
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
+import WelcomeScreen from './screens/Onboarding/screens/welcome'
 
 import {
   ChakraProvider,
@@ -19,14 +20,16 @@ import {
   Spinner,
   Spacer,
   Menu as ChakraMenu,
-  Button as ChakraButton
+  Button as ChakraButton,
+  VStack,
+  Text
 } from '@chakra-ui/react'
 import { FiUser } from 'react-icons/fi'
-import { signInWithLocal } from './data/database/users/auth'
+import { signInWithLocal, signOut } from './data/database/users/auth'
 import { getProfile } from './data/database/users/profile'
+import { StorageHelper } from './data/storage'
 
 function App () {
-
   return (
     <ChakraProvider>
       <Provider store={store}>
@@ -41,7 +44,7 @@ function App () {
 export default App
 
 function ScreenRenderer () {
-  const userState = useSelector(state => state.user)
+  const userState = useSelector(state => state?.user)
   const firebaseApp = useSelector(state => state.firebaseApp)
   const location = useLocation()
   const navigate = useNavigate()
@@ -53,15 +56,15 @@ function ScreenRenderer () {
       type: FirebaseActions.INIT,
       data: {}
     })
-    if (userState.userId) {
+    if (userState?.userId) {
       navigate(
         location.pathname === '/'
-          ? SiteRoutes.Engine.Widget.Screens().Widget.path
+          ? SiteRoutes.Engine.Setup.Screens().MyServices.path
           : location.pathname,
         true
       )
     }
-  }, [userState.userId])
+  }, [userState?.userId])
 
   useEffect(() => {
     if (firebaseApp.instance) {
@@ -75,7 +78,7 @@ function ScreenRenderer () {
             firebaseApp.instance
           )
 
-          if (profileResult.success) {
+          if (profileResult?.success) {
             dispatch({
               type: AuthActions.SET_USER,
               data: authResult.user.uid
@@ -102,12 +105,6 @@ function ScreenRenderer () {
     }
   }, [firebaseApp.instance])
 
-  function getMenuItems () {
-    return location.pathname.includes('/project/')
-      ? routes.Project
-      : routes.Engine
-  }
-
   const { SUCCESS, ERROR, LOADING } = Constants.LoadingState
 
   if (firebaseApp.instance) {
@@ -119,7 +116,7 @@ function ScreenRenderer () {
           </div>
         </>
       )
-    } else if (userState.userId) {
+    } else if (userState?.userId && userState?.profile) {
       return (
         <Grid
           templateAreas={`"header header"
@@ -145,9 +142,15 @@ function ScreenRenderer () {
             position='relative'
           >
             <Spacer h='2' />
-            <Menu data={getMenuItems()} />
+            <Menu data={routes.Engine} />
           </GridItem>
-          <GridItem pl='4' area={'main'} overflow='scroll' color='white !important'>
+          <GridItem
+            pl='4'
+            area={'main'}
+            overflow='scroll'
+            color='white !important'
+          >
+            <WelcomeScreen isOpen={!userState?.profile?.onboard_complete} />
             <Routes>
               {routes.Engine.map((route, index) => {
                 return !route.screens ? (

@@ -3,7 +3,8 @@ import {
   BsCheck2,
   BsCheckAll,
   BsFillCheckCircleFill,
-  BsPlusCircleDotted
+  BsPlusCircleDotted,
+  BsThreeDotsVertical
 } from 'react-icons/bs'
 import {
   Badge,
@@ -47,11 +48,14 @@ import {
   AccordionPanel,
   InputGroup,
   InputLeftElement,
-  InputLeftAddon
+  InputLeftAddon,
+  Spinner,
+  Switch,
+  Checkbox
 } from '@chakra-ui/react'
 import React, { useEffect, useImperativeHandle, useRef, useState } from 'react'
 import validator from 'validator'
-import { BiCheck, BiPlus, BiTrash, BiX } from 'react-icons/bi'
+import { BiCheck, BiPencil, BiPlus, BiTrash, BiX } from 'react-icons/bi'
 
 import DropDown from 'react-dropdown'
 import 'react-dropdown/style.css'
@@ -68,8 +72,12 @@ import { Constants } from '../../../data/constants'
 import { BsChevronDown } from 'react-icons/bs'
 import { uuidv4 } from '@firebase/util'
 import './components.css'
-import { useMicroServices } from '../../../data/database/users/services'
+import { useServicesHook } from '../../../data/database/users/services'
 import { StringHelper } from '../../../data/extensions/stringHelper'
+import { FiEdit, FiEdit2 } from 'react-icons/fi'
+import { AiFillTool, AiOutlineSetting } from 'react-icons/ai'
+import { DeleteButton } from '../../ProjectRequests/components'
+import axios from 'axios'
 
 function getSelectedStyle (selected) {
   if (selected)
@@ -87,42 +95,78 @@ function getSelectedStyle (selected) {
     }
 }
 
-export const AppTypeSingle = ({
-  isSelected,
+export const ServiceSingle = ({
+  isEditable,
+  isEnabled,
   icon,
   value,
   title,
   description,
-  onSelectChange
+  onClick = () => {},
+  onEdit
 }) => {
   return (
     <Box
       transition='all 200ms'
-      w='250px'
-      h='full'
+      w='300px'
+      h='auto'
       {...SiteStyles.ClickableContainer}
-      onClick={() => onSelectChange(value)}
+      onClick={onClick}
       justifyContent='space-between'
-      {...getSelectedStyle(isSelected)}
+      {...getSelectedStyle(isEnabled)}
     >
-      <VStack textAlign='left' align='flex-start'>
-        <HStack>
-          <AnimatePresence mode='wait'>
-            <motion.div
-              key={isSelected}
-              initial={{ x: 10, opacity: 1 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: -10, opacity: 0 }}
-              style={{
-                width: '20px'
-              }}
+      <VStack textAlign='left' align='flex-start' role='group'>
+        <HStack w='full' justify='space-between'>
+          <HStack align='flex-start'>
+            <AnimatePresence mode='wait'>
+              <motion.div
+                key={isEnabled}
+                initial={{ x: 10, opacity: 1 }}
+                animate={{ x: 0, opacity: 1 }}
+                exit={{ x: -10, opacity: 0 }}
+                style={{
+                  width: '20px',
+                  marginTop: '4px'
+                }}
+              >
+                {isEnabled ? <BsFillCheckCircleFill color='white' /> : icon}
+              </motion.div>
+            </AnimatePresence>
+            <Text fontSize='md' fontWeight='normal'>
+              {title}
+            </Text>
+          </HStack>
+          {isEditable && (
+            <Tooltip
+              bg='white'
+              color='black'
+              label='Edit'
+              fontSize='xs'
+              hasArrow
             >
-              {isSelected ? <BsFillCheckCircleFill color='white' /> : icon}
-            </motion.div>
-          </AnimatePresence>
-          <Text fontSize='md' fontWeight='normal' display='flex'>
-            {title}
-          </Text>
+              <IconButton
+                icon={<FiEdit2 />}
+                size='xs'
+                // {...SiteStyles.DeleteButton}
+                bg='#0f283d'
+                borderWidth='thin'
+                borderColor='transparent'
+                _hover={{
+                  bg: 'teal'
+                }}
+                _active={{
+                  bg: 'teal'
+                }}
+                _groupHover={{
+                  borderColor: '#205480'
+                }}
+                onClick={e => {
+                  e.stopPropagation()
+                  onEdit && onEdit()
+                }}
+              />
+            </Tooltip>
+          )}
         </HStack>
         <Text fontWeight='thin' fontSize='sm'>
           {description}
@@ -161,13 +205,34 @@ const CreateService = ({ onClick }) => {
 export const AddServiceModal = React.forwardRef(({ onSuccessClose }, ref) => {
   const [isOpen, setIsOpen] = useState(false)
   const [microServices, setMicroServices] = useState([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [isExistingData, setIsExistingData] = useState(false)
   const [serviceDetails, setServiceDetails] = useState({
+    chargeType: 'bundle',
+    description: '',
+    enabled: false,
     name: ''
   })
-  const { isUpdating, add } = useMicroServices()
+  const { isUpdating, add, update, isDeleting, _delete } = useServicesHook()
   const toast = useToastGenerator()
 
-  function open () {
+  function open (param) {
+    if (param) {
+      setIsExistingData(false)
+      setIsLoading(true)
+      const spread = { ...param }
+      const micros = spread.microServices
+      delete spread.microServices
+      setServiceDetails(spread)
+      setMicroServices(micros)
+
+      setTimeout(() => {
+        setIsLoading(false)
+        setIsExistingData(true)
+      }, 1000)
+    } else {
+      setIsExistingData(false)
+    }
     setIsOpen(true)
   }
 
@@ -175,10 +240,12 @@ export const AddServiceModal = React.forwardRef(({ onSuccessClose }, ref) => {
     open
   }))
 
-  function addMicroService (key) {
+  function addMicroService () {
     setMicroServices(prev => [
       ...prev,
       {
+        uid: uuidv4(),
+        enabled: false,
         name: ''
       }
     ])
@@ -187,13 +254,15 @@ export const AddServiceModal = React.forwardRef(({ onSuccessClose }, ref) => {
   function addVariationToMicro (microIndex) {
     setMicroServices(prev => {
       let spread = [...prev]
-
       const microService = { ...spread[microIndex] }
       if (microService) {
         const micro_variations = microService.variations
           ? [...microService.variations]
           : []
-        microService.variations = [...micro_variations, { name: '' }]
+        microService.variations = [
+          ...micro_variations,
+          { uid: uuidv4(), name: '' }
+        ]
       }
 
       spread[microIndex] = microService
@@ -205,10 +274,10 @@ export const AddServiceModal = React.forwardRef(({ onSuccessClose }, ref) => {
     let spread = [...microServices]
     spread.splice(microIndex, 1)
     setMicroServices(prev => {
-      let spread = [...microServices]
-      spread.splice(microIndex, 1)
+      const spreadMicros = [...prev]
+      spreadMicros.splice(microIndex, 1)
 
-      return spread
+      return spreadMicros
     })
   }
 
@@ -278,11 +347,23 @@ export const AddServiceModal = React.forwardRef(({ onSuccessClose }, ref) => {
       ...serviceDetails,
       microServices: microServices
     }
-    const result = await add(service)
+    const result = !isExistingData
+      ? await add(service)
+      : await update(serviceDetails.uid, service)
     toast.show(result)
     if (result.success) {
       setIsOpen(false)
       onSuccessClose()
+    }
+  }
+
+  async function performDelete () {
+    const result = await _delete(serviceDetails?.uid)
+    if (result.success) {
+      setIsOpen(false)
+      onSuccessClose()
+    } else {
+      toast.show(result)
     }
   }
 
@@ -294,23 +375,17 @@ export const AddServiceModal = React.forwardRef(({ onSuccessClose }, ref) => {
       }
     }
 
-    const service_propValid = !StringHelper.isPropsEmpty(serviceDetails)
+    const service_propValid = !StringHelper.isPropsEmpty(serviceDetails, [
+      'enabled'
+    ])
+
+    console.log('Service prop:', serviceDetails)
 
     const microService_propValid = microServices.every(
-      micro => !StringHelper.isPropsEmpty(micro)
+      micro => !StringHelper.isPropsEmpty(micro, ['enabled'])
     )
 
-    const variation_propValid = microServices.every(micro =>
-      micro.variations?.every(
-        variation =>
-          !StringHelper.isPropsEmpty(variation) &&
-          variation.pricing?.type &&
-          variation.pricing?.amount
-      )
-    )
-
-    const propertyCountMet =
-      service_propValid && microService_propValid && variation_propValid
+    const propertyCountMet = service_propValid && microService_propValid
 
     if (propertyCountMet) {
       return {
@@ -319,7 +394,7 @@ export const AddServiceModal = React.forwardRef(({ onSuccessClose }, ref) => {
     } else {
       return {
         isValid: false,
-        message: 'Property not set for one or more variations.'
+        message: 'One or more micro-services have missing properties.'
       }
     }
   }
@@ -341,7 +416,7 @@ export const AddServiceModal = React.forwardRef(({ onSuccessClose }, ref) => {
       <ModalOverlay />
       <ModalContent color='white' bg='#091927' h='full'>
         <ModalHeader
-          bg='#143554'
+          // bg='#143554'
           display='flex'
           justifyContent='space-between'
           alignItems='center'
@@ -350,94 +425,165 @@ export const AddServiceModal = React.forwardRef(({ onSuccessClose }, ref) => {
             Offer A New Service
           </Text>
         </ModalHeader>
-        <ModalCloseButton mt='1.5' />
-        <ModalBody h='100%'>
-          <VStack
-            w='full'
-            h='max-content'
-            justify='flex-start'
-            align='start'
-            pt='3'
-          >
-            <Input
-              placeholder='Add Your Service Name'
-              onChange={e =>
-                setServiceDetails(prev => ({ ...prev, name: e.target.value }))
-              }
-              {...SiteStyles.InputStyles}
+        <ModalCloseButton
+          mt='1.5'
+          _hover={{
+            bg: '#143554'
+          }}
+        />
+        <ModalBody h='100%' position='relative'>
+          {isLoading && (
+            <Spinner
+              size='md'
+              color='blue.400'
+              position='absolute'
+              top='50%'
+              left='50%'
             />
-            <Input
-              placeholder={`Explain ${serviceDetails?.name || 'this'} service in a few words`}
-              onChange={e =>
-                setServiceDetails(prev => ({
-                  ...prev,
-                  description: e.target.value
-                }))
-              }
-              {...SiteStyles.InputStyles}
-            />
-            <Box h='2px' />
-            <Accordion
+          )}
+          {!isLoading && (
+            <VStack
               w='full'
-              allowMultiple={true}
-              defaultIndex={[0]}
-              allowToggle={false}
+              h='max-content'
+              justify='flex-start'
+              align='start'
+              pt='3'
             >
-              {microServices?.map((micro, index) => (
-                <SingleMicroService
-                  key={`${index}`}
-                  {...micro}
-                  onUpdate={values =>
-                    updateMicroService({ ...values, microIndex: index })
+              {isExistingData && (
+                <Checkbox
+                  defaultChecked={serviceDetails?.enabled}
+                  onClick={() =>
+                    setServiceDetails(prev => ({
+                      ...prev,
+                      enabled: !prev.enabled
+                    }))
                   }
-                  onVariationUpdate={values =>
-                    updateMicro_Variation({ ...values, microIndex: index })
-                  }
-                  onAddVariation={() => addVariationToMicro(index)}
-                  onRemove={() => removeMicro(index)}
-                  onRemoveVariation={({ variationIndex }) =>
-                    removeVariation({ microIndex: index, variationIndex })
-                  }
-                />
-              ))}
-            </Accordion>
-            <Button
-              size='sm'
-              onClick={addMicroService}
-              leftIcon={<BiPlus />}
-              {...SiteStyles.ButtonStyles}
-              borderStyle='dashed'
-            >
-              Add New Micro-Service
-            </Button>
-          </VStack>
+                >
+                  Service is Enabled
+                </Checkbox>
+              )}
+              <Input
+                placeholder='Add Your Service Name'
+                onChange={e =>
+                  setServiceDetails(prev => ({ ...prev, name: e.target.value }))
+                }
+                value={serviceDetails?.name || ''}
+                {...SiteStyles.InputStyles}
+              />
+              <Input
+                placeholder={`Explain ${
+                  serviceDetails?.name || 'this'
+                } service in a few words`}
+                value={serviceDetails?.description || ''}
+                onChange={e =>
+                  setServiceDetails(prev => ({
+                    ...prev,
+                    description: e.target.value
+                  }))
+                }
+                {...SiteStyles.InputStyles}
+              />
+              <Text>How do you want to charge for this service?</Text>
+              <RadioGroup
+                value={serviceDetails?.chargeType}
+                onChange={val =>
+                  setServiceDetails(prev => ({
+                    ...prev,
+                    chargeType: val
+                  }))
+                }
+              >
+                <HStack>
+                  <Radio value='bundle'>Bundle Wise</Radio>
+                  <Radio value='feature'>Feature Wise</Radio>
+                </HStack>
+              </RadioGroup>
+              <Box h='5px' />
+              <Accordion
+                w='full'
+                allowMultiple={true}
+                defaultIndex={[0]}
+                allowToggle={false}
+              >
+                {microServices?.map((micro, index) => (
+                  <SingleMicroService
+                    key={`${index}`}
+                    {...micro}
+                    onUpdate={values =>
+                      updateMicroService({ ...values, microIndex: index })
+                    }
+                    onVariationUpdate={values =>
+                      updateMicro_Variation({ ...values, microIndex: index })
+                    }
+                    onAddVariation={() => addVariationToMicro(index)}
+                    onRemove={() => removeMicro(index)}
+                    onRemoveVariation={({ variationIndex }) =>
+                      removeVariation({ microIndex: index, variationIndex })
+                    }
+                  />
+                ))}
+              </Accordion>
+              <Button
+                size='sm'
+                onClick={addMicroService}
+                leftIcon={<BiPlus />}
+                {...SiteStyles.ButtonStyles}
+                borderStyle='dashed'
+              >
+                Add New Micro-Service
+              </Button>
+            </VStack>
+          )}
         </ModalBody>
 
-        <ModalFooter>
-          <Tooltip
-            placement='top'
-            hasArrow
-            label={formValidity().message}
-            bg='white'
-            color='#0f283d'
-            p='2'
-            pl='4'
-            pr='4'
+        {!isLoading && (
+          <ModalFooter
+            justifyContent={isExistingData ? 'space-between' : 'flex-end'}
           >
-            <Button
-              size='sm'
-              // isDisabled={!formValidity().isValid}
-              onClick={e => {
-                formValidity().isValid && performUpdate()
-              }}
-              cursor={formValidity().isValid ? 'pointer' : 'not-allowed'}
-              isLoading={isUpdating}
-              {...SiteStyles.ButtonStyles}
+            {isExistingData && (
+              <DeleteButton
+                onConfirm={performDelete}
+                popoverTitle={'Delete service?'}
+                popoverBody='If confirmed, the service will be deleted. This action is irreversible.'
+                customButton={
+                  <Button
+                    size='sm'
+                    // onClick={e => {
+                    //   formValidity().isValid && performUpdate()
+                    // }}
+                    cursor={formValidity().isValid ? 'pointer' : 'not-allowed'}
+                    // isLoading={isUpdating}
+                    {...SiteStyles.DeleteButton_Main}
+                  >
+                    Delete
+                  </Button>
+                }
+              ></DeleteButton>
+            )}
+            <Tooltip
+              placement='top'
+              hasArrow
+              label={formValidity().message}
+              bg='white'
+              color='#0f283d'
+              p='2'
+              pl='4'
+              pr='4'
             >
-              Create Service
-            </Button>
-          </Tooltip>
-        </ModalFooter>
+              <Button
+                size='sm'
+                onClick={e => {
+                  formValidity().isValid && performUpdate()
+                }}
+                cursor={formValidity().isValid ? 'pointer' : 'not-allowed'}
+                isLoading={isUpdating}
+                {...SiteStyles.ButtonStyles}
+              >
+                {isExistingData ? 'Update Service' : 'Create Service'}
+              </Button>
+            </Tooltip>
+          </ModalFooter>
+        )}
       </ModalContent>
     </Modal>
   )
@@ -484,7 +630,7 @@ const SingleMicroService = ({
         <>
           <AccordionButton cursor='default'>
             <Box as='span' flex='1' textAlign='left'>
-              <Text>{name || 'Micro Service 1'}</Text>
+              <Text>{name || 'Micro Service Name'}</Text>
             </Box>
             <IconButton
               icon={<BiTrash />}
@@ -501,7 +647,7 @@ const SingleMicroService = ({
             <VStack align='flex-start' spacing='4'>
               <Input
                 {...SiteStyles.InputStyles}
-                placeholder='Micro Service Name'
+                placeholder={'Micro Service Name'}
                 value={name || ''}
                 onChange={e => onUpdate({ key: 'name', value: e.target.value })}
               />
@@ -513,21 +659,6 @@ const SingleMicroService = ({
                   onUpdate({ key: 'stepQuestion', value: e.target.value })
                 }
               />
-              <InputGroup>
-                <InputLeftAddon
-                  bg='#143554'
-                  children={'Base Price :'}
-                  border='none'
-                />
-                <Input
-                  {...SiteStyles.InputStyles}
-                  placeholder='$10.00'
-                  value={basePrice || ''}
-                  onChange={e =>
-                    onUpdate({ key: 'basePrice', value: e.target.value })
-                  }
-                />
-              </InputGroup>
               {variations?.length > 0 && (
                 <TableContainer
                   className='table-container'
@@ -642,16 +773,16 @@ const SingleMicroService = ({
                   </Table>
                 </TableContainer>
               )}
-              <Button
-                size='xs'
-                // isDisabled={!formValidity().isValid}
-                onClick={onAddVariation}
-                leftIcon={<BiPlus />}
-                colorScheme='cyan'
-                // {...SiteStyles.ButtonStyles}
-              >
-                Add Variation
-              </Button>
+              {/* {isDigital && (
+                <Button
+                  size='xs'
+                  onClick={onAddVariation}
+                  leftIcon={<BiPlus />}
+                  colorScheme='cyan'
+                >
+                  Add Variation
+                </Button>
+              )} */}
             </VStack>
           </AccordionPanel>
         </>

@@ -1,3 +1,4 @@
+import React, { useEffect, useState, useCallback } from 'react'
 import './global.css'
 import Logo from '../../logo-trans.png'
 import '../global/global.css'
@@ -22,7 +23,7 @@ import {
   useToast,
   Tooltip
 } from '@chakra-ui/react'
-import { IoExitOutline } from 'react-icons/io5'
+import { IoArrowBackSharp, IoExitOutline } from 'react-icons/io5'
 import { TbExternalLink } from 'react-icons/tb'
 import moment from 'moment'
 import { AuthActions } from '../../data/actions/userActions'
@@ -30,11 +31,108 @@ import { getRoutes, SiteRoutes } from '../../misc/routes'
 import { useDispatch } from 'react-redux'
 import { StorageHelper } from '../../data/storage'
 import { GrUser } from 'react-icons/gr'
-import { useCallback, useState } from 'react'
 import { signOut, useFirebaseInstance } from '../../data/database/users/auth'
 import { BsChevronRight } from 'react-icons/bs'
 import { AiOutlineRight } from 'react-icons/ai'
 import { BiUser, BiX } from 'react-icons/bi'
+import { IoIosArrowRoundBack } from 'react-icons/io'
+
+const ButtonStyles = {
+  transition: 'all 300ms',
+  bg: '#0f283d',
+  dropShadow: 'md',
+  borderWidth: 'thin',
+  borderColor: 'teal.400',
+  color: 'white',
+  _active: {
+    bg: 'teal'
+  },
+  _hover: {
+    bg: 'teal'
+  }
+}
+
+const LinkStyles = {
+  color: 'teal',
+  fontWeight: 'semibold'
+}
+
+const InputStyles = {
+  bg: '#0f283d',
+  border: 'none'
+}
+
+const FocusableInputStyles = {
+  transition: 'padding-left 300ms',
+  bg: 'transparent',
+  border: 'none !important',
+  pl: 0,
+  resize: 'none',
+  _focus: {
+    ...InputStyles,
+    pl: '4',
+    resize: 'vertical'
+  },
+  boxShadow: 'none !important'
+}
+const ClickableContainer = {
+  userSelect: 'none',
+  borderWidth: 'thin',
+  borderColor: '#543d63',
+  cursor: 'pointer',
+  borderRadius: 'md',
+  _hover: {
+    bg: '#0f283d',
+    borderColor: 'transparent',
+    // color: '#3b154d',
+    shadow: 'md'
+  },
+  p: '5'
+}
+const DeleteButton_Main = {
+  ...ButtonStyles,
+  borderColor: 'red.400',
+  _hover: {
+    bg: 'red.600',
+    borderColor: 'red.400',
+    color: 'white'
+  },
+  _active: {
+    bg: 'red.400',
+    borderColor: 'red.400',
+    color: 'white'
+  }
+}
+const DeleteButton = {
+  bg: '#14344f',
+  variant: 'solid',
+  p: '2',
+  size: 'xs',
+  h: '30px',
+  _active: {
+    bg: '#3d0f1b'
+  },
+  _hover: {
+    bg: '#61162a'
+  },
+  icon: <BiX size={16} />
+}
+
+const BadgeStyle = {
+  bg: '#543d63',
+  color: 'white'
+}
+
+export const SiteStyles = {
+  LinkStyles,
+  ButtonStyles,
+  InputStyles,
+  FocusableInputStyles,
+  ClickableContainer,
+  DeleteButton,
+  DeleteButton_Main,
+  BadgeStyle
+}
 
 export const Header = ({ onLinkClick = link => {} }) => {
   const [isLogginOut, setIsLoggingOut] = useState(false)
@@ -177,57 +275,59 @@ export const Footer = () => (
 /**
  * A global component to render screens with titles and descriptions.
  * @param {object} props Component Props
+ * @param {string | JSX.Element} props.title Text/Component to render as the description of the screen. This will render in a pre-defined `<Text>` component.
  * @param {string | JSX.Element} props.description Text/Component to render as the description of the screen. This will render in a pre-defined `<Text>` component.
+ * @param {true | false} props.allowGoBack If `true`, it will render an additional button at the top-left corner, which allows to go back.
+ * @param {true | false} props.preventChildScroll
  * @param {JSX.Element} props.children Component(s) to render as the children of this component. Render all your screen components here.
  * @returns
  */
-export function ScreenContainer ({ description, children }) {
-  const location = useLocation()
-  const routes = getRoutes().Engine
-
-  function constructBreadcrumb () {
-    let value = {
-      parent: 'Parent',
-      screen: 'Screen'
-    }
-    routes.map(parent => {
-      const screen = parent.screens.find(sub => sub.path === location.pathname)
-      if (screen) {
-        value.parent = parent.label
-        value.screen = screen.label
-      }
-    })
-    return value
-  }
-
+export const ScreenContainer = ({
+  title,
+  description,
+  children,
+  allowGoBack,
+  preventChildScroll
+}) => {
+  const navigate = useNavigate()
   return (
     <Grid gridTemplateRows='auto 1fr' w='100%' h='100%'>
       <GridItem>
         <VStack align='flex-start' pt='3'>
-          {/* <Text fontSize='lg' fontWeight='normal'>
-            {title}
-          </Text> */}
-          {/* <HStack
-            bg='#3181FF15'
-            fontSize='sm'
-            w='max-content'
-            pt='1'
-            pb='1'
-            pl='2'
-            pr='2'
-            borderRadius='md'
-            fontWeight='normal'
-          >
-            <Text>{constructBreadcrumb().parent}</Text>
-            <AiOutlineRight size={10} />
-            <Text>{constructBreadcrumb().screen}</Text>
-          </HStack> */}
-          <Text fontSize='lg' fontWeight='normal'>
+          {allowGoBack && (
+            <Button
+              transition='all 300ms'
+              variant='unstyled'
+              fontSize='sm'
+              display='flex'
+              leftIcon={<IoArrowBackSharp />}
+              h='max-content'
+              p='1'
+              onClick={() => navigate(-1)}
+              _hover={{
+                color: 'teal.400'
+              }}
+            >
+              Go Back
+            </Button>
+          )}
+          {title && (
+            <Text fontSize='lg' fontWeight='normal'>
+              {title}
+            </Text>
+          )}
+          <Text fontSize='md' fontWeight='normal'>
             {description}
           </Text>
         </VStack>
       </GridItem>
-      <GridItem justifyContent='flex-start' textAlign='left' pt='3'>
+      <GridItem
+        justifyContent='flex-start'
+        textAlign='left'
+        pt='3'
+        pr='2'
+        overflow={preventChildScroll ? 'hidden' : 'scroll'}
+      >
         {children}
       </GridItem>
     </Grid>
@@ -292,85 +392,4 @@ export const UserInfo = ({
       </Tooltip>
     )
   )
-}
-
-const LinkStyles = {
-  color: 'teal',
-  fontWeight: 'semibold'
-}
-const ButtonStyles = {
-  transition: 'all 300ms',
-  bg: '#0f283d',
-  dropShadow: 'md',
-  borderWidth: 'thin',
-  borderColor: 'teal.400',
-  color: 'white',
-  _active: {
-    bg: 'teal'
-  },
-  _hover: {
-    bg: 'teal'
-  }
-}
-
-const InputStyles = {
-  bg: '#0f283d',
-  border: 'none'
-}
-
-const FocusableInputStyles = {
-  transition: 'padding-left 300ms',
-  bg: 'transparent',
-  border: 'none !important',
-  pl: 0,
-  resize: 'none',
-  _focus: {
-    ...InputStyles,
-    pl: '4',
-    resize: 'vertical'
-  },
-  boxShadow: 'none !important'
-}
-const ClickableContainer = {
-  userSelect: 'none',
-  borderWidth: 'thin',
-  borderColor: '#543d63',
-  cursor: 'pointer',
-  borderRadius: 'md',
-  _hover: {
-    bg: '#0f283d',
-    borderColor: 'transparent',
-    // color: '#3b154d',
-    shadow: 'md'
-  },
-  p: '5'
-}
-const DeleteButton = {
-  bg: '#14344f',
-  variant: 'solid',
-  p: '2',
-  size: 'xs',
-  h: '30px',
-  _active: {
-    bg: '#3d0f1b'
-  },
-  _hover: {
-    bg: '#61162a'
-  },
-  icon: <BiX size={16} />
-}
-
-const BadgeStyle = {
-  bg: '#543d63',
-  color: 'white'
-}
-
-export const SiteStyles = {
-  LinkStyles,
-  ButtonStyles,
-  InputStyles,
-  FocusableInputStyles,
-  ClickableContainer,
-  DeleteButton,
-  BadgeStyle
 }

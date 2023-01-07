@@ -1,18 +1,18 @@
 import { FirebaseError } from 'firebase/app'
-import { getAuth } from 'firebase/auth'
+import { Timestamp } from 'firebase/firestore'
 import {
   doc,
   addDoc,
   setDoc,
   getDoc,
   getFirestore,
+  writeBatch,
   updateDoc,
   arrayUnion,
   arrayRemove,
   collection,
   getDocs,
-  deleteDoc,
-  Timestamp
+  deleteDoc
 } from 'firebase/firestore'
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
@@ -20,9 +20,13 @@ import { getCollection } from '../index.js'
 import { useFirebaseInstance } from './auth.js'
 
 const collectionName = `profiles`
-const sub_collectionName = 'custom-services'
+const sub_collectionName = 'custom-features'
 
-async function createService (fireInstance, profileID, { data, merge }) {
+async function createFeature (
+  fireInstance,
+  profileID,
+  { data, merge, isMultiple }
+) {
   if (!fireInstance) return
 
   const collection_ref = collection(
@@ -32,13 +36,26 @@ async function createService (fireInstance, profileID, { data, merge }) {
     sub_collectionName
   )
   try {
-    const new_docRef = await addDoc(collection_ref, data, {
-      merge: merge
-    })
-    const new_doc = (await getDoc(new_docRef))?.data()
-    return { success: true, data: new_doc }
+    if (!isMultiple) {
+      const new_docRef = await addDoc(collection_ref, data, {
+        merge: merge
+      })
+      const new_doc = (await getDoc(new_docRef))?.data()
+
+      return { success: true, data: new_doc }
+    } else {
+      const batch = writeBatch(getFirestore(fireInstance))
+      data?.map(single => {
+        const new_docRef = doc(collection_ref)
+        batch.set(new_docRef, { ...single, createdAt: Timestamp.now() })
+      })
+
+      await batch.commit()
+      return { success: true }
+    }
   } catch (ex) {
     let error = new FirebaseError()
+    console.log('Error is:', ex)
     error = {
       ...error,
       ...ex
@@ -46,16 +63,16 @@ async function createService (fireInstance, profileID, { data, merge }) {
     return {
       error: {
         ...error,
-        message: "Couldn't create/set service data."
+        message: "Couldn't create/set feature data."
       }
     }
   }
 }
 
-async function updateService (
+async function updateFeature (
   fireInstance,
   profileID,
-  serviceID,
+  featureId,
   { data, merge }
 ) {
   if (!fireInstance) return
@@ -65,13 +82,13 @@ async function updateService (
     collectionName,
     profileID,
     sub_collectionName,
-    serviceID
+    featureId
   )
   try {
     let spread = { ...data }
     if (spread.uid) delete spread.uid
 
-    const new_docRef = await setDoc(doc_ref, spread, {
+    await setDoc(doc_ref, spread, {
       merge: merge
     })
     const new_doc = {
@@ -88,12 +105,12 @@ async function updateService (
     return {
       error: {
         ...error,
-        message: "Couldn't update the service."
+        message: "Couldn't update the feature."
       }
     }
   }
 }
-async function deleteService (fireInstance, profileID, serviceID) {
+async function deleteFeature (fireInstance, profileID, featureID) {
   if (!fireInstance) return
 
   const doc_ref = doc(
@@ -101,7 +118,7 @@ async function deleteService (fireInstance, profileID, serviceID) {
     collectionName,
     profileID,
     sub_collectionName,
-    serviceID
+    featureID
   )
   try {
     await deleteDoc(doc_ref)
@@ -121,40 +138,35 @@ async function deleteService (fireInstance, profileID, serviceID) {
   }
 }
 
-export const useServicesHook = (serviceId, preventFetch) => {
+export const useFeaturesHook = (featureId, preventFetch = false) => {
   const fireInstance = useFirebaseInstance()
   const userId = useSelector(state => state?.user?.userId)
-  const profile = useSelector(state => state?.user?.profile)
   const [data, setData] = useState()
   const [isFetching, setIsFetching] = useState(true)
   const [isUpdating, setIsUpdating] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
 
   useEffect(() => {
-    if (userId) {
-      if (serviceId) get()
+    if (userId && !preventFetch) {
+      if (featureId) get()
       else getAll()
     }
-  }, [userId, serviceId])
-
-  useEffect(() => {
-    profile?.onboard_complete && getAll()
-  }, [profile?.onboard_complete])
+  }, [userId, featureId])
 
   async function get () {
-    if (serviceId) {
+    if (featureId) {
       setIsFetching(true)
-      const service_docRef = doc(
+      const feature_docRef = doc(
         getFirestore(fireInstance),
         collectionName,
         userId,
         sub_collectionName,
-        serviceId
+        featureId
       )
-      const service_doc = await getDoc(service_docRef)
+      const feature_doc = await getDoc(feature_docRef)
 
-      if (service_doc.exists()) {
-        setDoc(service_doc.data())
+      if (feature_doc.exists()) {
+        setDoc(feature_doc.data())
       } else {
         setData()
       }
@@ -185,27 +197,38 @@ export const useServicesHook = (serviceId, preventFetch) => {
 
   async function add (data, merge = true) {
     setIsUpdating(true)
-    const serviceResult = await createService(fireInstance, userId, {
+    const featureResult = await createFeature(fireInstance, userId, {
       data: { ...data, createdAt: Timestamp.now() },
       merge: merge
     })
     setIsUpdating(false)
-    return serviceResult
+    return featureResult
   }
-  async function update (serviceID, data, merge = true) {
+
+  async function addMultiple (data, merge = true) {
     setIsUpdating(true)
-    const serviceResult = await updateService(fireInstance, userId, serviceID, {
+    const featureResult = await createFeature(fireInstance, userId, {
+      data: data,
+      isMultiple: true
+    })
+    setIsUpdating(false)
+    return featureResult
+  }
+
+  async function update (featureId, data, merge = true) {
+    setIsUpdating(true)
+    const featureResult = await updateFeature(fireInstance, userId, featureId, {
       data: data,
       merge: merge
     })
     setIsUpdating(false)
-    return serviceResult
+    return featureResult
   }
-  async function _delete (serviceID) {
+  async function _delete (featureId) {
     setIsDeleting(true)
-    const serviceResult = await deleteService(fireInstance, userId, serviceID)
+    const featureResult = await deleteFeature(fireInstance, userId, featureId)
     setIsDeleting(false)
-    return serviceResult
+    return featureResult
   }
 
   return {
@@ -216,6 +239,7 @@ export const useServicesHook = (serviceId, preventFetch) => {
     get,
     getAll,
     add,
+    addMultiple,
     update,
     _delete
   }

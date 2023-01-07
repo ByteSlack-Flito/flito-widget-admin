@@ -21,6 +21,9 @@ export const StringHelper = {
   isPropsEmpty (obj = {}, ignoreProps = []) {
     return Object.keys(obj).some(prop => {
       if (!ignoreProps.includes(prop)) {
+        if(Array.isArray(obj[prop])){
+          return obj[prop].length <= 0
+        }
         return !obj[prop] && !obj[prop].trim()
       }
     })
@@ -54,6 +57,6 @@ export function trimString (source, length, ellipsis = '.', ellipsisCount = 3) {
     return
   }
   if (source.length <= length) return source
-  
+
   return source.substring(0, length) + ellipsis.repeat(ellipsisCount)
 }

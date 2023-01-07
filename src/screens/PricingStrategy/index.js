@@ -56,6 +56,38 @@ const Option_IsTyping = ({ innerProps }) => (
   </div>
 )
 
+export const ReactSelectStyles = {
+  control: (baseStyles, state) => ({
+    ...baseStyles,
+    background: '#0f283d',
+    borderColor: '#38B2AC'
+  }),
+  input: (baseStyles, state) => ({
+    ...baseStyles,
+    color: 'white !important'
+  }),
+  placeholder: baseStyles => ({
+    ...baseStyles,
+    color: 'white !important'
+  }),
+  singleValue: baseStyles => ({
+    ...baseStyles,
+    color: 'white !important',
+    backgroundColor: '#0f283d'
+  }),
+  menuList: baseStyles => ({
+    ...baseStyles,
+    background: '#143554'
+  }),
+  option: (baseStyles, state) => ({
+    ...baseStyles,
+    ':hover': {
+      backgroundColor: '#0f283d'
+    },
+    backgroundColor: '#143554'
+  })
+}
+
 const PricingStrategyScreen = () => {
   const [currencies, setCurrencies] = useState()
   const [pricingData, setPricingData] = useState({
@@ -156,38 +188,6 @@ const PricingStrategyScreen = () => {
       setPricingData(prev => ({ ...prev, [key]: updatedData }))
     }
     toast.show(result)
-  }
-
-  const ReactSelectStyles = {
-    control: (baseStyles, state) => ({
-      ...baseStyles,
-      background: '#0f283d',
-      borderColor: '#38B2AC'
-    }),
-    input: (baseStyles, state) => ({
-      ...baseStyles,
-      color: 'white !important'
-    }),
-    placeholder: baseStyles => ({
-      ...baseStyles,
-      color: 'white !important'
-    }),
-    singleValue: baseStyles => ({
-      ...baseStyles,
-      color: 'white !important',
-      backgroundColor: '#0f283d'
-    }),
-    menuList: baseStyles => ({
-      ...baseStyles,
-      background: '#143554'
-    }),
-    option: (baseStyles, state) => ({
-      ...baseStyles,
-      ':hover': {
-        backgroundColor: '#0f283d'
-      },
-      backgroundColor: '#143554'
-    })
   }
 
   return (

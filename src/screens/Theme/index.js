@@ -5,7 +5,7 @@ import { ScreenContainer } from '../../components/global'
 import { CustomTabs } from './components'
 import { ThemeScreens } from './themeScreens'
 
-const TabProps = {
+export const TabProps = {
   _selected: {
     color: 'white',
     bg: '#d885ff30',
