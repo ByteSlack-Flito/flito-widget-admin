@@ -21,18 +21,18 @@ import { useProfile } from '../../../data/database/users/profile'
 
 export default ({ isOpen }) => {
   const user = useSelector(state => state.user)
-  const { update } = useProfile(false)
+  const profileHook = useProfile(false)
   const dispatch = useDispatch()
-  const [isUpdating, setIsUpdating] = useState('')
+  const [isUpdating, setIsUpdating] = useState()
 
   async function performQuickSetup () {
-    setIsUpdating('quick')
+    setIsUpdating(true)
     const api = process.env.REACT_APP_API_URL
     const result = await axios.post(`${api}/static/generateSample`, {
       uid: user.userId
     })
     if (result.status == 200) {
-      const updateResult = await update({
+      const updateResult = await profileHook.update({
         onboard_complete: true
       })
       if (updateResult.success) {
@@ -43,8 +43,23 @@ export default ({ isOpen }) => {
             onboard_complete: true
           }
         })
-        setIsUpdating('')
+        setIsUpdating(false)
       }
+    }
+  }
+
+  async function performFreshSetup () {
+    const updateResult = await profileHook.update({
+      onboard_complete: true
+    })
+    if (updateResult.success) {
+      dispatch({
+        type: ProfileActions.SET_PROFILE,
+        data: {
+          ...user.profile,
+          onboard_complete: true
+        }
+      })
     }
   }
 
@@ -119,7 +134,8 @@ export default ({ isOpen }) => {
                       cursor='pointer'
                       p='0'
                       onClick={performQuickSetup}
-                      isLoading={isUpdating === 'quick'}
+                      isLoading={isUpdating}
+                      disabled={profileHook.isUpdating}
                     >
                       <VStack
                         w='full'
@@ -163,6 +179,9 @@ export default ({ isOpen }) => {
                         color: 'teal.400'
                       }}
                       cursor='pointer'
+                      isLoading={profileHook.isUpdating}
+                      onClick={performFreshSetup}
+                      disabled={isUpdating}
                     >
                       <VStack
                         w='full'
