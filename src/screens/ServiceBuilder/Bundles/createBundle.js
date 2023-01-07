@@ -76,7 +76,7 @@ export default () => {
   const constructServices = serviceHook.data?.map(service => ({
     value: service.uid,
     label: service.name
-  }))
+  })) || []
 
   useEffect(() => {
     !StringHelper.isEmpty(formData.service) &&

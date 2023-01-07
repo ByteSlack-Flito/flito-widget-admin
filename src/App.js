@@ -102,12 +102,6 @@ function ScreenRenderer () {
     }
   }, [firebaseApp.instance])
 
-  function getMenuItems () {
-    return location.pathname.includes('/project/')
-      ? routes.Project
-      : routes.Engine
-  }
-
   const { SUCCESS, ERROR, LOADING } = Constants.LoadingState
 
   if (firebaseApp.instance) {
@@ -145,7 +139,7 @@ function ScreenRenderer () {
             position='relative'
           >
             <Spacer h='2' />
-            <Menu data={getMenuItems()} />
+            <Menu data={routes.Engine} />
           </GridItem>
           <GridItem pl='4' area={'main'} overflow='scroll' color='white !important'>
             <Routes>

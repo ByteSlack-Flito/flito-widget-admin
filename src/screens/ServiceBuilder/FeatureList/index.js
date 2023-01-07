@@ -88,6 +88,14 @@ export const FeatureList = ({}) => {
             >
               Create New
             </Button>
+            {(!featureList || featureList?.length <= 0) && (
+              <Text fontSize='md' fontWeight='normal' color='gray.500'>
+                <i>
+                  Start creating features and they will show up here. You should
+                  add at-least one feature, per service.
+                </i>
+              </Text>
+            )}
             {featureList?.length > 0 && (
               <TableContainer
                 className='table-container'

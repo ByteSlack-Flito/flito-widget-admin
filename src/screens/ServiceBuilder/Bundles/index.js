@@ -105,6 +105,13 @@ export const BundleList = ({}) => {
             >
               Create Bundle
             </Button>
+            {(!bundleList || bundleList?.length <= 0) && (
+              <Text fontSize='md' fontWeight='normal' color='gray.500'>
+                <i>
+                  Start creating service bundles and they will show up here.
+                </i>
+              </Text>
+            )}
             {bundleList?.length > 0 && (
               <TableContainer
                 className='table-container'
