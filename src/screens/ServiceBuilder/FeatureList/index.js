@@ -181,7 +181,7 @@ export const FeatureList = ({}) => {
                           </Text>
                         </Td>
                         <Td maxW='200px'>
-                          <Text size='xs'>{feature.unitPrice || 'N/A'}</Text>
+                          <Text size='xs'>{feature.price || 'N/A'}</Text>
                         </Td>
                         <Td textAlign='right'>
                           <IconButton

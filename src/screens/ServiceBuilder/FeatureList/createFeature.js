@@ -13,12 +13,22 @@ import {
   HStack,
   IconButton,
   Input,
+  InputGroup,
+  InputRightElement,
+  Popover,
+  PopoverArrow,
+  PopoverBody,
+  PopoverCloseButton,
+  PopoverContent,
+  PopoverHeader,
+  PopoverTrigger,
   SimpleGrid,
   Table,
   TableContainer,
   Tbody,
   Td,
   Text,
+  Textarea,
   Th,
   Thead,
   Tooltip,
@@ -36,6 +46,7 @@ import { VscCopy } from 'react-icons/vsc'
 import { StringHelper } from '../../../data/extensions/stringHelper'
 import { useFeaturesHook } from '../../../data/database/users/features'
 import { SiteRoutes } from '../../../misc/routes'
+import { BiPlus, BiPlusCircle } from 'react-icons/bi'
 
 const NoSimilarMico = ({ innerProps }) => (
   <div {...innerProps}>
@@ -51,6 +62,7 @@ export default () => {
   const routeState = useLocation().state
   const serviceHook = useServicesHook()
   const [services, setServices] = useState()
+  const [existingSet, setExistingSet] = useState(false)
   const [microServices, setMicroServices] = useState([])
   const [featureList, setFeatureLsit] = useState()
   const { addMultiple, isUpdating, update } = useFeaturesHook(0, true)
@@ -79,13 +91,27 @@ export default () => {
     mergeMicroServices()
   }, [services])
 
+  //#region Setting up existing data
   useEffect(() => {
-    if (routeState?.data && serviceHook.data && microServices) {
+    const exsData = routeState?.data
+    const serviceData = serviceHook.data
+
+    if (exsData && serviceData) {
+      const found_services = routeState?.data.association.services.map(single =>
+        constructServices?.find(x => x.value === single)
+      )
+      setServices(found_services)
+    }
+  }, [routeState?.data, serviceHook.data])
+
+  useEffect(() => {
+    const exsData = routeState?.data
+
+    if (exsData && microServices?.length > 0) {
       const constructExistingFeature = () => {
         const micro = microServices?.find(
           x => x.value === routeState?.data.association.microService.microUID
         )
-
         return {
           name: routeState?.data.name,
           price: routeState?.data.price,
@@ -94,12 +120,9 @@ export default () => {
         }
       }
       setFeatureLsit([constructExistingFeature()])
-      const found_services = routeState?.data.association.services.map(single =>
-        constructServices?.find(x => x.value === single)
-      )
-      setServices(found_services)
     }
-  }, [routeState?.data, serviceHook.data, microServices])
+  }, [routeState?.data, microServices])
+  //#endregion
 
   function mergeMicroServices () {
     if (services) {
@@ -221,7 +244,7 @@ export default () => {
     feature =>
       feature.name &&
       feature.microService &&
-      !StringHelper.isPropsEmpty(feature, ['price'])
+      !StringHelper.isPropsEmpty(feature, ['price', 'description'])
   )
 
   async function finaliseFeatures () {
@@ -237,13 +260,20 @@ export default () => {
         return {
           name: single.name,
           price: single.price,
+          description: single.description || '',
           association
         }
       })
 
-      const result = await addMultiple(formatted)
-      toast.show(result)
+      let result = {}
+      if (!routeState?.data) {
+        result = await addMultiple(formatted)
+      } else {
+        // console.log('Formatted is:', formatted[0])
+        result = await update(routeState.data.uid, formatted[0])
+      }
 
+      toast.show(result)
       if (result.success) {
         setTimeout(() => navigate(-1), 1000)
       }
@@ -353,14 +383,72 @@ export default () => {
                         />
                       </Td>
                       <Td maxW='200px'>
-                        <Input
-                          {...SiteStyles.InputStyles}
-                          onChange={e =>
-                            updateFeature(index, 'name', e.target.value)
-                          }
-                          value={feature.name || ''}
-                          placeholder='Feature/Option Name'
-                        />
+                        <InputGroup>
+                          <Input
+                            {...SiteStyles.InputStyles}
+                            onChange={e =>
+                              updateFeature(index, 'name', e.target.value)
+                            }
+                            pr='2rem'
+                            value={feature.name || ''}
+                            fontSize='sm'
+                            placeholder='Feature/Option Name'
+                          />
+                          <InputRightElement>
+                            <Popover>
+                              <PopoverTrigger>
+                                {/* <Tooltip label='Add Description'> */}
+                                <IconButton
+                                  size='xs'
+                                  {...SiteStyles.ButtonStyles}
+                                  icon={<BiPlus />}
+                                >
+                                  Description
+                                </IconButton>
+                                {/* </Tooltip> */}
+                              </PopoverTrigger>
+                              <PopoverContent bg='#143554' border='none'>
+                                <PopoverArrow
+                                  bg='#143554'
+                                  boxShadow='none !important'
+                                />
+                                <PopoverCloseButton />
+                                <PopoverHeader border='none'>
+                                  Add description
+                                </PopoverHeader>
+                                <PopoverBody>
+                                  <Textarea
+                                    {...SiteStyles.InputStyles}
+                                    value={feature.description || ''}
+                                    placeholder='Type here...'
+                                    onChange={e =>
+                                      updateFeature(
+                                        index,
+                                        'description',
+                                        e.target.value
+                                      )
+                                    }
+                                  />
+                                </PopoverBody>
+                              </PopoverContent>
+                            </Popover>
+                            {/* <Textarea
+                            {...SiteStyles.InputStyles}
+                            onChange={e =>
+                              updateFeature(
+                                index,
+                                'description',
+                                e.target.value
+                              )
+                            }
+                            maxH='60px'
+                            minH='30px'
+                            fontSize='xs'
+                            value={feature.description || ''}
+                            placeholder='Add a description'
+                          /> */}
+                          </InputRightElement>
+                        </InputGroup>
                       </Td>
                       <Td maxW='200px'>
                         <Input
@@ -374,31 +462,33 @@ export default () => {
                         />
                       </Td>
                       <Td textAlign='right'>
-                        <HStack align='flex-end' justify='flex-end'>
-                          <Tooltip
-                            placement='bottom'
-                            label='Duplicate'
-                            hasArrow
-                            bg='#1a405e'
-                            fontSize='0.75rem'
-                          >
+                        {!routeState?.data && (
+                          <HStack align='flex-end' justify='flex-end'>
+                            <Tooltip
+                              placement='bottom'
+                              label='Duplicate'
+                              hasArrow
+                              bg='#1a405e'
+                              fontSize='0.75rem'
+                            >
+                              <IconButton
+                                {...SiteStyles.DeleteButton}
+                                _hover={{
+                                  bg: 'teal.600'
+                                }}
+                                _active={{
+                                  bg: 'teal.600'
+                                }}
+                                icon={<VscCopy />}
+                                onClick={() => handleFeature(index)}
+                              />
+                            </Tooltip>
                             <IconButton
                               {...SiteStyles.DeleteButton}
-                              _hover={{
-                                bg: 'teal.600'
-                              }}
-                              _active={{
-                                bg: 'teal.600'
-                              }}
-                              icon={<VscCopy />}
-                              onClick={() => handleFeature(index)}
+                              onClick={() => handleFeature(index, true)}
                             />
-                          </Tooltip>
-                          <IconButton
-                            {...SiteStyles.DeleteButton}
-                            onClick={() => handleFeature(index, true)}
-                          />
-                        </HStack>
+                          </HStack>
+                        )}
                       </Td>
                     </Tr>
                   ))}
@@ -407,18 +497,25 @@ export default () => {
             </TableContainer>
           )}
           {featureList && (
-            <HStack spacing='2' pt='2' justify='space-between' w='full'>
-              <Button
-                {...SiteStyles.ButtonStyles}
-                size='sm'
-                borderStyle='dashed'
-                onClick={addFeature}
-                leftIcon={<FiPlus />}
-              >
-                {!featureList || featureList.length <= 0
-                  ? 'Add Feature'
-                  : 'Add Another'}
-              </Button>
+            <HStack
+              spacing='2'
+              pt='2'
+              justify={routeState?.data ? 'flex-end' : 'space-between'}
+              w='full'
+            >
+              {!routeState?.data && (
+                <Button
+                  {...SiteStyles.ButtonStyles}
+                  size='sm'
+                  borderStyle='dashed'
+                  onClick={addFeature}
+                  leftIcon={<FiPlus />}
+                >
+                  {!featureList || featureList.length <= 0
+                    ? 'Add Feature'
+                    : 'Add Another'}
+                </Button>
+              )}
               <Tooltip
                 label={
                   !isFormValid &&
@@ -443,7 +540,7 @@ export default () => {
                   onClick={finaliseFeatures}
                   isLoading={isUpdating}
                 >
-                  Finalise & Save
+                  {routeState?.data ? 'Update Feature' : 'Finalise & Save'}
                 </Button>
               </Tooltip>
             </HStack>

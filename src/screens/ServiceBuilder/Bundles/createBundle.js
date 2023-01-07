@@ -219,7 +219,7 @@ export default () => {
                     <Thead bg='#0f283d' h='35px' borderTopRadius='md'>
                       <Tr>
                         <Th borderTopLeftRadius='md'></Th>
-                        <Th>Feature/Option</Th>
+                        <Th>Select Features</Th>
                         <Th>Price/Rate</Th>
                         <Th
                           borderTopRightRadius='md'
@@ -263,7 +263,7 @@ export default () => {
                             </VStack>
                           </Td>
                           <Td>
-                            <Text size='xs'>{feature.unitPrice || 'N/A'}</Text>
+                            <Text size='xs'>{feature.price || 'N/A'}</Text>
                           </Td>
                           <Td></Td>
                         </Tr>

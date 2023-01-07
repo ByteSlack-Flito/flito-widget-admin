@@ -57,7 +57,7 @@ export const SiteRoutes = {
           Init: {
             path: '/',
             ignoreRendering: true,
-            element: <Navigate to={`${ENGINE_ROUTE}/my-tech-stack`} />
+            element: <Navigate to={`${ENGINE_ROUTE}/my-services`} />
           },
           MyServices: {
             id: 201,
