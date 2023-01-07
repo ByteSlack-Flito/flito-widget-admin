@@ -95,7 +95,7 @@ function getSelectedStyle (selected) {
     }
 }
 
-export const AppTypeSingle = ({
+export const ServiceSingle = ({
   isEditable,
   isEnabled,
   icon,

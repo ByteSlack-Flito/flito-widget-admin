@@ -124,6 +124,7 @@ async function deleteService (fireInstance, profileID, serviceID) {
 export const useServicesHook = (serviceId, preventFetch) => {
   const fireInstance = useFirebaseInstance()
   const userId = useSelector(state => state?.user?.userId)
+  const profile = useSelector(state => state?.user?.profile)
   const [data, setData] = useState()
   const [isFetching, setIsFetching] = useState(true)
   const [isUpdating, setIsUpdating] = useState(false)
@@ -135,6 +136,10 @@ export const useServicesHook = (serviceId, preventFetch) => {
       else getAll()
     }
   }, [userId, serviceId])
+
+  useEffect(() => {
+    profile?.onboard_complete && getAll()
+  }, [profile?.onboard_complete])
 
   async function get () {
     if (serviceId) {

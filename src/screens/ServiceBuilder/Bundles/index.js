@@ -30,7 +30,7 @@ import { trimString } from '../../../data/extensions/stringHelper'
 import { SiteRoutes } from '../../../misc/routes'
 import { InfoBox } from '../../PricingStrategy/components'
 import { DeleteButton } from '../../ProjectRequests/components'
-import { AppTypes } from '../../TechStacks'
+import { AppTypes } from '../../MyServices'
 import { DuplicateBundleModal } from './components'
 
 export const BundleList = ({}) => {

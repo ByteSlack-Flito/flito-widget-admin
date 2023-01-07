@@ -9,7 +9,7 @@ import { GiTeamIdea } from 'react-icons/gi'
 import TeamScreen from '../screens/Team'
 import PricingStrategyScreen from '../screens/PricingStrategy'
 import WidgetScreen from '../screens/Widget'
-import { TechStackScreen } from '../screens/TechStacks'
+import { MyServicesScreen } from '../screens/MyServices'
 import { BiCodeAlt } from 'react-icons/bi'
 import { AiOutlineAppstoreAdd } from 'react-icons/ai'
 import ProjectRequestScreen from '../screens/ProjectRequests'
@@ -64,7 +64,7 @@ export const SiteRoutes = {
             icon: <AiOutlineAppstoreAdd />,
             label: 'My Services',
             path: `${ENGINE_ROUTE}/my-services`,
-            element: <TechStackScreen />
+            element: <MyServicesScreen />
           },
           ServiceBuilder: {
             id: 202,
