@@ -14,6 +14,7 @@ import {
   IconButton,
   Input,
   InputGroup,
+  InputRightAddon,
   InputRightElement,
   Popover,
   PopoverArrow,
@@ -22,6 +23,8 @@ import {
   PopoverContent,
   PopoverHeader,
   PopoverTrigger,
+  Radio,
+  RadioGroup,
   SimpleGrid,
   Table,
   TableContainer,
@@ -46,7 +49,8 @@ import { VscCopy } from 'react-icons/vsc'
 import { StringHelper } from '../../../data/extensions/stringHelper'
 import { useFeaturesHook } from '../../../data/database/users/features'
 import { SiteRoutes } from '../../../misc/routes'
-import { BiPlus, BiPlusCircle } from 'react-icons/bi'
+import { BiPlus, BiPlusCircle, BiTrash } from 'react-icons/bi'
+import { DeleteButton } from '../../ProjectRequests/components'
 
 const NoSimilarMico = ({ innerProps }) => (
   <div {...innerProps}>
@@ -65,7 +69,8 @@ export default () => {
   const [existingSet, setExistingSet] = useState(false)
   const [microServices, setMicroServices] = useState([])
   const [featureList, setFeatureLsit] = useState()
-  const { addMultiple, isUpdating, update } = useFeaturesHook(0, true)
+  const { addMultiple, isUpdating, update, _delete, isDeleting } =
+    useFeaturesHook(0, true)
   const navigate = useNavigate()
   const toast = useToastGenerator()
 
@@ -82,10 +87,11 @@ export default () => {
         }
   }
 
-  const constructServices = serviceHook.data?.map(service => ({
-    value: service.uid,
-    label: service.name
-  })) || []
+  const constructServices =
+    serviceHook.data?.map(service => ({
+      value: service.uid,
+      label: service.name
+    })) || []
 
   useEffect(() => {
     mergeMicroServices()
@@ -212,11 +218,19 @@ export default () => {
     ])
   }
 
-  function updateFeature (index, key, val) {
+  function updateFeature (index, key, val, nestedKey) {
     setFeatureLsit(prev => {
       const spread = [...prev]
       const spread_feature = { ...spread[index] }
-      spread_feature[key] = val
+      if (!nestedKey) {
+        spread_feature[key] = val
+      } else {
+        if (spread_feature[key]) spread_feature[key][nestedKey] = val
+        else {
+          spread_feature[key] = new Object()
+          spread_feature[key][nestedKey] = val
+        }
+      }
       spread[index] = spread_feature
 
       return spread
@@ -244,7 +258,7 @@ export default () => {
     feature =>
       feature.name &&
       feature.microService &&
-      !StringHelper.isPropsEmpty(feature, ['price', 'description'])
+      !StringHelper.isPropsEmpty(feature, ['price', 'description', 'delivery'])
   )
 
   async function finaliseFeatures () {
@@ -259,7 +273,7 @@ export default () => {
         }
         return {
           name: single.name,
-          price: single.price,
+          price: single.price || '',
           description: single.description || '',
           association
         }
@@ -279,6 +293,24 @@ export default () => {
       }
     }
   }
+
+  async function deleteFeature () {
+    const result = await _delete(routeState.data.uid)
+    toast.show(result)
+
+    setTimeout(() => navigate(-1), 1000)
+  }
+
+  const timeOptions = [
+    {
+      label: 'Days',
+      value: 'days'
+    },
+    {
+      label: 'Weeks',
+      value: 'weeks'
+    }
+  ]
 
   return (
     <motion.div
@@ -353,10 +385,13 @@ export default () => {
                     </Th>
                     <Th>Feature/Option</Th>
                     <Th>Price/Rate</Th>
-                    <Th
-                      borderTopRightRadius='md'
-                      borderBottomRightRadius='md'
-                    ></Th>
+                    <Th>Delivery Time</Th>
+                    {!routeState.data?.uid && (
+                      <Th
+                        borderTopRightRadius='md'
+                        borderBottomRightRadius='md'
+                      ></Th>
+                    )}
                   </Tr>
                 </Thead>
                 <Tbody fontWeight='normal' overflowY='scroll'>
@@ -396,17 +431,19 @@ export default () => {
                           />
                           <InputRightElement>
                             <Popover>
-                              <PopoverTrigger>
-                                {/* <Tooltip label='Add Description'> */}
-                                <IconButton
-                                  size='xs'
-                                  {...SiteStyles.ButtonStyles}
-                                  icon={<BiPlus />}
-                                >
-                                  Description
-                                </IconButton>
-                                {/* </Tooltip> */}
-                              </PopoverTrigger>
+                              <Tooltip label='Add Description' hasArrow>
+                                <Box>
+                                  <PopoverTrigger>
+                                    <IconButton
+                                      size='xs'
+                                      {...SiteStyles.ButtonStyles}
+                                      icon={<BiPlus />}
+                                    >
+                                      Description
+                                    </IconButton>
+                                  </PopoverTrigger>
+                                </Box>
+                              </Tooltip>
                               <PopoverContent bg='#143554' border='none'>
                                 <PopoverArrow
                                   bg='#143554'
@@ -461,8 +498,53 @@ export default () => {
                           placeholder='$0.00'
                         />
                       </Td>
-                      <Td textAlign='right'>
-                        {!routeState?.data && (
+                      <Td>
+                        <InputGroup>
+                          <Input
+                            {...SiteStyles.InputStyles}
+                            onChange={e =>
+                              /^\d*\.?\d*$/.test(e.target.value) &&
+                              updateFeature(
+                                index,
+                                'delivery',
+                                e.target.value,
+                                'period'
+                              )
+                            }
+                            value={feature.delivery?.period || ''}
+                            placeholder='Ex. 5 Weeks'
+                          />
+                          <InputRightAddon
+                            p='0'
+                            bg='transparent'
+                            border='none'
+                            fontSize='xs'
+                          >
+                            <Select
+                              options={timeOptions}
+                              className='react_select'
+                              placeholder='Select...'
+                              styles={ReactSelectStyles}
+                              onChange={val =>
+                                updateFeature(
+                                  index,
+                                  'delivery',
+                                  val.value,
+                                  'periodType'
+                                )
+                              }
+                              value={timeOptions.find(
+                                x => x.value === feature?.delivery?.periodType
+                              )}
+                              components={{
+                                NoOptionsMessage: NoSimilarMico
+                              }}
+                            />
+                          </InputRightAddon>
+                        </InputGroup>
+                      </Td>
+                      {!routeState?.data && (
+                        <Td textAlign='right'>
                           <HStack align='flex-end' justify='flex-end'>
                             <Tooltip
                               placement='bottom'
@@ -488,8 +570,8 @@ export default () => {
                               onClick={() => handleFeature(index, true)}
                             />
                           </HStack>
-                        )}
-                      </Td>
+                        </Td>
+                      )}
                     </Tr>
                   ))}
                 </Tbody>
@@ -515,6 +597,17 @@ export default () => {
                     ? 'Add Feature'
                     : 'Add Another'}
                 </Button>
+              )}
+              {routeState?.data && (
+                <DeleteButton
+                  buttonProps={{
+                    pos: 'relative',
+                    icon: <BiTrash />
+                  }}
+                  popoverTitle='Delete feature?'
+                  popoverBody='Are you sure you want to delete this feature?'
+                  onConfirm={deleteFeature}
+                />
               )}
               <Tooltip
                 label={

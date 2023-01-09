@@ -293,7 +293,7 @@ export const ScreenContainer = ({
   return (
     <Grid gridTemplateRows='auto 1fr' w='100%' h='100%'>
       <GridItem>
-        <VStack align='flex-start' pt='3'>
+        <VStack align='flex-start' pt='3' textAlign='left' pr='5'>
           {allowGoBack && (
             <Button
               transition='all 300ms'
