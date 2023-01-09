@@ -77,7 +77,13 @@ export const BundleList = ({}) => {
 
   return (
     <ScreenContainer
-      description='Manage all your service bundles.'
+      description={
+        <>
+          Service bundles help your users to get flexible pricing. If a user
+          chooses a set of features, that mostly fall under a service bundle,
+          the widget will quote the price and timeline of that service bundle.
+        </>
+      }
       preventChildScroll={false}
     >
       {isLoading && <Spinner size='md' color='blue.400' />}
@@ -129,6 +135,7 @@ export const BundleList = ({}) => {
                       <Th borderTopLeftRadius='md'>Bundle</Th>
                       <Th>Affected Services</Th>
                       <Th>Pricing</Th>
+                      <Th>Delivery Time</Th>
                       <Th borderTopRightRadius='md'></Th>
                     </Tr>
                   </Thead>
@@ -187,6 +194,23 @@ export const BundleList = ({}) => {
                             w='max-content'
                           >
                             $ {bundle.unitPrice}
+                          </Text>
+                        </Td>
+                        <Td maxW='200px'>
+                          <Text
+                            size='xs'
+                            variant='solid'
+                            bg='blue.800'
+                            fontSize='0.70rem'
+                            p='0.5'
+                            pl='2'
+                            pr='2'
+                            borderRadius='full'
+                            w='max-content'
+                          >
+                            {!bundle.delivery
+                              ? 'Unspecified'
+                              : `${bundle.delivery?.period} ${bundle.delivery?.periodType}`}
                           </Text>
                         </Td>
                         <Td textAlign='right'>

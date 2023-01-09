@@ -104,7 +104,7 @@ export const FeatureList = ({}) => {
                 borderRadius='md'
                 borderWidth='thin'
                 borderColor='teal.700'
-                mt='3'
+                // mt='3'
                 pos='relative'
               >
                 <Table className='custom-table' size='sm' h='full'>
@@ -166,12 +166,33 @@ export const FeatureList = ({}) => {
                                     pr='2'
                                     borderRadius='full'
                                   >
-                                    {trimString(affected_service.name, 10, '.')}
+                                    {feature.association?.services?.length < 2
+                                      ? affected_service.name
+                                      : trimString(
+                                          affected_service.name,
+                                          10,
+                                          '.'
+                                        )}
                                   </Text>
                                 </Tooltip>
                               )
                             )}
                           </Flex>
+                        </Td>
+                        <Td maxW='200px'>
+                          <Text
+                            size='xs'
+                            variant='solid'
+                            bg='#1a405e'
+                            fontSize='0.70rem'
+                            p='0.5'
+                            pl='2'
+                            pr='2'
+                            borderRadius='full'
+                            w='max-content'
+                          >
+                            {feature.association?.microService?.name}
+                          </Text>
                         </Td>
                         <Td maxW='200px'>
                           <Text
@@ -185,11 +206,8 @@ export const FeatureList = ({}) => {
                             borderRadius='full'
                             w='max-content'
                           >
-                            {feature.association?.microService?.name}
+                            ${feature.price || 'N/A'}
                           </Text>
-                        </Td>
-                        <Td maxW='200px'>
-                          <Text size='xs'>{feature.price || 'N/A'}</Text>
                         </Td>
                         <Td textAlign='right'>
                           <IconButton

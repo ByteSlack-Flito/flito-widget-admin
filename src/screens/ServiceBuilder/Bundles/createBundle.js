@@ -14,6 +14,8 @@ import {
   HStack,
   IconButton,
   Input,
+  InputGroup,
+  InputRightAddon,
   SimpleGrid,
   Table,
   TableContainer,
@@ -39,7 +41,7 @@ import { StringHelper } from '../../../data/extensions/stringHelper'
 import { useFeaturesHook } from '../../../data/database/users/features'
 import { SiteRoutes } from '../../../misc/routes'
 import { useBundlesHook } from '../../../data/database/users/bundles'
-import { BsCheckCircleFill } from 'react-icons/bs'
+import { BsCheckCircleFill, BsCircle } from 'react-icons/bs'
 
 export default () => {
   const routeState = useLocation().state
@@ -51,7 +53,11 @@ export default () => {
     name: '',
     service: '',
     unitPrice: '',
-    features: []
+    features: [],
+    delivery: {
+      period: 0,
+      periodType: 'days'
+    }
   })
   const navigate = useNavigate()
   const toast = useToastGenerator()
@@ -69,14 +75,16 @@ export default () => {
         }
       : {
           title: 'Create New Service Bundle',
-          description: 'Define a Service and create feature(s) for it.'
+          description:
+            'Create a new Service Bundle for a service to allow your users more flixible quotations.'
         }
   }
 
-  const constructServices = serviceHook.data?.map(service => ({
-    value: service.uid,
-    label: service.name
-  })) || []
+  const constructServices =
+    serviceHook.data?.map(service => ({
+      value: service.uid,
+      label: service.name
+    })) || []
 
   useEffect(() => {
     !StringHelper.isEmpty(formData.service) &&
@@ -93,8 +101,17 @@ export default () => {
     )
   }
 
-  function handleFormData (key, val) {
-    setFormData(prev => ({ ...prev, [key]: val }))
+  function handleFormData (key, val, nestedKey) {
+    setFormData(prev => {
+      const spread = { ...prev }
+      if (nestedKey) {
+        spread[key][nestedKey] = val
+      } else {
+        spread[key] = val
+      }
+
+      return spread
+    })
   }
 
   function handleFeature (featureUID) {
@@ -131,7 +148,19 @@ export default () => {
   }
 
   const numbreRegex = /^\d*\.?\d*$/
-  const isFormValid = !StringHelper.isPropsEmpty(formData)
+  const isFormValid =
+    !StringHelper.isPropsEmpty(formData) && formData.delivery.period > 0
+
+  const timeOptions = [
+    {
+      label: 'Days',
+      value: 'days'
+    },
+    {
+      label: 'Weeks',
+      value: 'weeks'
+    }
+  ]
 
   return (
     <motion.div
@@ -154,6 +183,7 @@ export default () => {
           gridTemplateColumns='0.8fr 1fr'
           h='100%'
           gap='5'
+          pt='3'
         >
           <GridItem pl='2'>
             <VStack align='flex-start' spacing='3'>
@@ -186,6 +216,39 @@ export default () => {
                   handleFormData('unitPrice', e.target.value)
                 }
               />
+              <InputGroup>
+                <Input
+                  {...SiteStyles.InputStyles}
+                  onChange={e =>
+                    /^\d*\.?\d*$/.test(e.target.value) &&
+                    handleFormData('delivery', e.target.value, 'period')
+                  }
+                  value={formData.delivery?.period || ''}
+                  placeholder='Delivery Time. ex. 5 Weeks'
+                />
+                <InputRightAddon
+                  p='0'
+                  bg='transparent'
+                  border='none'
+                  // fontSize='xs'
+                >
+                  <Select
+                    options={timeOptions}
+                    className='react_select'
+                    placeholder='Select...'
+                    styles={ReactSelectStyles}
+                    onChange={val =>
+                      handleFormData('delivery', val.value, 'periodType')
+                    }
+                    value={timeOptions.find(
+                      x => x.value === formData?.delivery?.periodType
+                    )}
+                    // components={{
+                    //   NoOptionsMessage: NoSimilarMico
+                    // }}
+                  />
+                </InputRightAddon>
+              </InputGroup>
             </VStack>
           </GridItem>
           <GridItem
@@ -239,8 +302,10 @@ export default () => {
                           userSelect='none'
                         >
                           <Td w='50px' color='teal.500' fontSize='lg'>
-                            {formData.features.includes(feature.uid) && (
+                            {formData.features.includes(feature.uid) ? (
                               <BsCheckCircleFill />
+                            ) : (
+                              <BsCircle />
                             )}
                           </Td>
                           <Td>
