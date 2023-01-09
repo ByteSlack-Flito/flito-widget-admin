@@ -122,6 +122,7 @@ export default () => {
           name: routeState?.data.name,
           price: routeState?.data.price,
           description: routeState?.data.description || '',
+          delivery: routeState?.data.delivery,
           microService: micro
         }
       }
@@ -279,6 +280,7 @@ export default () => {
           name: single.name,
           price: single.price || '',
           description: single.description || '',
+          delivery: single.delivery || {},
           association
         }
       })
