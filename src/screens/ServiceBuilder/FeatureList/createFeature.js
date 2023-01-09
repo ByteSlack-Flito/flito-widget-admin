@@ -131,67 +131,71 @@ export default () => {
   //#endregion
 
   function mergeMicroServices () {
-    if (services) {
-      if (services?.length > 1) {
-        const mergedMicros = []
+    const selectedServices = services
+    if (selectedServices) {
+      if (selectedServices?.length > 1) {
         const filteredServices = serviceHook.data?.filter(x =>
-          services.some(y => y.value === x.uid)
+          selectedServices.some(y => y.value === x.uid)
         )
 
-        /// Now here, we are firstly selecting the first service and will loop through it's micro services.
-        /// While looping through it's micro-services, we will check how many microServices from other services are similar
-        /// to the given microService in the loop. This is how we merge the microServices
+        // console.log('Services would be:', filteredServices)
 
-        filteredServices[0]?.microServices?.map((micro, microIndex) => {
-          const micro_name = micro.name
-          const step_question = micro.stepQuestion
-
-          /// Now we loop through all other services
-          filteredServices.map((otherService, index) => {
-            if (index > 0 && otherService.microServices[microIndex]) {
-              const other_micro_name =
-                otherService.microServices[microIndex].name
-              const other_micro_stepQuestion =
-                otherService.microServices[microIndex].stepQuestion
-
-              const nameMatch = stringSimilarity.compareTwoStrings(
-                micro_name,
-                other_micro_name
-              )
-              const stepQuestionMatch = stringSimilarity.compareTwoStrings(
-                step_question,
-                other_micro_stepQuestion
-              )
-
-              if (nameMatch >= 0.8 && stepQuestionMatch >= 0.8) {
-                mergedMicros.push(micro)
-              }
-            }
+        const merged = filteredServices.reduce((acc, curr) => {
+          const matchingService = acc.find(item => {
+            return item.microServices.some(microService => {
+              return curr.microServices.some(currMicroService => {
+                return microService.name === currMicroService.name
+              })
+            })
           })
-        })
+          if (matchingService) {
+            matchingService.microServices = matchingService.microServices.map(
+              service => {
+                const matchingMicroService = curr.microServices.find(
+                  microService => {
+                    return microService.name === service.name
+                  }
+                )
+                if (matchingMicroService) {
+                  service.mergedWith = service.mergedWith || []
+                  if (!service.mergedWith.find(x => x.serviceID === curr.uid)) {
+                    service.mergedWith.push({
+                      serviceID: curr.uid,
+                      microID:
+                        matchingMicroService.sampleID ||
+                        matchingMicroService.uid
+                    })
+                  }
+                }
+                return service
+              }
+            )
+          } else {
+            acc.push(curr)
+          }
+          return acc
+        }, [])
 
+        const micro_only = []
+        merged?.map(x => micro_only.push(...x.microServices))
         setMicroServices(
-          mergedMicros.map(mergedMicro => ({
-            label: mergedMicro.name,
-            value: mergedMicro.uid
+          micro_only.map(x => ({
+            label: x.name,
+            value: x.sampleID || x.uid
           }))
         )
-        if (mergedMicros?.length <= 0) {
-          setFeatureLsit(prev => {
-            const spread = [...prev]
-            const updated = spread.map(x => ({ ...x, microService: null }))
-            return updated
-          })
-        }
+        // console.log("Init micros are:", micro_only)
       } else {
         const serviceRef = serviceHook.data?.find(
           x => x.uid === services[0]?.value
         )
         setMicroServices(
-          serviceRef?.microServices.map(micro => ({
-            label: micro.name,
-            value: micro.uid
-          }))
+          !serviceRef
+            ? []
+            : serviceRef.microServices.map(x => ({
+                label: x.name,
+                value: x.sampleID || x.uid
+              }))
         )
       }
     }
@@ -284,7 +288,7 @@ export default () => {
         result = await addMultiple(formatted)
       } else {
         // console.log('Formatted is:', formatted[0])
-        result = await update(routeState.data.uid, formatted[0])
+        result = await update(routeState?.data.uid, formatted[0])
       }
 
       toast.show(result)
@@ -295,7 +299,7 @@ export default () => {
   }
 
   async function deleteFeature () {
-    const result = await _delete(routeState.data.uid)
+    const result = await _delete(routeState?.data.uid)
     toast.show(result)
 
     setTimeout(() => navigate(-1), 1000)
@@ -386,7 +390,7 @@ export default () => {
                     <Th>Feature/Option</Th>
                     <Th>Price/Rate</Th>
                     <Th>Delivery Time</Th>
-                    {!routeState.data?.uid && (
+                    {!routeState?.data?.uid && (
                       <Th
                         borderTopRightRadius='md'
                         borderBottomRightRadius='md'

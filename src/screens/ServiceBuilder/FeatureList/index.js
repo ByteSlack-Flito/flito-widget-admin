@@ -206,7 +206,7 @@ export const FeatureList = ({}) => {
                             borderRadius='full'
                             w='max-content'
                           >
-                            ${feature.price || 'N/A'}
+                            {feature.price ? `$ ${feature.price}` : 'Unspecified'}
                           </Text>
                         </Td>
                         <Td textAlign='right'>
