@@ -123,7 +123,7 @@ export const SiteRoutes = {
             id: 402,
             label: 'Requests',
             icon: <MdDashboardCustomize />,
-            path: `${ENGINE_ROUTE}/widget-requests`,
+            path: `${ENGINE_ROUTE}/project-requests`,
             element: <ProjectRequestScreen />
           },
           Theme: {

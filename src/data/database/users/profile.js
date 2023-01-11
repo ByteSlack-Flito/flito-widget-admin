@@ -160,6 +160,7 @@ export const useWidget = (fetchByDefault = true) => {
       merge: merge
     })
     setIsUpdating(false)
+    setData(prev => ({...prev, ...data}))
     return profileResult
   }
   return {

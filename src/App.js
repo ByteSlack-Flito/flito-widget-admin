@@ -163,9 +163,9 @@ function ScreenRenderer () {
               })}
             </Routes>
           </GridItem>
-          <GridItem pl='2' area={'footer'}>
+          {/* <GridItem pl='2' area={'footer'}>
             <Footer />
-          </GridItem>
+          </GridItem> */}
         </Grid>
       )
     } else {

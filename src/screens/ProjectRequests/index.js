@@ -22,65 +22,52 @@ import {
   Spacer,
   Box,
   Spinner,
-  SimpleGrid
+  SimpleGrid,
+  Flex
 } from '@chakra-ui/react'
 import { FaSearch } from 'react-icons/fa'
 import { ProjectSingle, RequestDetailsModal } from './components'
 import { BiCheck } from 'react-icons/bi'
 import { useProfile } from '../../data/database/users/profile'
+import { useProjectRequest } from '../../data/database/users/projectRequests'
+import { ScreenContainer } from '../../components/global'
 
 const ProjectRequestScreen = () => {
   const detailsModalRef = useRef()
-  const { isFetching, data, update, get } = useProfile()
+  const { isFetching, data, update, _delete } = useProjectRequest()
   const [doneRead, setDoneRead] = useState([])
 
-  useEffect(() => {}, [])
-
-  async function showDetailsScreen (id) {
-    detailsModalRef.current.setMetaId(id)
-    detailsModalRef.current.open()
-
-    const { projectRequests } = data
-
-    const isRead =
-      projectRequests?.find(x => x.metaId === id).isRead ||
-      doneRead.includes(id)
-
-    if (!isRead) {
-      doneRead.push(id)
-      let spread = [...projectRequests]
-      const updatingIndex = spread.findIndex(x => x.metaId === id)
-      spread[updatingIndex].isRead = true
-
-      await update({ projectRequests: spread })
+  async function showDetailsScreen (project) {
+    detailsModalRef.current.open(project)
+    if (!project.isRead) {
+      await update(project.uid, {
+        isRead: true
+      })
     }
   }
 
-  async function deleteRequest (metaId) {
-    const { projectRequests } = data
-    const updatedArray = projectRequests.filter(x => x.metaId !== metaId)
-
-    const deleteResult = await update({projectRequests: updatedArray})
-    if(deleteResult.success){
-      get()
-    }
-  }
-
-  const request_sorted = data?.projectRequests?.sort((a, b) => a.createdOn - b.createdOn).reverse()
+  const request_sorted = data
+    ?.sort((a, b) => a.createdAt - b.createdAt)
+    .reverse()
 
   return (
-    <VStack align='flex-start' pt='3'>
-      <Text fontSize='lg' fontWeight='normal'>
-        Project Requests
-      </Text>
-      <Text fontSize='sm' fontWeight='normal'>
-        List of all project requests.
-      </Text>
+    <ScreenContainer
+      title='Project Requests'
+      description={
+        <>
+          {' '}
+          When someone receives a quotation by the widget, they become a
+          potential lead for your business. All the quotation are gathered here,
+          as <i>project requests</i> to give you full transparency of what the
+          client expects.
+        </>
+      }
+    >
       <RequestDetailsModal ref={detailsModalRef} />
       {isFetching && <Spinner size='md' color='blue.400' />}
       {!isFetching && (
-        <Box w='full' display='flex' flexWrap='wrap'>
-          {(!data?.projectRequests || data.projectRequests.length <= 0) && (
+        <Flex w='full' gap='3' flexWrap='wrap' pt='3'>
+          {(!data || data.length <= 0) && (
             <Text fontSize='md' fontWeight='normal' color='gray.500'>
               <i>
                 No requests yet. Once someone uses the Flito Widget integrated
@@ -89,24 +76,23 @@ const ProjectRequestScreen = () => {
             </Text>
           )}
           {request_sorted?.map(project => {
-            const isRead = project.isRead || doneRead.includes(project.metaId)
+            const isRead = project.isRead || doneRead.includes(project.uid)
             return (
               <ProjectSingle
-                isRead={isRead}
-                onClick={() => showDetailsScreen(project.metaId)}
-                onRequestDelete={() => deleteRequest(project.metaId)}
+                {...project}
+                onClick={() => showDetailsScreen(project)}
+                onRequestDelete={() => _delete(project.uid)}
                 style={{
                   marginRight: '3',
                   marginBottom: '3',
                   maxW: '300px'
                 }}
-                {...project}
               />
             )
           })}
-        </Box>
+        </Flex>
       )}
-    </VStack>
+    </ScreenContainer>
   )
 }
 

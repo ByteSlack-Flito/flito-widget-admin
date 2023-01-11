@@ -60,3 +60,10 @@ export function trimString (source, length, ellipsis = '.', ellipsisCount = 3) {
 
   return source.substring(0, length) + ellipsis.repeat(ellipsisCount)
 }
+
+/**
+ * Capitalizes the first letter of a string and returns the updated string.
+ * @param {''} s Source string
+ * @returns 
+ */
+export const capitalizeFirst = (s) => `${s[0].toUpperCase()}${s.slice(1)}`

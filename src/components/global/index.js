@@ -76,6 +76,7 @@ const FocusableInputStyles = {
   boxShadow: 'none !important'
 }
 const ClickableContainer = {
+  transition: 'all 200ms',
   userSelect: 'none',
   borderWidth: 'thin',
   borderColor: '#543d63',

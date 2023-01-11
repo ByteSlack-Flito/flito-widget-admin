@@ -70,7 +70,7 @@ export const MyServicesScreen = () => {
             <Box w='400px'>
               <Select
                 options={currencies}
-                isLoading={widgetHook.isFetching}
+                isLoading={widgetHook.isFetching || widgetHook.isUpdating}
                 // defaultValue={currencies}
                 className='react_select'
                 placeholder='Select Currency For Your Services...'
