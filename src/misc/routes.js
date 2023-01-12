@@ -88,14 +88,14 @@ export const SiteRoutes = {
             ignoreRendering: true,
             element: <CreateFeature />
           },
-          MyTeam: {
-            id: 203,
-            icon: <GiTeamIdea />,
-            label: 'My Team',
-            path: `${ENGINE_ROUTE}/my-team`,
-            ignoreRendering: true,
-            element: <TeamScreen />
-          }
+          // MyTeam: {
+          //   id: 203,
+          //   icon: <GiTeamIdea />,
+          //   label: 'My Team',
+          //   path: `${ENGINE_ROUTE}/my-team`,
+          //   ignoreRendering: true,
+          //   element: <TeamScreen />
+          // }
           // PricingStrategy: {
           //   id: 204,
           //   label: 'Pricing Strategy',
@@ -131,7 +131,7 @@ export const SiteRoutes = {
             label: 'Color & Content',
             icon: <IoColorPaletteOutline />,
             path: `${ENGINE_ROUTE}/theme-setup`,
-            ignoreRendering: true,
+            // ignoreRendering: true,
             element: <ThemeScreen />
           }
         }

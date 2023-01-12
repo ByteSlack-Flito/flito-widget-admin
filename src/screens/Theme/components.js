@@ -129,7 +129,12 @@ export const CustomTabs = ({
       align='flex-start'
       {...containerProps}
     >
-      <HStack w='full' h='max-content' borderBottomWidth='thin' {...tabContainerProps}>
+      <HStack
+        w='full'
+        h='max-content'
+        borderBottomWidth='thin'
+        {...tabContainerProps}
+      >
         {tabs.map((label, index) => (
           <Button
             key={`${label}${index}`}

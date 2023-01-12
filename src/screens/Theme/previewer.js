@@ -1,23 +1,36 @@
 import {
   Box,
   Button,
+  Flex,
   HStack,
   Input,
   SimpleGrid,
   Text,
   VStack
 } from '@chakra-ui/react'
+import { BsArrowRightShort } from 'react-icons/bs'
 import { SiteStyles } from '../../components/global'
 import { generateArray } from '../../misc/logics'
+import TinyColor from 'tinycolor2'
 
 const Steps = ({
-  welcomeText,
+  welcomeTitle,
+  welcomeSubtitle,
   background,
   textColor,
-  buttonColor,
-  buttonTextColor,
-  buttonHoverColor,
-  buttonHoverTextColor
+  optionColor,
+  optionTextColor,
+  optionHoverColor,
+  optionHoverTextColor,
+  nextButtonColor,
+  nextButtonTextColor,
+  nextButtonHoverColor,
+  nextButtonHoverTextColor,
+
+  skipButtonColor,
+  skipButtonTextColor,
+  skipButtonHoverColor,
+  skipButtonHoverTextColor
 }) => (
   <VStack
     w='full'
@@ -29,31 +42,91 @@ const Steps = ({
     pl='4'
     pr='4'
     textAlign='center'
+    spacing='0.5'
   >
-    <Text fontSize='xl' fontWeight='medium' color={textColor}>
-      {welcomeText}
+    <Text fontSize='xl' fontWeight='normal' color={textColor}>
+      {welcomeTitle}
     </Text>
-    <HStack>
+    <Text fontSize='sm' fontWeight='thin' color={textColor}>
+      {welcomeSubtitle}
+    </Text>
+    <Flex gap='3' w='full' justify='center' pt='3'>
       {generateArray(2).map((x, index) => (
-        <Button
-          transition='all 0ms'
+        <VStack
+          align='flex-start'
+          justify='flex-start'
+          textAlign='left'
+          transition='all 200ms'
           key={index}
-          color={buttonTextColor}
-          bg={buttonColor}
+          color={optionTextColor}
+          borderWidth='thin'
+          borderColor={TinyColor(optionColor).darken(10).toString()}
           size='sm'
-          borderRadius='md'
+          borderRadius='5px'
+          bg={optionColor}
           _active={{
-            bg: buttonHoverColor
+            bg: optionHoverColor
           }}
           _hover={{
-            bg: buttonHoverColor,
-            color: buttonHoverTextColor
+            borderColor: optionHoverColor,
+            bg: optionHoverColor,
+            color: optionHoverTextColor
           }}
+          maxW='150px'
+          p='2'
+          pl='3'
+          pr='3'
+          userSelect='none'
+          cursor='pointer'
         >
-          Option {index + 1}
-        </Button>
+          <Text fontSize='0.80rem'>Option</Text>
+          <Text fontSize='0.70rem' fontWeight='normal'>
+            Quick overview of the service/feature
+          </Text>
+        </VStack>
       ))}
-    </HStack>
+    </Flex>
+    <Box height='10px' />
+    <Flex gap='3'>
+      <Button
+        transition='all 200ms'
+        size='xs'
+        variant='solid'
+        bg={nextButtonColor}
+        color={nextButtonTextColor}
+        _active={{
+          bg: nextButtonHoverColor
+        }}
+        _hover={{
+          bg: nextButtonHoverColor,
+          color: nextButtonHoverTextColor
+        }}
+        // p='0 !important'
+        borderRadius='5px'
+        rightIcon={<BsArrowRightShort />}
+      >
+        Next Button
+      </Button>
+
+      <Button
+        transition='all 200ms'
+        size='xs'
+        variant='solid'
+        bg={skipButtonColor}
+        color={skipButtonTextColor}
+        _active={{
+          bg: skipButtonHoverColor
+        }}
+        _hover={{
+          bg: skipButtonHoverColor,
+          color: skipButtonHoverTextColor
+        }}
+        // p='0 !important'
+        borderRadius='5px'
+      >
+        Skip Button
+      </Button>
+    </Flex>
   </VStack>
 )
 
@@ -135,8 +208,8 @@ const Estimate = ({
               color={ctaButton?.textColor}
               bg={ctaButton?.backgroundColor}
               size='xs'
-            //   pl='2'
-            //   pr='2'
+              //   pl='2'
+              //   pr='2'
               borderRadius='md'
               _active={{
                 bg: ctaButton?.hoverBackgroundColor

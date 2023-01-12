@@ -1,7 +1,13 @@
 import {
+  Accordion,
+  AccordionButton,
+  AccordionIcon,
+  AccordionItem,
+  AccordionPanel,
   Button,
   Checkbox,
   extendTheme,
+  Flex,
   HStack,
   Input,
   InputGroup,
@@ -19,21 +25,46 @@ import { useWidget } from '../../data/database/users/profile'
 import { ThemeComponents } from './components'
 import { Previewer, PreviewerScreen } from './previewer'
 import { motion } from 'framer-motion'
+import './index.css'
+
+const init_state = {
+  global: {
+    welcomeTitle: 'Estimate Our Services In Seconds',
+    welcomeSubtitle: 'Choose what services you want',
+    backgroundColor: '#ffffff',
+    textColor: '#000000'
+  },
+  options: {
+    backgroundColor: '#ffffff',
+    textColor: '#000000',
+    hoverBackgroundColor: '#3182CE',
+    hoverTextColor: '#ffffff'
+  },
+  nextButton: {
+    backgroundColor: '#319795',
+    textColor: '#ffffff',
+    hoverBackgroundColor: '#2C7A7B',
+    hoverTextColor: '#ffffff'
+  },
+  skipButton: {
+    backgroundColor: '#A0AEC0',
+    textColor: '#ffffff',
+    hoverBackgroundColor: '#718096',
+    hoverTextColor: '#ffffff'
+  }
+}
 
 const Steps = () => {
   const { data, isFetching, isUpdating, update } = useWidget()
   const toast = useToastGenerator()
-  const [globalStyles, setGlobalStyles] = useState({
-    welcomeText: 'Estimate your app in seconds',
-    backgroundColor: '#ffffff',
-    textColor: '#000000'
-  })
-  const [buttonStyles, setButtonStyles] = useState({
-    backgroundColor: '#ffffff',
-    textColor: '#000000',
-    hoverBackgroundColor: '#ffffff',
-    hoverTextColor: '#ffffff'
-  })
+  const [globalStyles, setGlobalStyles] = useState(init_state.global)
+  const [optionStyles, setOptionStyles] = useState(init_state.options)
+  const [nextButtonStyles, setNextButtonStyles] = useState(
+    init_state.nextButton
+  )
+  const [skipButtonStyles, setSkipButtonStyles] = useState(
+    init_state.skipButton
+  )
 
   function updateGlobal (key, val) {
     setGlobalStyles(prev => ({
@@ -41,8 +72,20 @@ const Steps = () => {
       [key]: val
     }))
   }
-  function updateButton (key, val) {
-    setButtonStyles(prev => ({
+  function updateOptions (key, val) {
+    setOptionStyles(prev => ({
+      ...prev,
+      [key]: val
+    }))
+  }
+  function updateNextButton (key, val) {
+    setNextButtonStyles(prev => ({
+      ...prev,
+      [key]: val
+    }))
+  }
+  function updateSkipButton (key, val) {
+    setSkipButtonStyles(prev => ({
       ...prev,
       [key]: val
     }))
@@ -52,7 +95,9 @@ const Steps = () => {
     const data = {
       steps: {
         global: globalStyles,
-        button: buttonStyles
+        options: optionStyles,
+        nextButton: nextButtonStyles,
+        skipButton: skipButtonStyles
       }
     }
 
@@ -67,8 +112,10 @@ const Steps = () => {
 
   useEffect(() => {
     if (data?.styles?.steps) {
-      setGlobalStyles(data.styles.steps.global)
-      setButtonStyles(data.styles.steps.button)
+      setGlobalStyles(data.styles.steps?.global || init_state.global)
+      setOptionStyles(data.styles.steps?.options || init_state.options)
+      setNextButtonStyles(data.styles.steps?.nextButton || init_state.nextButton)
+      setSkipButtonStyles(data.styles.steps?.skipButton || init_state.skipButton)
       // setDataSetFromAPI(true)
     }
   }, [data])
@@ -89,104 +136,253 @@ const Steps = () => {
               fontSize='sm'
               fontWeight='medium'
               align='flex-start'
-              spacing='5'
+              // spacing='5'
             >
-              <VStack
-                spacing='3'
-                // bg='#14344f'
-                borderWidth='thin'
-                borderColor='teal'
-                borderStyle='dashed'
-                p='3'
-                pl='3'
-                pr='3'
-                borderRadius='md'
+              <Accordion
+                // allowMultiple
+                defaultIndex={[0]}
                 w='full'
-                align='flex-start'
+                id='styling-according'
               >
-                <Text fontSize='md' fontWeight='light'>
-                  Global Style
-                </Text>
-                <InputGroup>
-                  <InputLeftAddon
-                    children={'Welcome:'}
-                    bg='#14344f'
-                    border='none'
-                  />
-                  <Input
-                    w='full'
-                    {...SiteStyles.InputStyles}
-                    placeholder='Type Welcome Message'
-                    onChange={e => updateGlobal('welcomeText', e.target.value)}
-                    value={globalStyles.welcomeText}
-                  />
-                </InputGroup>
-                <HStack w='full' spacing='5'>
-                  <ThemeComponents.ColorPicker
-                    label='Background Color'
-                    value={globalStyles.backgroundColor}
-                    onColorChange={val => updateGlobal('backgroundColor', val)}
-                  />
-                  <ThemeComponents.ColorPicker
-                    label='Text Color'
-                    value={globalStyles.textColor}
-                    onColorChange={val => updateGlobal('textColor', val)}
-                  />
-                </HStack>
-              </VStack>
-              <VStack
-                spacing='3'
-                // bg='#14344f'
-                borderWidth='thin'
-                borderColor='teal'
-                borderStyle='dashed'
-                p='3'
-                pl='3'
-                pr='3'
-                borderRadius='md'
-                w='full'
-                align='flex-start'
-              >
-                <Text fontSize='md' fontWeight='light'>
-                  Button Style
-                </Text>
-                <HStack w='full' spacing='5'>
-                  <ThemeComponents.ColorPicker
-                    label='Background'
-                    value={buttonStyles.backgroundColor}
-                    onColorChange={val => updateButton('backgroundColor', val)}
-                  />
-                  <ThemeComponents.ColorPicker
-                    label='Text Color'
-                    value={buttonStyles.textColor}
-                    onColorChange={val => updateButton('textColor', val)}
-                  />
-                </HStack>
-                <HStack w='full' spacing='5'>
-                  <ThemeComponents.ColorPicker
-                    label='Hover Background'
-                    value={buttonStyles.hoverBackgroundColor}
-                    onColorChange={val =>
-                      updateButton('hoverBackgroundColor', val)
-                    }
-                  />
-                  <ThemeComponents.ColorPicker
-                    label='Hover Text Color'
-                    value={buttonStyles.hoverTextColor}
-                    onColorChange={val => updateButton('hoverTextColor', val)}
-                  />
-                </HStack>
-              </VStack>
+                {/* Global Styles Section */}
+                <AccordionItem
+                  borderWidth='thin'
+                  borderColor='blue.800'
+                  borderRadius='md'
+                  mb='2'
+                >
+                  <h2>
+                    <AccordionButton
+                      _hover={{
+                        bg: '#09192750'
+                      }}
+                    >
+                      <Flex textAlign='left' w='full'>
+                        <Text>Global Styles</Text>
+                      </Flex>
+                      <AccordionIcon />
+                    </AccordionButton>
+                  </h2>
+                  <AccordionPanel pb={4}>
+                    <VStack spacing='2'>
+                      <Input
+                        w='full'
+                        {...SiteStyles.InputStyles}
+                        placeholder='Welcome Title'
+                        onChange={e =>
+                          updateGlobal('welcomeTitle', e.target.value)
+                        }
+                        value={globalStyles.welcomeTitle}
+                      />
+                      <Input
+                        w='full'
+                        {...SiteStyles.InputStyles}
+                        placeholder='Welcome Subtitle'
+                        onChange={e =>
+                          updateGlobal('welcomeSubtitle', e.target.value)
+                        }
+                        value={globalStyles.welcomeSubtitle}
+                      />
+                      <HStack w='full' spacing='5'>
+                        <ThemeComponents.ColorPicker
+                          label='Background Color'
+                          value={globalStyles.backgroundColor}
+                          onColorChange={val =>
+                            updateGlobal('backgroundColor', val)
+                          }
+                        />
+                        <ThemeComponents.ColorPicker
+                          label='Text Color'
+                          value={globalStyles.textColor}
+                          onColorChange={val => updateGlobal('textColor', val)}
+                        />
+                      </HStack>
+                    </VStack>
+                  </AccordionPanel>
+                </AccordionItem>
+
+                {/* Option Styles Section */}
+                <AccordionItem
+                  borderWidth='thin'
+                  borderColor='blue.800'
+                  borderRadius='md'
+                  mb='2'
+                >
+                  <h2>
+                    <AccordionButton
+                      _hover={{
+                        bg: '#09192750'
+                      }}
+                    >
+                      <Flex textAlign='left' w='full'>
+                        <Text>Option Styles</Text>
+                      </Flex>
+                      <AccordionIcon />
+                    </AccordionButton>
+                  </h2>
+                  <AccordionPanel pb={4}>
+                    <HStack w='full' spacing='5'>
+                      <ThemeComponents.ColorPicker
+                        label='Background'
+                        value={optionStyles.backgroundColor}
+                        onColorChange={val =>
+                          updateOptions('backgroundColor', val)
+                        }
+                      />
+                      <ThemeComponents.ColorPicker
+                        label='Text Color'
+                        value={optionStyles.textColor}
+                        onColorChange={val => updateOptions('textColor', val)}
+                      />
+                    </HStack>
+                    <HStack w='full' spacing='5'>
+                      <ThemeComponents.ColorPicker
+                        label='Hover Background'
+                        value={optionStyles.hoverBackgroundColor}
+                        onColorChange={val =>
+                          updateOptions('hoverBackgroundColor', val)
+                        }
+                      />
+                      <ThemeComponents.ColorPicker
+                        label='Hover Text Color'
+                        value={optionStyles.hoverTextColor}
+                        onColorChange={val =>
+                          updateOptions('hoverTextColor', val)
+                        }
+                      />
+                    </HStack>
+                  </AccordionPanel>
+                </AccordionItem>
+
+                {/* Next Button Style Section */}
+                <AccordionItem
+                  borderWidth='thin'
+                  borderColor='blue.800'
+                  borderRadius='md'
+                  mb='2'
+                >
+                  <h2>
+                    <AccordionButton
+                      _hover={{
+                        bg: '#09192750'
+                      }}
+                    >
+                      <Flex textAlign='left' w='full'>
+                        <Text>Next Button Styles</Text>
+                      </Flex>
+                      <AccordionIcon />
+                    </AccordionButton>
+                  </h2>
+                  <AccordionPanel pb={4}>
+                    <HStack w='full' spacing='5'>
+                      <ThemeComponents.ColorPicker
+                        label='Background'
+                        value={nextButtonStyles.backgroundColor}
+                        onColorChange={val =>
+                          updateNextButton('backgroundColor', val)
+                        }
+                      />
+                      <ThemeComponents.ColorPicker
+                        label='Text Color'
+                        value={nextButtonStyles.textColor}
+                        onColorChange={val =>
+                          updateNextButton('textColor', val)
+                        }
+                      />
+                    </HStack>
+                    <HStack w='full' spacing='5'>
+                      <ThemeComponents.ColorPicker
+                        label='Hover Background'
+                        value={nextButtonStyles.hoverBackgroundColor}
+                        onColorChange={val =>
+                          updateNextButton('hoverBackgroundColor', val)
+                        }
+                      />
+                      <ThemeComponents.ColorPicker
+                        label='Hover Text Color'
+                        value={nextButtonStyles.hoverTextColor}
+                        onColorChange={val =>
+                          updateNextButton('hoverTextColor', val)
+                        }
+                      />
+                    </HStack>
+                  </AccordionPanel>
+                </AccordionItem>
+
+                {/* Next Button Style Section */}
+                <AccordionItem
+                  borderWidth='thin'
+                  borderColor='blue.800'
+                  borderRadius='md'
+                  mb='2'
+                >
+                  <h2>
+                    <AccordionButton
+                      _hover={{
+                        bg: '#09192750'
+                      }}
+                    >
+                      <Flex textAlign='left' w='full'>
+                        <Text>Skip Button Styles</Text>
+                      </Flex>
+                      <AccordionIcon />
+                    </AccordionButton>
+                  </h2>
+                  <AccordionPanel pb={4}>
+                    <HStack w='full' spacing='5'>
+                      <ThemeComponents.ColorPicker
+                        label='Background'
+                        value={skipButtonStyles.backgroundColor}
+                        onColorChange={val =>
+                          updateSkipButton('backgroundColor', val)
+                        }
+                      />
+                      <ThemeComponents.ColorPicker
+                        label='Text Color'
+                        value={skipButtonStyles.textColor}
+                        onColorChange={val =>
+                          updateSkipButton('textColor', val)
+                        }
+                      />
+                    </HStack>
+                    <HStack w='full' spacing='5'>
+                      <ThemeComponents.ColorPicker
+                        label='Hover Background'
+                        value={skipButtonStyles.hoverBackgroundColor}
+                        onColorChange={val =>
+                          updateSkipButton('hoverBackgroundColor', val)
+                        }
+                      />
+                      <ThemeComponents.ColorPicker
+                        label='Hover Text Color'
+                        value={skipButtonStyles.hoverTextColor}
+                        onColorChange={val =>
+                          updateSkipButton('hoverTextColor', val)
+                        }
+                      />
+                    </HStack>
+                  </AccordionPanel>
+                </AccordionItem>
+              </Accordion>
             </VStack>
             <Previewer>
               <PreviewerScreen.Steps
                 background={globalStyles.backgroundColor}
-                welcomeText={globalStyles.welcomeText}
+                welcomeTitle={globalStyles.welcomeTitle}
+                welcomeSubtitle={globalStyles.welcomeSubtitle}
                 textColor={globalStyles.textColor}
-                buttonColor={buttonStyles.backgroundColor}
-                buttonTextColor={buttonStyles.textColor}
-                buttonHoverColor={buttonStyles.hoverBackgroundColor}
-                buttonHoverTextColor={buttonStyles.hoverTextColor}
+                optionColor={optionStyles.backgroundColor}
+                optionTextColor={optionStyles.textColor}
+                optionHoverColor={optionStyles.hoverBackgroundColor}
+                optionHoverTextColor={optionStyles.hoverTextColor}
+                nextButtonColor={nextButtonStyles.backgroundColor}
+                nextButtonTextColor={nextButtonStyles.textColor}
+                nextButtonHoverColor={nextButtonStyles.hoverBackgroundColor}
+                nextButtonHoverTextColor={nextButtonStyles.hoverTextColor}
+                skipButtonColor={skipButtonStyles.backgroundColor}
+                skipButtonTextColor={skipButtonStyles.textColor}
+                skipButtonHoverColor={skipButtonStyles.hoverBackgroundColor}
+                skipButtonHoverTextColor={skipButtonStyles.hoverTextColor}
               />
             </Previewer>
           </SimpleGrid>
@@ -217,15 +413,16 @@ const Estimate = () => {
     estimatorBackground: '#ffffff',
     estimatorTextColor: '#000000'
   })
-  const [expectationButtonStyles, setExpectationButtonStyles] = useState({
-    text: 'Set Expectation',
-    backgroundColor: '#ffffff',
-    textColor: '#000000',
-    hoverBackgroundColor: '#ffffff',
-    hoverTextColor: '#ffffff'
-  })
+  const [expectationnextButtonStyles, setExpectationnextButtonStyles] =
+    useState({
+      text: 'Set Expectation',
+      backgroundColor: '#ffffff',
+      textColor: '#000000',
+      hoverBackgroundColor: '#ffffff',
+      hoverTextColor: '#ffffff'
+    })
 
-  const [ctaButtonStyles, setCTAButtonStyles] = useState({
+  const [ctanextButtonStyles, setCTAnextButtonStyles] = useState({
     enabled: false,
     calendlyLink: '',
     text: 'Set Up Call',
@@ -242,13 +439,13 @@ const Estimate = () => {
     }))
   }
   function updateExpectationButton (key, val) {
-    setExpectationButtonStyles(prev => ({
+    setExpectationnextButtonStyles(prev => ({
       ...prev,
       [key]: val
     }))
   }
   function updateCTAButton (key, val) {
-    setCTAButtonStyles(prev => ({
+    setCTAnextButtonStyles(prev => ({
       ...prev,
       [key]: val
     }))
@@ -258,8 +455,8 @@ const Estimate = () => {
     const data = {
       estimate: {
         global: globalStyles,
-        expectationButton: expectationButtonStyles,
-        ctaButton: ctaButtonStyles
+        expectationButton: expectationnextButtonStyles,
+        ctaButton: ctanextButtonStyles
       }
     }
 
@@ -275,8 +472,8 @@ const Estimate = () => {
   useEffect(() => {
     if (data?.styles?.estimate) {
       setGlobalStyles(data.styles.estimate.global)
-      setExpectationButtonStyles(data.styles.estimate.expectationButton)
-      setCTAButtonStyles(data.styles.estimate.ctaButton)
+      setExpectationnextButtonStyles(data.styles.estimate.expectationButton)
+      setCTAnextButtonStyles(data.styles.estimate.ctaButton)
     }
   }, [data])
 
@@ -298,7 +495,13 @@ const Estimate = () => {
           key='estimate'
         >
           <SimpleGrid columns={2} gap='5' w='full' h='full'>
-            <VStack position='relative' w='full' maxW='full' h='full' overflowX='hidden'>
+            <VStack
+              position='relative'
+              w='full'
+              maxW='full'
+              h='full'
+              overflowX='hidden'
+            >
               <VStack
                 fontSize='sm'
                 fontWeight='medium'
@@ -402,19 +605,19 @@ const Estimate = () => {
                     onChange={e =>
                       updateExpectationButton('text', e.target.value)
                     }
-                    value={expectationButtonStyles.text}
+                    value={expectationnextButtonStyles.text}
                   />
                   <HStack w='full' spacing='5'>
                     <ThemeComponents.ColorPicker
                       label='Background'
-                      value={expectationButtonStyles.backgroundColor}
+                      value={expectationnextButtonStyles.backgroundColor}
                       onColorChange={val =>
                         updateExpectationButton('backgroundColor', val)
                       }
                     />
                     <ThemeComponents.ColorPicker
                       label='Text Color'
-                      value={expectationButtonStyles.textColor}
+                      value={expectationnextButtonStyles.textColor}
                       onColorChange={val =>
                         updateExpectationButton('textColor', val)
                       }
@@ -423,14 +626,14 @@ const Estimate = () => {
                   <HStack w='full' spacing='5'>
                     <ThemeComponents.ColorPicker
                       label='Hover Background'
-                      value={expectationButtonStyles.hoverBackgroundColor}
+                      value={expectationnextButtonStyles.hoverBackgroundColor}
                       onColorChange={val =>
                         updateExpectationButton('hoverBackgroundColor', val)
                       }
                     />
                     <ThemeComponents.ColorPicker
                       label='Hover Text Color'
-                      value={expectationButtonStyles.hoverTextColor}
+                      value={expectationnextButtonStyles.hoverTextColor}
                       onColorChange={val =>
                         updateExpectationButton('hoverTextColor', val)
                       }
@@ -455,12 +658,12 @@ const Estimate = () => {
                   </Text>
                   <Checkbox
                     onChange={() =>
-                      updateCTAButton('enabled', !ctaButtonStyles.enabled)
+                      updateCTAButton('enabled', !ctanextButtonStyles.enabled)
                     }
                   >
                     Enable Calendly CTA
                   </Checkbox>
-                  {ctaButtonStyles.enabled && (
+                  {ctanextButtonStyles.enabled && (
                     <VStack w='full'>
                       <Input
                         w='full'
@@ -469,26 +672,26 @@ const Estimate = () => {
                         onChange={e =>
                           updateCTAButton('calendlyLink', e.target.value)
                         }
-                        value={ctaButtonStyles.calendlyLink}
+                        value={ctanextButtonStyles.calendlyLink}
                       />
                       <Input
                         w='full'
                         {...SiteStyles.InputStyles}
                         placeholder='CTA Button Text'
                         onChange={e => updateCTAButton('text', e.target.value)}
-                        value={ctaButtonStyles.text}
+                        value={ctanextButtonStyles.text}
                       />
                       <HStack w='full' spacing='5'>
                         <ThemeComponents.ColorPicker
                           label='Background'
-                          value={ctaButtonStyles.backgroundColor}
+                          value={ctanextButtonStyles.backgroundColor}
                           onColorChange={val =>
                             updateCTAButton('backgroundColor', val)
                           }
                         />
                         <ThemeComponents.ColorPicker
                           label='Text Color'
-                          value={ctaButtonStyles.textColor}
+                          value={ctanextButtonStyles.textColor}
                           onColorChange={val =>
                             updateCTAButton('textColor', val)
                           }
@@ -497,14 +700,14 @@ const Estimate = () => {
                       <HStack w='full' spacing='5'>
                         <ThemeComponents.ColorPicker
                           label='Hover Background'
-                          value={ctaButtonStyles.hoverBackgroundColor}
+                          value={ctanextButtonStyles.hoverBackgroundColor}
                           onColorChange={val =>
                             updateCTAButton('hoverBackgroundColor', val)
                           }
                         />
                         <ThemeComponents.ColorPicker
                           label='Hover Text Color'
-                          value={ctaButtonStyles.hoverTextColor}
+                          value={ctanextButtonStyles.hoverTextColor}
                           onColorChange={val =>
                             updateCTAButton('hoverTextColor', val)
                           }
@@ -515,7 +718,7 @@ const Estimate = () => {
                 </VStack>
                 <VStack>
                   <Button
-                    {...SiteStyles.ButtonStyles}
+                    {...SiteStyles.nextButtonStyles}
                     onClick={performUpdate}
                     isLoading={isUpdating}
                   >
@@ -533,10 +736,10 @@ const Estimate = () => {
                 goodbyeText={globalStyles.goodbyeText}
                 textColor={data?.styles?.steps?.global?.textColor}
                 expectationButton={{
-                  ...expectationButtonStyles
+                  ...expectationnextButtonStyles
                 }}
                 ctaButton={{
-                  ...ctaButtonStyles
+                  ...ctanextButtonStyles
                 }}
               />
             </Previewer>

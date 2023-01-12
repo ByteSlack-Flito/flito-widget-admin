@@ -47,11 +47,11 @@ export const ThemeScreen = () => {
         </TabPanels>
       </Tabs> */}
 
-      <CustomTabs tabs={['Steps Screen', 'Estimate Screen']} tabProps={TabProps} tabContainerProps={{
+      <CustomTabs tabs={['Steps Screen']} tabProps={TabProps} tabContainerProps={{
         borderBottomColor: '#d885ff30'
       }}>
         <ThemeScreens.Steps />
-        <ThemeScreens.Estimate />
+        {/* <ThemeScreens.Estimate /> */}
       </CustomTabs>
     </ScreenContainer>
   )
